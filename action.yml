@@ -1,0 +1,38 @@
+name: Maple visual review
+description: Sync Maple's visual review comments onto a pull request, and gate the merge until they are resolved.
+author: The Maple Authors
+
+branding:
+  icon: message-square
+  color: red
+
+inputs:
+  mode:
+    description: |
+      "sync" writes the review comment onto the pull request.
+      "gate" reports the maple/visual-review check run.
+      Run sync before gate, so a blocked reviewer can see why.
+    required: true
+  branch:
+    description: Branch or pull request the comments belong to. Defaults to the pull request's head ref.
+    required: false
+  token:
+    description: |
+      Token used for the API calls. sync needs pull-requests:write;
+      gate needs no write permission at all.
+    required: false
+    default: ${{ github.token }}
+  fail-on-orphaned:
+    description: Treat an orphaned comment as unresolved. Defaults to true.
+    required: false
+    default: "true"
+
+outputs:
+  open-count:
+    description: Number of comments still open.
+  conclusion:
+    description: The check run's conclusion, or "in_progress" while comments are open.
+
+runs:
+  using: node24
+  main: dist/index.js
