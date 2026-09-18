@@ -1,0 +1,38 @@
+{
+  "name": "maple-action",
+  "version": "0.0.0",
+  "private": true,
+  "description": "GitHub Action that syncs Maple's visual review comments and gates the merge",
+  "license": "Apache-2.0",
+  "type": "module",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maple-kit/maple-action.git"
+  },
+  "scripts": {
+    "build": "ncc build src/index.ts -o dist --source-map --license licenses.txt",
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "hooks": "lefthook install"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "26.6.1",
+    "@vercel/ncc": "0.45.0",
+    "eslint": "10.10.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.12.0",
+    "lefthook": "2.1.14",
+    "prettier": "3.9.8",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0",
+    "vitest": "5.0.1"
+  }
+}
