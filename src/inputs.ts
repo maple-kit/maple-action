@@ -14,7 +14,6 @@ export interface Inputs {
   readonly mode: Mode;
   readonly branch: string;
   readonly token: string;
-  readonly failOnOrphaned: boolean;
 }
 
 /** Raised when an input is missing or not one of its allowed values. */
@@ -32,15 +31,6 @@ export class InvalidInputError extends Error {
 /** Reads one input from the environment, trimmed. */
 export function readInput(env: NodeJS.ProcessEnv, name: string): string {
   return (env[`INPUT_${name.toUpperCase().replace(/ /g, "_")}`] ?? "").trim();
-}
-
-/** Reads a boolean input, accepting only the YAML spellings GitHub documents. */
-export function readBoolean(env: NodeJS.ProcessEnv, name: string, fallback: boolean): boolean {
-  const raw = readInput(env, name).toLowerCase();
-  if (raw === "") return fallback;
-  if (raw === "true") return true;
-  if (raw === "false") return false;
-  throw new InvalidInputError(name, `must be "true" or "false", received "${raw}"`);
 }
 
 /**
@@ -62,5 +52,5 @@ export function readInputs(env: NodeJS.ProcessEnv): Inputs {
     throw new InvalidInputError("branch", "is required when the run has no head ref");
   }
 
-  return { mode, branch, token, failOnOrphaned: readBoolean(env, "fail-on-orphaned", true) };
+  return { mode, branch, token };
 }

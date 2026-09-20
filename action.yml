@@ -22,16 +22,14 @@ inputs:
       gate needs no write permission at all.
     required: false
     default: ${{ github.token }}
-  fail-on-orphaned:
-    description: Treat an orphaned comment as unresolved. Defaults to true.
-    required: false
-    default: "true"
 
 outputs:
   open-count:
-    description: Number of comments still open.
+    description: Number of comments holding the gate.
   conclusion:
-    description: The check run's conclusion, or "in_progress" while comments are open.
+    description: '"blocked", "clear" or "neutral" — Maple''s verdict, not the check run''s status.'
+  reason:
+    description: Why the verdict was reached, e.g. "comments-open" or "no-review". Branch on this.
 
 runs:
   using: node24
