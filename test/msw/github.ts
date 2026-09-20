@@ -14,11 +14,19 @@ import type { RequestHandler } from "msw";
 
 const API = "https://api.github.com";
 
+/** One issue comment, as the fake holds it. */
+export interface StoredComment {
+  id: number;
+  body: string;
+}
+
 /** A fake repository: one pull request, its comments, and what it answers with. */
 export interface GitHubFake {
   readonly handlers: RequestHandler[];
   /** Puts `comments` on the pull request, one issue comment each. */
   put(...comments: readonly Comment[]): void;
+  /** Every issue comment on the pull request, including ones a run wrote. */
+  issueComments(): readonly StoredComment[];
   /** How many comments each page returns, so a suite can force a second one. */
   pageSize(size: number): void;
   /** Answers every comment listing with this status instead of the comments. */
@@ -33,10 +41,11 @@ export interface GitHubFake {
 
 /** Creates the fake. The pull request is 42, on `feature/x` at `commit_sha`. */
 export function createGitHubFake(owner = "maple-kit", repo = "app"): GitHubFake {
-  let comments: readonly Comment[] = [];
+  let issues: StoredComment[] = [];
   let size = 100;
   let failure: number | undefined;
   let pages = 0;
+  let nextId = 2000;
   let credentials: string[] = [];
 
   const pull = { number: 42, head: { ref: "feature/x" } };
@@ -63,20 +72,44 @@ export function createGitHubFake(owner = "maple-kit", repo = "app"): GitHubFake 
 
       const page = Number(new URL(request.url).searchParams.get("page") ?? "1");
       const from = (page - 1) * size;
-      const body = comments.slice(from, from + size).map(issueComment);
-      const last = from + size >= comments.length;
+      const body = issues.slice(from, from + size);
+      const last = from + size >= issues.length;
 
       return HttpResponse.json(body, {
         headers: last ? {} : { link: `<${request.url}>; rel="next"` },
       });
+    }),
+
+    http.post(`${API}/repos/${owner}/${repo}/issues/:pull/comments`, async ({ request }) => {
+      if (failure !== undefined) {
+        return HttpResponse.json({ message: "Bad credentials" }, { status: failure });
+      }
+
+      nextId += 1;
+      const created = { id: nextId, body: (await body(request)) ?? "" };
+      issues.push(created);
+      return HttpResponse.json(created, { status: 201 });
+    }),
+
+    http.patch(`${API}/repos/${owner}/${repo}/issues/comments/:id`, async ({ params, request }) => {
+      if (failure !== undefined) {
+        return HttpResponse.json({ message: "Bad credentials" }, { status: failure });
+      }
+
+      const found = issues.find((comment) => comment.id === Number(params["id"]));
+      if (!found) return HttpResponse.json({ message: "Not Found" }, { status: 404 });
+
+      found.body = (await body(request)) ?? found.body;
+      return HttpResponse.json(found);
     }),
   ];
 
   return {
     handlers,
     put: (...put) => {
-      comments = put;
+      issues = put.map(issueComment);
     },
+    issueComments: () => issues,
     pageSize: (next) => {
       size = next;
     },
@@ -87,7 +120,8 @@ export function createGitHubFake(owner = "maple-kit", repo = "app"): GitHubFake 
     credentials: () => credentials,
     reset: () => {
       credentials = [];
-      comments = [];
+      issues = [];
+      nextId = 2000;
       size = 100;
       failure = undefined;
       pages = 0;
@@ -96,9 +130,15 @@ export function createGitHubFake(owner = "maple-kit", repo = "app"): GitHubFake 
 }
 
 /** What the store wrote: the table a person reads, with the fence under it. */
-function issueComment(comment: Comment, index: number): { id: number; body: string } {
+function issueComment(comment: Comment, index: number): StoredComment {
   return {
     id: 1000 + index,
     body: exportMarkdown([comment], { branch: comment.branch }).markdown,
   };
+}
+
+/** The `body` field of a write, as the real API reads it. */
+async function body(request: Request): Promise<string | undefined> {
+  const sent = (await request.json()) as { body?: unknown };
+  return typeof sent.body === "string" ? sent.body : undefined;
 }

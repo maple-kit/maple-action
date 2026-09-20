@@ -13,6 +13,8 @@ export interface RunContext {
   readonly owner: string;
   readonly repo: string;
   readonly eventName: string;
+  /** `GITHUB_API_URL`, so an Enterprise Server run reaches its own API. */
+  readonly apiUrl: string;
   /** The ref this run is on, as a label for a surface the inputs did not name. */
   readonly ref: string;
   /**
@@ -21,6 +23,13 @@ export interface RunContext {
    * `pull_request` event is the merge commit GitHub invented.
    */
   readonly sha?: string;
+  /** The pull request's number, absent when the run is not on one. */
+  readonly pull?: number;
+  /**
+   * True when the head is a fork. Its token is read-only however the workflow
+   * declares its permissions, so `sync` degrades instead of failing.
+   */
+  readonly fork: boolean;
 }
 
 /** Raised when the environment is not one this action can run in. */
@@ -32,9 +41,12 @@ export class MissingContextError extends Error {
   }
 }
 
-/** The event payload, trimmed to the two fields read out of it. */
+/** The event payload, trimmed to the fields read out of it. */
 interface EventPayload {
-  readonly pull_request?: { readonly head?: { readonly sha?: string } };
+  readonly pull_request?: {
+    readonly number?: number;
+    readonly head?: { readonly sha?: string; readonly repo?: { readonly full_name?: string } };
+  };
   readonly merge_group?: { readonly head_sha?: string };
 }
 
@@ -49,13 +61,29 @@ export function readContext(
     throw new MissingContextError("GITHUB_REPOSITORY");
   }
 
-  const sha = headSha(env, read);
   return {
     owner,
     repo,
     eventName: env["GITHUB_EVENT_NAME"] ?? "",
+    apiUrl: env["GITHUB_API_URL"] ?? "https://api.github.com",
     ref: env["GITHUB_REF_NAME"] ?? "",
-    ...(sha ? { sha } : {}),
+    ...surfaceOf(eventPayload(env, read), repository),
+  };
+}
+
+/** What the payload says about the surface: its commit, its number, whose it is. */
+function surfaceOf(
+  payload: EventPayload | undefined,
+  repository: string,
+): Pick<RunContext, "fork" | "pull" | "sha"> {
+  const sha = payload?.pull_request?.head?.sha ?? payload?.merge_group?.head_sha;
+  const pull = payload?.pull_request?.number;
+  const head = payload?.pull_request?.head?.repo?.full_name;
+
+  return {
+    fork: head !== undefined && head !== repository,
+    ...(sha === undefined ? {} : { sha }),
+    ...(pull === undefined ? {} : { pull }),
   };
 }
 
@@ -63,13 +91,15 @@ export function readContext(
  * A payload that cannot be read is a run with no pull request, not a failure:
  * a `push` or a `schedule` has no `pull_request` in it either.
  */
-function headSha(env: NodeJS.ProcessEnv, read: (path: string) => string): string | undefined {
+function eventPayload(
+  env: NodeJS.ProcessEnv,
+  read: (path: string) => string,
+): EventPayload | undefined {
   const path = env["GITHUB_EVENT_PATH"];
   if (path === undefined || path === "") return undefined;
 
   try {
-    const payload = JSON.parse(read(path)) as EventPayload;
-    return payload.pull_request?.head?.sha ?? payload.merge_group?.head_sha;
+    return JSON.parse(read(path)) as EventPayload;
   } catch {
     return undefined;
   }

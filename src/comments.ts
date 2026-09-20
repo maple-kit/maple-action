@@ -21,6 +21,7 @@ export function storeFor(context: RunContext, token: string): CommentStore {
     githubStore({
       owner: context.owner,
       repo: context.repo,
+      baseUrl: context.apiUrl,
       token,
       pull: { ...(context.sha === undefined ? {} : { commit: context.sha }), matches: sameSurface },
     }),
