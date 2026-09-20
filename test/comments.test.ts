@@ -11,6 +11,7 @@ const CONTEXT: RunContext = {
   owner: "maple-kit",
   repo: "app",
   eventName: "pull_request",
+  ref: "feature/x",
   sha: "commit_sha",
 };
 

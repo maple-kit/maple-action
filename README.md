@@ -4,11 +4,10 @@ The GitHub Action for [Maple](https://github.com/maple-kit/maple): it writes the
 visual review comments onto a pull request, and holds the merge until they are
 resolved.
 
-**Status: partly wired.** The action reads the pull request's real Maple
-comments through `@maple-kit/core` and decides with `decideGate`. What is
-missing is the publication: nothing posts the `maple/visual-review` check run
-yet, so the verdict reaches the outputs and nothing else. `sync` is not
-implemented.
+**Status: `gate` works, `sync` does not.** The action reads the pull request's
+Maple comments through `@maple-kit/core`, decides with `decideGate` and
+publishes `maple/visual-review` through `githubGate`. `sync` validates its
+inputs and writes no comment yet.
 
 ## Two modes, in this order
 
@@ -24,7 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write # sync only; gate needs no write access
+      checks: write # gate: the check run it reports
+      pull-requests: write # sync: the comment it writes
     steps:
       - uses: maple-kit/maple-action@v1
         with:
@@ -65,8 +65,8 @@ anything without a preview deployment all reach the gate. A gate that blocks
 them is a gate someone deletes from the ruleset within a week, so it reports
 `neutral` and gets out of the way.
 
-Needs no write permissions at all to decide. Posting the check run needs
-`checks: write`, which arrives with the publication.
+Needs `checks: write`, and nothing else. It reads the comments with the same
+token, which on a pull request needs no extra permission.
 
 The pull request is found by the run's head commit — `GET /commits/{sha}/pulls`
 names it rather than inferring it — falling back to the head branch's name and
@@ -76,6 +76,15 @@ DNS label and `feature/ABC-1` reaches the browser as `feature-abc-1`.
 A read that fails is `neutral`, never a failed step: a gate that cannot see
 must not block, and an action that exits 1 blocks with nothing a reviewer can
 act on. The step annotates the run with why.
+
+A **publish** that fails is the opposite: the step fails. A gate that quietly
+did not report is a gate that stops holding merges and says nothing.
+
+Blocked is published as `in_progress` rather than `failure`, and a completed
+run is superseded by a new one rather than reopened. Both are `githubGate`'s
+doing, and both are what let a reviewer resolve the last comment and watch the
+check go green with no new push — the property its contract suite exists to
+protect.
 
 ## Inputs
 
@@ -105,11 +114,11 @@ fork from a store it could not read.
 
 ## Merge queues
 
-A `merge_group` run passes immediately, before an input is even validated: a
-merge-queue ref has no head ref to read, so validating one would fail the very
-run that has to pass. The review happened on the pull request; re-running it in
-the queue is what leaves a merge queue hung, and that failure has sunk this
-exact feature in other tools.
+A `merge_group` run passes immediately: it reads no comments and publishes a
+`neutral` run on the queue entry's own head commit, which is in the payload and
+not in `GITHUB_HEAD_REF` — a merge-queue ref has no head ref at all. The review
+happened on the pull request; re-running it in the queue is what leaves a merge
+queue hung, and that failure has sunk this exact feature in other tools.
 
 ## Notes for maintainers
 

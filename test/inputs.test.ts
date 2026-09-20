@@ -43,7 +43,7 @@ describe("readInputs", () => {
     expect(() => readInputs({ ...BASE, INPUT_TOKEN: "" })).toThrow(/is required/);
   });
 
-  it("rejects a run with no branch and no head ref", () => {
-    expect(() => readInputs({ INPUT_MODE: "gate", INPUT_TOKEN: "t" })).toThrow(/head ref/);
+  it("leaves the branch absent when there is no head ref to fall back to", () => {
+    expect(readInputs({ INPUT_MODE: "gate", INPUT_TOKEN: "t" }).branch).toBeUndefined();
   });
 });

@@ -12,8 +12,12 @@ export type Mode = "gate" | "sync";
 /** Every input, already validated. */
 export interface Inputs {
   readonly mode: Mode;
-  readonly branch: string;
   readonly token: string;
+  /**
+   * Absent on a run with no head ref to fall back to, such as a merge-queue
+   * entry. Required to read comments, which is where it is asked for.
+   */
+  readonly branch?: string;
 }
 
 /** Raised when an input is missing or not one of its allowed values. */
@@ -48,9 +52,5 @@ export function readInputs(env: NodeJS.ProcessEnv): Inputs {
   if (token === "") throw new InvalidInputError("token", "is required");
 
   const branch = readInput(env, "branch") || (env["GITHUB_HEAD_REF"] ?? "");
-  if (branch === "") {
-    throw new InvalidInputError("branch", "is required when the run has no head ref");
-  }
-
-  return { mode, branch, token };
+  return { mode, token, ...(branch === "" ? {} : { branch }) };
 }
