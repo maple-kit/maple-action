@@ -7,7 +7,7 @@
   "type": "module",
   "packageManager": "pnpm@10.34.5",
   "engines": {
-    "node": ">=22.13.0"
+    "node": ">=24.0.0"
   },
   "repository": {
     "type": "git",
@@ -34,5 +34,8 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.70.0",
     "vitest": "5.0.1"
+  },
+  "dependencies": {
+    "@maple-kit/core": "0.2.0"
   }
 }

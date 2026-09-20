@@ -1,64 +1,15 @@
+import { decideGate } from "@maple-kit/core/gate";
+import { storedComment } from "@maple-kit/core/testing";
 import { describe, expect, it } from "vitest";
 
-import { CHECK_NAME, decideGate, isMergeGroup, needsWriteAccess } from "../src/gate.js";
+import { isMergeGroup, needsWriteAccess, outputsFor } from "../src/gate.js";
 
-import type { GateComment } from "../src/gate.js";
+import type { Comment } from "@maple-kit/core";
 
-const WITH_REVIEW = { failOnOrphaned: true, hasReview: true };
-
-function comments(...statuses: GateComment["status"][]): GateComment[] {
-  return statuses.map((status, index) => ({ id: `c_${index}`, status }));
+/** The decision's own fixture, so this test cannot disagree with it. */
+function comment(status: Comment["status"], id: string): Comment {
+  return storedComment({ id, status });
 }
-
-describe("decideGate", () => {
-  it("concludes neutral when there is no Maple review at all", () => {
-    const outcome = decideGate([], { failOnOrphaned: true, hasReview: false });
-
-    expect(outcome).toMatchObject({ status: "completed", conclusion: "neutral", openCount: 0 });
-  });
-
-  it("succeeds when every comment is resolved", () => {
-    expect(decideGate(comments("resolved", "resolved"), WITH_REVIEW)).toMatchObject({
-      status: "completed",
-      conclusion: "success",
-      openCount: 0,
-    });
-  });
-
-  it("stays in_progress while a comment is open", () => {
-    const outcome = decideGate(comments("open", "resolved"), WITH_REVIEW);
-
-    expect(outcome.status).toBe("in_progress");
-    expect(outcome.conclusion).toBeUndefined();
-    expect(outcome.openCount).toBe(1);
-  });
-
-  it("never parks at completed/failure", () => {
-    const outcome = decideGate(comments("open"), WITH_REVIEW);
-
-    expect(outcome.conclusion).not.toBe("failure");
-  });
-
-  it("counts needs_reverify as unresolved", () => {
-    expect(decideGate(comments("needs_reverify"), WITH_REVIEW).openCount).toBe(1);
-  });
-
-  it("counts an orphan as unresolved by default", () => {
-    expect(decideGate(comments("orphaned"), WITH_REVIEW).openCount).toBe(1);
-  });
-
-  it("lets an orphan through when fail-on-orphaned is off", () => {
-    const outcome = decideGate(comments("orphaned"), { failOnOrphaned: false, hasReview: true });
-
-    expect(outcome.conclusion).toBe("success");
-  });
-
-  it("says how many of how many are open", () => {
-    expect(decideGate(comments("open", "open", "resolved"), WITH_REVIEW).summary).toBe(
-      "2 of 3 visual review comment(s) still open.",
-    );
-  });
-});
 
 describe("the merge queue", () => {
   it("recognises a merge_group run", () => {
@@ -74,8 +25,35 @@ describe("permissions", () => {
   });
 });
 
-describe("the check name", () => {
-  it("is the name pinned in the branch ruleset", () => {
-    expect(CHECK_NAME).toBe("maple/visual-review");
+describe("the verdict as outputs", () => {
+  it("reports an open comment as blocked, with its count and reason", () => {
+    const verdict = decideGate([comment("open", "c_1"), comment("resolved", "c_2")]);
+
+    expect(outputsFor(verdict)).toEqual({
+      conclusion: "blocked",
+      reason: "comments-open",
+      "open-count": "1",
+    });
+  });
+
+  it("reports a resolved surface as clear", () => {
+    expect(outputsFor(decideGate([comment("resolved", "c_1")]))).toMatchObject({
+      conclusion: "clear",
+      reason: "all-resolved",
+    });
+  });
+
+  it("reports a pull request Maple never reviewed as neutral, not blocked", () => {
+    expect(outputsFor(decideGate(undefined, { hasReview: false }))).toEqual({
+      conclusion: "neutral",
+      reason: "no-review",
+      "open-count": "0",
+    });
+  });
+
+  it("writes every value as a string, because an output has no other type", () => {
+    const values = Object.values(outputsFor(decideGate(undefined)));
+
+    expect(values.every((value) => typeof value === "string")).toBe(true);
   });
 });

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { InvalidInputError, readBoolean, readInput, readInputs } from "../src/inputs.js";
+import { InvalidInputError, readInput, readInputs } from "../src/inputs.js";
 
 const BASE = { INPUT_MODE: "gate", INPUT_TOKEN: "t", GITHUB_HEAD_REF: "feature/x" };
 
@@ -10,7 +10,7 @@ describe("readInput", () => {
   });
 
   it("replaces spaces with underscores", () => {
-    expect(readInput({ INPUT_FAIL_ON_ORPHANED: "true" }, "fail on orphaned")).toBe("true");
+    expect(readInput({ INPUT_HEAD_REF: "feature/x" }, "head ref")).toBe("feature/x");
   });
 
   it("trims surrounding whitespace", () => {
@@ -22,33 +22,9 @@ describe("readInput", () => {
   });
 });
 
-describe("readBoolean", () => {
-  it("reads true and false", () => {
-    expect(readBoolean({ INPUT_X: "true" }, "x", false)).toBe(true);
-    expect(readBoolean({ INPUT_X: "false" }, "x", true)).toBe(false);
-  });
-
-  it("is case-insensitive", () => {
-    expect(readBoolean({ INPUT_X: "TRUE" }, "x", false)).toBe(true);
-  });
-
-  it("falls back when unset", () => {
-    expect(readBoolean({}, "x", true)).toBe(true);
-  });
-
-  it("rejects anything else rather than coercing it", () => {
-    expect(() => readBoolean({ INPUT_X: "yes" }, "x", false)).toThrow(InvalidInputError);
-  });
-});
-
 describe("readInputs", () => {
   it("accepts a valid environment", () => {
-    expect(readInputs(BASE)).toEqual({
-      mode: "gate",
-      branch: "feature/x",
-      token: "t",
-      failOnOrphaned: true,
-    });
+    expect(readInputs(BASE)).toEqual({ mode: "gate", branch: "feature/x", token: "t" });
   });
 
   it("prefers an explicit branch over the head ref", () => {
