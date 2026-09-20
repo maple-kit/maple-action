@@ -6,8 +6,11 @@
  * the same question, and the two drift without anything looking wrong.
  */
 
-import type { GateVerdict } from "@maple-kit/core";
+import { githubGate } from "@maple-kit/core/connectors";
 
+import type { GateConnector, GateVerdict } from "@maple-kit/core";
+
+import type { RunContext } from "./context.js";
 import type { Mode } from "./inputs.js";
 
 /** A merge-queue run passes immediately; the review happened on the pull request. */
@@ -18,6 +21,17 @@ export function isMergeGroup(eventName: string): boolean {
 /** True when the mode writes to the pull request and so needs a write token. */
 export function needsWriteAccess(mode: Mode): boolean {
   return mode === "sync";
+}
+
+/**
+ * The connector that publishes `maple/visual-review` for this run.
+ *
+ * Hand-rolling the Checks API is how a gate ends up parked at `completed` and
+ * unable to reopen. `githubGate` is contract-tested against the property that
+ * matters: a blocked commit can become clear with no new push.
+ */
+export function gateFor(context: RunContext, token: string): GateConnector {
+  return githubGate({ owner: context.owner, repo: context.repo, token });
 }
 
 /**

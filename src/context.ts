@@ -13,10 +13,12 @@ export interface RunContext {
   readonly owner: string;
   readonly repo: string;
   readonly eventName: string;
+  /** The ref this run is on, as a label for a surface the inputs did not name. */
+  readonly ref: string;
   /**
-   * The pull request's head commit, absent when the run is not on one. Never
-   * `GITHUB_SHA`, which on a `pull_request` event is the merge commit GitHub
-   * invented and not the commit a reviewer looked at.
+   * The commit a verdict is about: a pull request's head, or a merge-queue
+   * entry's. Absent on a run that is neither. Never `GITHUB_SHA`, which on a
+   * `pull_request` event is the merge commit GitHub invented.
    */
   readonly sha?: string;
 }
@@ -30,9 +32,10 @@ export class MissingContextError extends Error {
   }
 }
 
-/** The event payload, trimmed to the one field read out of it. */
+/** The event payload, trimmed to the two fields read out of it. */
 interface EventPayload {
   readonly pull_request?: { readonly head?: { readonly sha?: string } };
+  readonly merge_group?: { readonly head_sha?: string };
 }
 
 /** Reads the context out of the environment. `read` is injected in tests. */
@@ -47,7 +50,13 @@ export function readContext(
   }
 
   const sha = headSha(env, read);
-  return { owner, repo, eventName: env["GITHUB_EVENT_NAME"] ?? "", ...(sha ? { sha } : {}) };
+  return {
+    owner,
+    repo,
+    eventName: env["GITHUB_EVENT_NAME"] ?? "",
+    ref: env["GITHUB_REF_NAME"] ?? "",
+    ...(sha ? { sha } : {}),
+  };
 }
 
 /**
@@ -59,7 +68,8 @@ function headSha(env: NodeJS.ProcessEnv, read: (path: string) => string): string
   if (path === undefined || path === "") return undefined;
 
   try {
-    return (JSON.parse(read(path)) as EventPayload).pull_request?.head?.sha;
+    const payload = JSON.parse(read(path)) as EventPayload;
+    return payload.pull_request?.head?.sha ?? payload.merge_group?.head_sha;
   } catch {
     return undefined;
   }

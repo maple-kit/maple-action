@@ -53812,7 +53812,13 @@ function readContext(env, read = (path) => (0,external_node_fs_namespaceObject.r
         throw new MissingContextError("GITHUB_REPOSITORY");
     }
     const sha = headSha(env, read);
-    return { owner, repo, eventName: env["GITHUB_EVENT_NAME"] ?? "", ...(sha ? { sha } : {}) };
+    return {
+        owner,
+        repo,
+        eventName: env["GITHUB_EVENT_NAME"] ?? "",
+        ref: env["GITHUB_REF_NAME"] ?? "",
+        ...(sha ? { sha } : {}),
+    };
 }
 /**
  * A payload that cannot be read is a run with no pull request, not a failure:
@@ -53823,12 +53829,147 @@ function headSha(env, read) {
     if (path === undefined || path === "")
         return undefined;
     try {
-        return JSON.parse(read(path)).pull_request?.head?.sha;
+        const payload = JSON.parse(read(path));
+        return payload.pull_request?.head?.sha ?? payload.merge_group?.head_sha;
     }
     catch {
         return undefined;
     }
 }
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/connectors/github-gate.js
+//#region src/connectors/github-gate.ts
+const CHECK_NAME = "maple/visual-review";
+const github_gate_DEFAULT_BASE = "https://api.github.com";
+function githubGate(options) {
+	const api = github_gate_createClient(options);
+	return {
+		name: "github",
+		publish: (report) => publish(api, report),
+		read: (target) => read(api, target)
+	};
+}
+function github_gate_createClient(options) {
+	const base = options.baseUrl ?? github_gate_DEFAULT_BASE;
+	const call = options.fetch ?? globalThis.fetch;
+	return {
+		options,
+		check: options.name ?? "maple/visual-review",
+		async request(path, init = {}) {
+			const response = await call(`${base}${path}`, {
+				...init,
+				headers: {
+					accept: "application/vnd.github+json",
+					authorization: `Bearer ${options.token}`,
+					"x-github-api-version": "2022-11-28",
+					...init.body === void 0 ? {} : { "content-type": "application/json" },
+					...init.headers
+				}
+			});
+			if (!response.ok) throw await github_gate_failure(response, path);
+			return await response.json();
+		}
+	};
+}
+async function github_gate_failure(response, path) {
+	const detail = await response.text().catch(() => "");
+	const parsed = detail ? github_gate_safeJson(detail) : void 0;
+	const message = typeof parsed === "object" && parsed !== null && "message" in parsed ? String(parsed.message) : detail || response.statusText;
+	return /* @__PURE__ */ new Error(`GitHub ${String(response.status)} on ${path}: ${message}`);
+}
+function github_gate_safeJson(text) {
+	try {
+		return JSON.parse(text);
+	} catch {
+		return;
+	}
+}
+async function publish(api, report) {
+	const existing = await latest(api, report);
+	const body = JSON.stringify(payload(api, report));
+	if (existing && existing.status !== "completed") {
+		await api.request(`${repoPath(api)}/check-runs/${String(existing.id)}`, {
+			method: "PATCH",
+			body
+		});
+		return;
+	}
+	await api.request(`${repoPath(api)}/check-runs`, {
+		method: "POST",
+		body
+	});
+}
+function payload(api, report) {
+	const now = (/* @__PURE__ */ new Date()).toISOString();
+	const blocked = report.verdict.conclusion === "blocked";
+	return {
+		name: api.check,
+		head_sha: report.sha,
+		external_id: externalId(report.verdict),
+		started_at: now,
+		...blocked ? { status: "in_progress" } : {
+			status: "completed",
+			conclusion: concluded(report.verdict.conclusion),
+			completed_at: now
+		},
+		...report.reviewUrl === void 0 ? {} : { details_url: report.reviewUrl },
+		output: {
+			title: report.verdict.title,
+			summary: report.verdict.summary
+		}
+	};
+}
+function concluded(conclusion) {
+	return conclusion === "clear" ? "success" : "neutral";
+}
+async function read(api, target) {
+	const run = await latest(api, target);
+	if (!run) return void 0;
+	const counts = countsIn(run.external_id);
+	return {
+		conclusion: conclusionOf(run),
+		reason: counts.reason,
+		title: run.output?.title ?? "",
+		summary: run.output?.summary ?? "",
+		open: counts.open,
+		total: counts.total
+	};
+}
+async function latest(api, target) {
+	const path = `${repoPath(api)}/commits/${target.sha}/check-runs?check_name=${encodeURIComponent(api.check)}&filter=latest`;
+	const { check_runs } = await api.request(path);
+	return check_runs[0];
+}
+function conclusionOf(run) {
+	if (run.status !== "completed") return "blocked";
+	return run.conclusion === "success" ? "clear" : "neutral";
+}
+function externalId(verdict) {
+	return JSON.stringify({
+		r: verdict.reason,
+		o: verdict.open,
+		t: verdict.total
+	});
+}
+function countsIn(externalId) {
+	const parsed = externalId === null ? void 0 : github_gate_safeJson(externalId);
+	if (typeof parsed !== "object" || parsed === null) return {
+		reason: "unreadable",
+		open: 0,
+		total: 0
+	};
+	const held = parsed;
+	return {
+		reason: typeof held["r"] === "string" ? held["r"] : "unreadable",
+		open: typeof held["o"] === "number" ? held["o"] : 0,
+		total: typeof held["t"] === "number" ? held["t"] : 0
+	};
+}
+function repoPath(api) {
+	return `/repos/${api.options.owner}/${api.options.repo}`;
+}
+//#endregion
+
 
 ;// CONCATENATED MODULE: ./src/gate.ts
 /**
@@ -53838,6 +53979,7 @@ function headSha(env, read) {
  * Neither is restated here: a second copy of a decision is a second answer to
  * the same question, and the two drift without anything looking wrong.
  */
+
 /** A merge-queue run passes immediately; the review happened on the pull request. */
 function isMergeGroup(eventName) {
     return eventName === "merge_group";
@@ -53845,6 +53987,16 @@ function isMergeGroup(eventName) {
 /** True when the mode writes to the pull request and so needs a write token. */
 function needsWriteAccess(mode) {
     return mode === "sync";
+}
+/**
+ * The connector that publishes `maple/visual-review` for this run.
+ *
+ * Hand-rolling the Checks API is how a gate ends up parked at `completed` and
+ * unable to reopen. `githubGate` is contract-tested against the property that
+ * matters: a blocked commit can become clear with no new push.
+ */
+function gateFor(context, token) {
+    return githubGate({ owner: context.owner, repo: context.repo, token });
 }
 /**
  * The verdict as the action's outputs.
@@ -53895,19 +54047,15 @@ function readInputs(env) {
     if (token === "")
         throw new InvalidInputError("token", "is required");
     const branch = readInput(env, "branch") || (env["GITHUB_HEAD_REF"] ?? "");
-    if (branch === "") {
-        throw new InvalidInputError("branch", "is required when the run has no head ref");
-    }
-    return { mode, branch, token };
+    return { mode, token, ...(branch === "" ? {} : { branch }) };
 }
 
-;// CONCATENATED MODULE: ./src/index.ts
+;// CONCATENATED MODULE: ./src/run.ts
 /**
- * The action's entrypoint.
+ * One run of the action, from the environment to the check run.
  *
- * It works out what the run is about, reads the comments through
- * `@maple-kit/core`, and asks `decideGate` for the verdict. Publishing that
- * verdict as a check run is the next slice; today it reaches the outputs.
+ * It is here rather than in `index.ts` so that the whole path can be driven by
+ * a test with a fake environment. `index.ts` is the three lines that call it.
  */
 
 
@@ -53917,17 +54065,13 @@ function readInputs(env) {
 
 /** What a surface Maple is not reviewing concludes: neutral, and saying so. */
 const NO_REVIEW = decideGate(undefined, { hasReview: false });
-/** Writes an action output, the only supported way since the set-output removal. */
-function setOutput(name, value) {
-    const file = process.env["GITHUB_OUTPUT"];
+/** Writes the outputs, the only supported way since the set-output removal. */
+function report(env, verdict) {
+    const file = env["GITHUB_OUTPUT"];
     if (file === undefined)
         return;
-    (0,external_node_fs_namespaceObject.appendFileSync)(file, `${name}=${value}\n`, "utf8");
-}
-/** Writes every output a verdict produces. */
-function report(verdict) {
-    for (const [name, value] of Object.entries(outputsFor(verdict)))
-        setOutput(name, value);
+    const lines = Object.entries(outputsFor(verdict)).map(([name, value]) => `${name}=${value}\n`);
+    (0,external_node_fs_namespaceObject.appendFileSync)(file, lines.join(""), "utf8");
 }
 function messageOf(error) {
     return error instanceof Error ? error.message : String(error);
@@ -53937,9 +54081,12 @@ function messageOf(error) {
  *
  * A store that throws is `undefined`, which `decideGate` reads as neutral. It
  * is deliberately not a failure: a gate that cannot see must not block, and an
- * action that exits 1 blocks with no way for a reviewer to tell why.
+ * action that exits 1 blocks with nothing a reviewer can act on.
  */
 async function verdictFor(context, inputs) {
+    if (inputs.branch === undefined) {
+        throw new InvalidInputError("branch", "is required when the run has no head ref");
+    }
     const store = storeFor(context, inputs.token);
     const comments = await readComments(store, inputs.branch).catch((error) => {
         process.stderr.write(`::warning::Maple could not read the comments: ${messageOf(error)}\n`);
@@ -53947,26 +54094,53 @@ async function verdictFor(context, inputs) {
     });
     return decideGate(comments, { statusTracked: store.capabilities.setStatus });
 }
-/** Reads the run, decides, and reports. Never throws; sets the exit code instead. */
-async function main() {
-    try {
-        const context = readContext(process.env);
-        // Before the inputs, not after: a merge-queue entry has nobody to comment
-        // on it and a run off a pull request has no head ref, so validating one
-        // would fail the very runs that have to pass.
-        if (isMergeGroup(context.eventName) || context.sha === undefined) {
-            report(NO_REVIEW);
-            return;
-        }
-        const inputs = readInputs(process.env);
-        report(await verdictFor(context, inputs));
-    }
-    catch (error) {
-        process.stderr.write(`::error::${messageOf(error)}\n`);
-        process.exitCode = 1;
-    }
+/**
+ * Publishes the verdict, and fails the step when it cannot.
+ *
+ * A gate that quietly failed to publish is a gate that stops holding merges
+ * and says nothing, which is worse than one that blocks the workflow loudly.
+ */
+async function run_publish(context, inputs, verdict) {
+    if (context.sha === undefined)
+        return;
+    await gateFor(context, inputs.token).publish({
+        branch: inputs.branch ?? context.ref,
+        sha: context.sha,
+        verdict,
+    });
 }
-void main();
+/**
+ * Runs the action once.
+ *
+ * @throws {Error} on anything that leaves the gate unreported. A read that
+ * fails is not one of those; a publish that fails is.
+ */
+async function run_run(env) {
+    const context = readContext(env);
+    // A merge-queue entry has nobody to comment on it and a run off a pull
+    // request has nothing to read. Both pass, and both are checked before the
+    // inputs, because neither has a head ref for `branch` to fall back to.
+    const reviewed = !isMergeGroup(context.eventName) && context.sha !== undefined;
+    const inputs = readInputs(env);
+    const verdict = reviewed ? await verdictFor(context, inputs) : NO_REVIEW;
+    if (inputs.mode === "gate")
+        await run_publish(context, inputs, verdict);
+    report(env, verdict);
+    return verdict;
+}
+
+;// CONCATENATED MODULE: ./src/index.ts
+/**
+ * The action's entrypoint: run once, and turn a throw into a failed step.
+ *
+ * Everything else is in `run.ts`, which takes the environment as an argument
+ * so a test can drive the whole path without a process.
+ */
+
+run_run(process.env).catch((error) => {
+    process.stderr.write(`::error::${error instanceof Error ? error.message : String(error)}\n`);
+    process.exitCode = 1;
+});
 
 
 //# sourceMappingURL=index.js.map
