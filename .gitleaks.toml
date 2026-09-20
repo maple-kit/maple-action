@@ -15,10 +15,19 @@ description = "Datadog application key"
 regex = '''(?i)\b(dd|datadog)[_-]?app(lication)?[_-]?key\b\s*[:=]\s*['"]?([a-f0-9]{40})['"]?'''
 keywords = ["datadog", "dd_app"]
 
-[allowlist]
+[[allowlists]]
 description = "Documentation and fixtures that show the shape of a credential, never a value"
 paths = [
   '''docs/setup-owner\.md''',
   '''\.env\.example$''',
   '''pnpm-lock\.yaml$''',
 ]
+
+# The committed bundle is generated from src/, which every rule still scans.
+# What it adds is its dependencies' own constants — `effect/ScheduleInterval`
+# and its like — which read as high-entropy strings and trip one rule and no
+# other. Scoped to that rule so a real key in the bundle is still caught.
+[[allowlists]]
+description = "Vendored constants in the ncc bundle are not credentials"
+targetRules = ["generic-api-key"]
+paths = ['''^dist/index\.js(\.map)?$''']

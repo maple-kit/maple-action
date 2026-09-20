@@ -4,10 +4,11 @@ The GitHub Action for [Maple](https://github.com/maple-kit/maple): it writes the
 visual review comments onto a pull request, and holds the merge until they are
 resolved.
 
-**Status: skeleton.** The inputs and outputs are implemented and tested, and
-the verdict comes from `decideGate` in
-[`@maple-kit/core`](https://github.com/maple-kit/maple). Reading the comments
-and posting the check run are not wired yet, so every run reports `no-review`.
+**Status: partly wired.** The action reads the pull request's real Maple
+comments through `@maple-kit/core` and decides with `decideGate`. What is
+missing is the publication: nothing posts the `maple/visual-review` check run
+yet, so the verdict reaches the outputs and nothing else. `sync` is not
+implemented.
 
 ## Two modes, in this order
 
@@ -64,7 +65,17 @@ anything without a preview deployment all reach the gate. A gate that blocks
 them is a gate someone deletes from the ruleset within a week, so it reports
 `neutral` and gets out of the way.
 
-Needs no write permissions at all.
+Needs no write permissions at all to decide. Posting the check run needs
+`checks: write`, which arrives with the publication.
+
+The pull request is found by the run's head commit — `GET /commits/{sha}/pulls`
+names it rather than inferring it — falling back to the head branch's name and
+then to a comparison that flattens both, because a preview hostname has to be a
+DNS label and `feature/ABC-1` reaches the browser as `feature-abc-1`.
+
+A read that fails is `neutral`, never a failed step: a gate that cannot see
+must not block, and an action that exits 1 blocks with nothing a reviewer can
+act on. The step annotates the run with why.
 
 ## Inputs
 
