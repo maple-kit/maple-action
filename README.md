@@ -4,10 +4,10 @@ The GitHub Action for [Maple](https://github.com/maple-kit/maple): it writes the
 visual review comments onto a pull request, and holds the merge until they are
 resolved.
 
-**Status: `gate` works, `sync` does not.** The action reads the pull request's
-Maple comments through `@maple-kit/core`, decides with `decideGate` and
-publishes `maple/visual-review` through `githubGate`. `sync` validates its
-inputs and writes no comment yet.
+**Status: both modes work, none of it has run against a real pull request yet.**
+The action reads the pull request's Maple comments through `@maple-kit/core`,
+decides with `decideGate`, publishes `maple/visual-review` through `githubGate`,
+and keeps one sticky comment up to date. Every test is against msw.
 
 ## Two modes, in this order
 
@@ -40,14 +40,26 @@ to read, on the pull request, which comments are holding it.
 
 ### `sync`
 
-Writes a single sticky comment: a human-readable table of the open comments,
-with a ` ```maple ` JSON fence under it that an agent reads.
+Keeps one sticky comment on the pull request: the verdict's own title, the
+table of comments, and nothing else. It is found again by a hidden marker and
+rewritten in place, so it never becomes a thread of its own.
 
-The fence is deliberately visible. The GitHub Action that hands a pull request
-body to a coding agent strips `<!-- -->` before the model sees it, so anything
-hidden in an HTML comment never arrives.
+**It carries no ` ```maple ` fence, on purpose.** Each Maple comment is already
+its own comment on the pull request with its own fence, and `githubStore.list`
+reads every comment that carries one — so a summary repeating them all would be
+read back as one more comment, with an id nothing can resolve. It would hold the
+gate for ever. The fences an agent reads are the ones on the comments
+themselves.
 
-Needs `pull-requests: write` and an explicit `contents: read`.
+The fences are deliberately visible, wherever they are. The GitHub Action that
+hands a pull request body to a coding agent strips `<!-- -->` before the model
+sees it, so anything hidden in an HTML comment never arrives. The marker is an
+HTML comment because it is for this action and not for a reader.
+
+Needs `pull-requests: write` and an explicit `contents: read`. **On a fork it
+degrades**: a fork's token is read-only however the workflow declares its
+permissions, so the same body goes to the step summary instead of failing a
+contributor's run.
 
 ### `gate`
 

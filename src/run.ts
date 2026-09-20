@@ -13,8 +13,9 @@ import { readComments, storeFor } from "./comments.js";
 import { readContext } from "./context.js";
 import { gateFor, isMergeGroup, outputsFor } from "./gate.js";
 import { InvalidInputError, readInputs } from "./inputs.js";
+import { stickyBody, syncSticky } from "./sync.js";
 
-import type { GateVerdict } from "@maple-kit/core";
+import type { Comment, GateVerdict } from "@maple-kit/core";
 
 import type { RunContext } from "./context.js";
 import type { Inputs } from "./inputs.js";
@@ -35,14 +36,20 @@ function messageOf(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
+/** What one run found: the comments, when it could read them, and the verdict. */
+interface Review {
+  readonly comments?: readonly Comment[];
+  readonly verdict: GateVerdict;
+}
+
 /**
- * The verdict for one pull request.
+ * The review of one pull request.
  *
- * A store that throws is `undefined`, which `decideGate` reads as neutral. It
- * is deliberately not a failure: a gate that cannot see must not block, and an
- * action that exits 1 blocks with nothing a reviewer can act on.
+ * A store that throws leaves `comments` undefined, which `decideGate` reads as
+ * neutral. It is deliberately not a failure: a gate that cannot see must not
+ * block, and an action that exits 1 blocks with nothing a reviewer can act on.
  */
-async function verdictFor(context: RunContext, inputs: Inputs): Promise<GateVerdict> {
+async function reviewOf(context: RunContext, inputs: Inputs): Promise<Review> {
   if (inputs.branch === undefined) {
     throw new InvalidInputError("branch", "is required when the run has no head ref");
   }
@@ -53,7 +60,8 @@ async function verdictFor(context: RunContext, inputs: Inputs): Promise<GateVerd
     return undefined;
   });
 
-  return decideGate(comments, { statusTracked: store.capabilities.setStatus });
+  const verdict = decideGate(comments, { statusTracked: store.capabilities.setStatus });
+  return { verdict, ...(comments === undefined ? {} : { comments }) };
 }
 
 /**
@@ -73,6 +81,28 @@ async function publish(context: RunContext, inputs: Inputs, verdict: GateVerdict
 }
 
 /**
+ * Writes the sticky comment, and falls back to the step summary rather than
+ * failing: a fork's token is read-only whatever the workflow asked for, and a
+ * contributor who did nothing wrong should not meet a failed step.
+ */
+async function sync(env: NodeJS.ProcessEnv, context: RunContext, inputs: Inputs, review: Review) {
+  const body = stickyBody(review.verdict, review.comments, inputs.branch ?? context.ref);
+
+  const written = await syncSticky(context, inputs.token, body).catch((error: unknown) => {
+    process.stderr.write(`::warning::Maple could not write the comment: ${messageOf(error)}\n`);
+    return "skipped" as const;
+  });
+
+  if (written === "skipped") appendSummary(env, body);
+}
+
+/** The step summary, which every run can write, including one on a fork. */
+function appendSummary(env: NodeJS.ProcessEnv, body: string): void {
+  const file = env["GITHUB_STEP_SUMMARY"];
+  if (file !== undefined) appendFileSync(file, `${body}\n`, "utf8");
+}
+
+/**
  * Runs the action once.
  *
  * @throws {Error} on anything that leaves the gate unreported. A read that
@@ -86,9 +116,11 @@ export async function run(env: NodeJS.ProcessEnv): Promise<GateVerdict> {
   // inputs, because neither has a head ref for `branch` to fall back to.
   const reviewed = !isMergeGroup(context.eventName) && context.sha !== undefined;
   const inputs = readInputs(env);
-  const verdict = reviewed ? await verdictFor(context, inputs) : NO_REVIEW;
+  const review = reviewed ? await reviewOf(context, inputs) : { verdict: NO_REVIEW };
 
-  if (inputs.mode === "gate") await publish(context, inputs, verdict);
-  report(env, verdict);
-  return verdict;
+  if (inputs.mode === "sync" && reviewed) await sync(env, context, inputs, review);
+  if (inputs.mode === "gate") await publish(context, inputs, review.verdict);
+
+  report(env, review.verdict);
+  return review.verdict;
 }

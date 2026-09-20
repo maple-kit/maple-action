@@ -11,7 +11,9 @@ const CONTEXT: RunContext = {
   owner: "maple-kit",
   repo: "app",
   eventName: "pull_request",
+  apiUrl: "https://api.github.com",
   ref: "feature/x",
+  fork: false,
   sha: "commit_sha",
 };
 

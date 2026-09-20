@@ -3,7 +3,7 @@ var __webpack_exports__ = {};
 
 ;// CONCATENATED MODULE: external "node:fs"
 const external_node_fs_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/gate/decide.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/gate/decide.js
 //#region src/gate/decide.ts
 const BLOCKING_STATUSES = [
 	"open",
@@ -85,7 +85,7 @@ function plural(count) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/connectors/capabilities.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/connectors/capabilities.js
 //#region src/connectors/capabilities.ts
 const CONNECTOR_METHODS = {
 	store: [
@@ -140,7 +140,7 @@ function assertUsable(kind, connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/errors.js
 //#region src/errors.ts
 var MapleStoreError = class extends Error {
 	reason;
@@ -20603,7 +20603,7 @@ const TaggedError = tag => {
   return O.BaseEffectError;
 };
 //# sourceMappingURL=Data.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/internal/effect/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/internal/effect/errors.js
 
 //#region src/internal/effect/errors.ts
 var StoreUnavailable = class extends TaggedError("StoreUnavailable") {};
@@ -53256,7 +53256,7 @@ const ensureErrorType = () => effect => effect;
  */
 const ensureRequirementsType = () => effect => effect;
 //# sourceMappingURL=Effect.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/internal/effect/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/internal/effect/store.js
 
 
 
@@ -53315,7 +53315,7 @@ function setCommentStatus(connector, id, status) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/store.js
 
 
 //#region src/store.ts
@@ -53332,7 +53332,7 @@ function createCommentStore(connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/connectors/github-pull.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/connectors/github-pull.js
 //#region src/connectors/github-pull.ts
 function createPullCache() {
 	return { held: /* @__PURE__ */ new Map() };
@@ -53378,7 +53378,7 @@ async function ofMatch(api, identifier, matches) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
 //#region src/lib/stable-stringify.ts
 var CyclicValueError = class extends TypeError {
 	path;
@@ -53417,7 +53417,7 @@ function stableStringify(value, space) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/export/markdown.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/export/markdown.js
 
 //#region src/export/markdown.ts
 const FENCE_VERSION = 1;
@@ -53430,12 +53430,18 @@ const REDUCTIONS = [
 	"quote"
 ];
 function exportMarkdown(comments, options) {
+	const rendered = markdown_table(comments, hostedOnly(options.screenshots));
+	if (options.fence === false) return {
+		markdown: rendered,
+		bytes: 0,
+		reduced: [],
+		overBudget: false
+	};
 	const budget = options.budget ?? 8192;
-	const screenshots = hostedOnly(options.screenshots);
 	const { fence, bytes, reduced } = fit(comments, options.branch, budget);
 	return {
 		markdown: [
-			markdown_table(comments, screenshots),
+			rendered,
 			"",
 			"```maple",
 			fence,
@@ -53571,7 +53577,7 @@ function markdown_size(text) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/connectors/github.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/connectors/github.js
 
 
 //#region src/connectors/github.ts
@@ -53748,6 +53754,7 @@ function storeFor(context, token) {
     return createCommentStore(githubStore({
         owner: context.owner,
         repo: context.repo,
+        baseUrl: context.apiUrl,
         token,
         pull: { ...(context.sha === undefined ? {} : { commit: context.sha }), matches: sameSurface },
     }));
@@ -53811,33 +53818,43 @@ function readContext(env, read = (path) => (0,external_node_fs_namespaceObject.r
     if (owner === undefined || repo === undefined || repo === "") {
         throw new MissingContextError("GITHUB_REPOSITORY");
     }
-    const sha = headSha(env, read);
     return {
         owner,
         repo,
         eventName: env["GITHUB_EVENT_NAME"] ?? "",
+        apiUrl: env["GITHUB_API_URL"] ?? "https://api.github.com",
         ref: env["GITHUB_REF_NAME"] ?? "",
-        ...(sha ? { sha } : {}),
+        ...surfaceOf(eventPayload(env, read), repository),
+    };
+}
+/** What the payload says about the surface: its commit, its number, whose it is. */
+function surfaceOf(payload, repository) {
+    const sha = payload?.pull_request?.head?.sha ?? payload?.merge_group?.head_sha;
+    const pull = payload?.pull_request?.number;
+    const head = payload?.pull_request?.head?.repo?.full_name;
+    return {
+        fork: head !== undefined && head !== repository,
+        ...(sha === undefined ? {} : { sha }),
+        ...(pull === undefined ? {} : { pull }),
     };
 }
 /**
  * A payload that cannot be read is a run with no pull request, not a failure:
  * a `push` or a `schedule` has no `pull_request` in it either.
  */
-function headSha(env, read) {
+function eventPayload(env, read) {
     const path = env["GITHUB_EVENT_PATH"];
     if (path === undefined || path === "")
         return undefined;
     try {
-        const payload = JSON.parse(read(path));
-        return payload.pull_request?.head?.sha ?? payload.merge_group?.head_sha;
+        return JSON.parse(read(path));
     }
     catch {
         return undefined;
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.2.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_35d3eb816c0727bb12ec3904533cb92b/node_modules/@maple-kit/core/dist/connectors/github-gate.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/connectors/github-gate.js
 //#region src/connectors/github-gate.ts
 const CHECK_NAME = "maple/visual-review";
 const github_gate_DEFAULT_BASE = "https://api.github.com";
@@ -53996,7 +54013,12 @@ function needsWriteAccess(mode) {
  * matters: a blocked commit can become clear with no new push.
  */
 function gateFor(context, token) {
-    return githubGate({ owner: context.owner, repo: context.repo, token });
+    return githubGate({
+        owner: context.owner,
+        repo: context.repo,
+        baseUrl: context.apiUrl,
+        token,
+    });
 }
 /**
  * The verdict as the action's outputs.
@@ -54050,6 +54072,102 @@ function readInputs(env) {
     return { mode, token, ...(branch === "" ? {} : { branch }) };
 }
 
+;// CONCATENATED MODULE: ./src/sync.ts
+/**
+ * The sticky comment `sync` keeps on the pull request.
+ *
+ * One comment, rewritten in place, so a reviewer who hits a blocked merge can
+ * read on the pull request which comments are holding it. It is found again by
+ * a marker rather than by remembering an id anywhere.
+ */
+
+/**
+ * How the comment finds itself again. Hidden, because it is for this action and
+ * not for a reader — unlike the fences, which are visible on purpose.
+ */
+const MARKER = "<!-- maple:visual-review -->";
+/** What the sticky comment says: the verdict's own title and table. */
+function stickyBody(verdict, comments, branch) {
+    const detail = comments === undefined || comments.length === 0
+        ? verdict.summary
+        : exportMarkdown(comments, { branch, fence: false }).markdown;
+    return [MARKER, `### ${verdict.title}`, "", detail, "", FOOTER].join("\n");
+}
+/**
+ * Why this comment carries no ```maple fence, where a reader will look for one.
+ * `docs/connectors.md` in maple has what a second fence would cost.
+ */
+const FOOTER = "_Each comment above is a comment of its own on this pull request, carrying " +
+    "the `maple` JSON fence an agent reads; this summary carries none, because a " +
+    "second copy reads back as a comment nobody can resolve. Resolve a comment in " +
+    "the overlay and `maple/visual-review` clears with no new push._";
+/**
+ * Writes the sticky comment, or says why it could not.
+ *
+ * A fork's token is read-only whatever the workflow asked for, so there the
+ * body goes to the step summary instead: degrading is right where failing
+ * would block a contributor who did nothing wrong.
+ */
+async function syncSticky(context, token, body) {
+    if (context.pull === undefined || context.fork)
+        return "skipped";
+    const existing = await findSticky(context, token);
+    if (existing === undefined) {
+        await sync_request(context, token, `/issues/${String(context.pull)}/comments`, post("POST", body));
+        return "created";
+    }
+    await sync_request(context, token, `/issues/comments/${String(existing.id)}`, post("PATCH", body));
+    return "updated";
+}
+/** The pages GitHub will be asked for before this gives up looking. */
+const sync_MAX_PAGES = 20;
+const sync_PAGE_SIZE = 100;
+/** The comment this action last wrote, or undefined when it never has. */
+async function findSticky(context, token) {
+    for (let page = 1; page <= sync_MAX_PAGES; page += 1) {
+        const path = `/issues/${String(context.pull ?? 0)}/comments` +
+            `?per_page=${String(sync_PAGE_SIZE)}&page=${String(page)}`;
+        const listed = await sync_request(context, token, path);
+        const found = listed.find((comment) => comment.body.includes(MARKER));
+        if (found)
+            return found;
+        if (listed.length < sync_PAGE_SIZE)
+            return undefined;
+    }
+    return undefined;
+}
+/** A write of one comment body, as fetch takes it. */
+function post(method, body) {
+    return { method, body: JSON.stringify({ body }) };
+}
+/** The three calls this file makes, with GitHub's own message on a failure. */
+async function sync_request(context, token, path, init = {}) {
+    const url = `${context.apiUrl}/repos/${context.owner}/${context.repo}${path}`;
+    const response = await fetch(url, {
+        ...init,
+        headers: {
+            accept: "application/vnd.github+json",
+            authorization: `Bearer ${token}`,
+            "x-github-api-version": "2022-11-28",
+            ...(init.body === undefined ? {} : { "content-type": "application/json" }),
+        },
+    });
+    if (!response.ok) {
+        throw new Error(`GitHub ${String(response.status)} on ${path}: ${await detail(response)}`);
+    }
+    return (await response.json());
+}
+async function detail(response) {
+    const text = await response.text().catch(() => "");
+    try {
+        const { message } = JSON.parse(text);
+        return typeof message === "string" ? message : text;
+    }
+    catch {
+        return text || response.statusText;
+    }
+}
+
 ;// CONCATENATED MODULE: ./src/run.ts
 /**
  * One run of the action, from the environment to the check run.
@@ -54057,6 +54175,7 @@ function readInputs(env) {
  * It is here rather than in `index.ts` so that the whole path can be driven by
  * a test with a fake environment. `index.ts` is the three lines that call it.
  */
+
 
 
 
@@ -54077,13 +54196,13 @@ function messageOf(error) {
     return error instanceof Error ? error.message : String(error);
 }
 /**
- * The verdict for one pull request.
+ * The review of one pull request.
  *
- * A store that throws is `undefined`, which `decideGate` reads as neutral. It
- * is deliberately not a failure: a gate that cannot see must not block, and an
- * action that exits 1 blocks with nothing a reviewer can act on.
+ * A store that throws leaves `comments` undefined, which `decideGate` reads as
+ * neutral. It is deliberately not a failure: a gate that cannot see must not
+ * block, and an action that exits 1 blocks with nothing a reviewer can act on.
  */
-async function verdictFor(context, inputs) {
+async function reviewOf(context, inputs) {
     if (inputs.branch === undefined) {
         throw new InvalidInputError("branch", "is required when the run has no head ref");
     }
@@ -54092,7 +54211,8 @@ async function verdictFor(context, inputs) {
         process.stderr.write(`::warning::Maple could not read the comments: ${messageOf(error)}\n`);
         return undefined;
     });
-    return decideGate(comments, { statusTracked: store.capabilities.setStatus });
+    const verdict = decideGate(comments, { statusTracked: store.capabilities.setStatus });
+    return { verdict, ...(comments === undefined ? {} : { comments }) };
 }
 /**
  * Publishes the verdict, and fails the step when it cannot.
@@ -54110,6 +54230,26 @@ async function run_publish(context, inputs, verdict) {
     });
 }
 /**
+ * Writes the sticky comment, and falls back to the step summary rather than
+ * failing: a fork's token is read-only whatever the workflow asked for, and a
+ * contributor who did nothing wrong should not meet a failed step.
+ */
+async function run_sync(env, context, inputs, review) {
+    const body = stickyBody(review.verdict, review.comments, inputs.branch ?? context.ref);
+    const written = await syncSticky(context, inputs.token, body).catch((error) => {
+        process.stderr.write(`::warning::Maple could not write the comment: ${messageOf(error)}\n`);
+        return "skipped";
+    });
+    if (written === "skipped")
+        appendSummary(env, body);
+}
+/** The step summary, which every run can write, including one on a fork. */
+function appendSummary(env, body) {
+    const file = env["GITHUB_STEP_SUMMARY"];
+    if (file !== undefined)
+        (0,external_node_fs_namespaceObject.appendFileSync)(file, `${body}\n`, "utf8");
+}
+/**
  * Runs the action once.
  *
  * @throws {Error} on anything that leaves the gate unreported. A read that
@@ -54122,11 +54262,13 @@ async function run_run(env) {
     // inputs, because neither has a head ref for `branch` to fall back to.
     const reviewed = !isMergeGroup(context.eventName) && context.sha !== undefined;
     const inputs = readInputs(env);
-    const verdict = reviewed ? await verdictFor(context, inputs) : NO_REVIEW;
+    const review = reviewed ? await reviewOf(context, inputs) : { verdict: NO_REVIEW };
+    if (inputs.mode === "sync" && reviewed)
+        await run_sync(env, context, inputs, review);
     if (inputs.mode === "gate")
-        await run_publish(context, inputs, verdict);
-    report(env, verdict);
-    return verdict;
+        await run_publish(context, inputs, review.verdict);
+    report(env, review.verdict);
+    return review.verdict;
 }
 
 ;// CONCATENATED MODULE: ./src/index.ts

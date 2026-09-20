@@ -37,6 +37,6 @@
     "vitest": "5.0.1"
   },
   "dependencies": {
-    "@maple-kit/core": "0.2.0"
+    "@maple-kit/core": "0.3.0"
   }
 }

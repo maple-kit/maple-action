@@ -20,14 +20,23 @@ afterEach(() => {
 });
 
 const HEAD = "commit_sha";
+const PULL_REQUEST = {
+  pull_request: {
+    number: 42,
+    head: { sha: HEAD, repo: { full_name: "maple-kit/app" } },
+  },
+};
 const directory = mkdtempSync(join(tmpdir(), "maple-action-"));
 
 /** A run's environment, with its event payload and output file on disk. */
 function env(overrides: NodeJS.ProcessEnv = {}, payload?: unknown): NodeJS.ProcessEnv {
-  const eventPath = join(directory, `event-${String(Math.random()).slice(2)}.json`);
-  const outputPath = join(directory, `output-${String(Math.random()).slice(2)}.txt`);
-  writeFileSync(eventPath, JSON.stringify(payload ?? { pull_request: { head: { sha: HEAD } } }));
+  const unique = String(Math.random()).slice(2);
+  const eventPath = join(directory, `event-${unique}.json`);
+  const outputPath = join(directory, `output-${unique}.txt`);
+  const summaryPath = join(directory, `summary-${unique}.md`);
+  writeFileSync(eventPath, JSON.stringify(payload ?? PULL_REQUEST));
   writeFileSync(outputPath, "");
+  writeFileSync(summaryPath, "");
 
   return {
     GITHUB_REPOSITORY: "maple-kit/app",
@@ -36,6 +45,7 @@ function env(overrides: NodeJS.ProcessEnv = {}, payload?: unknown): NodeJS.Proce
     GITHUB_HEAD_REF: "feature/x",
     GITHUB_EVENT_PATH: eventPath,
     GITHUB_OUTPUT: outputPath,
+    GITHUB_STEP_SUMMARY: summaryPath,
     INPUT_MODE: "gate",
     INPUT_TOKEN: "token",
     ...overrides,
@@ -146,6 +156,11 @@ describe("when something is broken", () => {
 });
 
 describe("sync mode", () => {
+  /** The sticky comment, found the way the action finds it again. */
+  function sticky() {
+    return github.issueComments().find((comment) => comment.body.includes("maple:visual-review"));
+  }
+
   it("decides without publishing a check run, which is gate's to write", async () => {
     github.put(storedComment({ id: "c_1", status: "open" }));
     const environment = env({ INPUT_MODE: "sync" });
@@ -154,5 +169,57 @@ describe("sync mode", () => {
 
     expect(outputs(environment)).toMatchObject({ conclusion: "blocked" });
     expect(checks.runsOn(HEAD)).toHaveLength(0);
+  });
+
+  it("writes one comment carrying the verdict and the table", async () => {
+    github.put(storedComment({ id: "c_1", status: "open", body: "Spacing is off" }));
+
+    await run(env({ INPUT_MODE: "sync" }));
+
+    expect(sticky()?.body).toContain("### 1 of 1 comment still open");
+    expect(sticky()?.body).toContain("Spacing is off");
+  });
+
+  it("carries no maple fence, which the store would read back as a comment", async () => {
+    github.put(storedComment({ id: "c_1", status: "open" }));
+    const environment = env({ INPUT_MODE: "sync" });
+
+    await run(environment);
+    const after = await run(env({ INPUT_MODE: "gate" }));
+
+    expect(sticky()?.body).not.toContain("```maple");
+    expect(after).toMatchObject({ open: 1, total: 1 });
+  });
+
+  it("rewrites the same comment rather than adding another", async () => {
+    github.put(storedComment({ id: "c_1", status: "open" }));
+
+    await run(env({ INPUT_MODE: "sync" }));
+    const first = sticky()?.id;
+    await run(env({ INPUT_MODE: "sync" }));
+
+    expect(github.issueComments()).toHaveLength(2);
+    expect(sticky()?.id).toBe(first);
+  });
+
+  it("says so when nobody has commented", async () => {
+    await run(env({ INPUT_MODE: "sync" }));
+
+    expect(sticky()?.body).toContain("Nobody has left a visual review comment");
+  });
+
+  it("degrades to the step summary on a fork instead of failing", async () => {
+    github.put(storedComment({ id: "c_1", status: "open" }));
+    const fork = {
+      pull_request: { number: 42, head: { sha: HEAD, repo: { full_name: "someone/app" } } },
+    };
+    const environment = env({ INPUT_MODE: "sync" }, fork);
+
+    await run(environment);
+
+    expect(sticky()).toBeUndefined();
+    expect(readFileSync(environment["GITHUB_STEP_SUMMARY"] ?? "", "utf8")).toContain(
+      "1 of 1 comment still open",
+    );
   });
 });

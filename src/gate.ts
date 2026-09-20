@@ -31,7 +31,12 @@ export function needsWriteAccess(mode: Mode): boolean {
  * matters: a blocked commit can become clear with no new push.
  */
 export function gateFor(context: RunContext, token: string): GateConnector {
-  return githubGate({ owner: context.owner, repo: context.repo, token });
+  return githubGate({
+    owner: context.owner,
+    repo: context.repo,
+    baseUrl: context.apiUrl,
+    token,
+  });
 }
 
 /**
