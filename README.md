@@ -26,11 +26,11 @@ jobs:
       checks: write # gate: the check run it reports
       pull-requests: write # sync: the comment it writes
     steps:
-      - uses: maple-kit/maple-action@v1
+      - uses: maple-kit/maple-action@v0
         with:
           mode: sync
 
-      - uses: maple-kit/maple-action@v1
+      - uses: maple-kit/maple-action@v0
         with:
           mode: gate
 ```
@@ -143,6 +143,20 @@ queue hung, and that failure has sunk this exact feature in other tools.
   fallback to fall back to.
 - `pull_request_target` is not documented and not supported. Running untrusted
   code with a write token is not a trade-off worth offering.
+
+## Versioning
+
+Tagged `v0.x.y`, with a moving **`v0`** that every release advances. Pin `@v0`
+to follow patches, or a full `v0.1.0` to pin exactly.
+
+It is `v0` rather than `v1` because nothing here promises a stable interface
+yet, which is the same reason every `@maple-kit/*` package is 0.x. `uses:` reads
+a major tag the same way whichever number it carries.
+
+The version is the action's own and does not track `@maple-kit/core`'s. The
+action releases when the action changes; core releases when core changes, and
+lockstep numbering would diverge the first time either happened alone. Which
+core a release bundles is in its release notes.
 
 ## Licence
 
