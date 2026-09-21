@@ -30,12 +30,13 @@ export function needsWriteAccess(mode: Mode): boolean {
  * unable to reopen. `githubGate` is contract-tested against the property that
  * matters: a blocked commit can become clear with no new push.
  */
-export function gateFor(context: RunContext, token: string): GateConnector {
+export function gateFor(context: RunContext, token: string, appId?: string): GateConnector {
   return githubGate({
     owner: context.owner,
     repo: context.repo,
     baseUrl: context.apiUrl,
     token,
+    ...(appId === undefined ? {} : { appId }),
   });
 }
 

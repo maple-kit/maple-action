@@ -14,6 +14,11 @@ export interface Inputs {
   readonly mode: Mode;
   readonly token: string;
   /**
+   * The App the token acts as. Only the App that created a check run may
+   * modify it, so without this the gate abandons its own run.
+   */
+  readonly appId?: string;
+  /**
    * Absent on a run with no head ref to fall back to, such as a merge-queue
    * entry. Required to read comments, which is where it is asked for.
    */
@@ -52,5 +57,12 @@ export function readInputs(env: NodeJS.ProcessEnv): Inputs {
   if (token === "") throw new InvalidInputError("token", "is required");
 
   const branch = readInput(env, "branch") || (env["GITHUB_HEAD_REF"] ?? "");
-  return { mode, token, ...(branch === "" ? {} : { branch }) };
+  const appId = readInput(env, "app-id");
+
+  return {
+    mode,
+    token,
+    ...(branch === "" ? {} : { branch }),
+    ...(appId === "" ? {} : { appId }),
+  };
 }

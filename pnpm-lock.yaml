@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@maple-kit/core':
-        specifier: 0.3.0
-        version: 0.3.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+        specifier: 0.6.0
+        version: 0.6.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
     devDependencies:
       '@eslint/js':
         specifier: 10.0.1
@@ -170,8 +170,8 @@ packages:
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
 
-  '@maple-kit/core@0.3.0':
-    resolution: {integrity: sha512-WNHxj5I0d1OjpfObMkBGuVwpbx8Xjey7kABKKPCII1P0aC679neYIdrjQk+hoLfrEAwHiooZBvDzg52AYjpA2Q==}
+  '@maple-kit/core@0.6.0':
+    resolution: {integrity: sha512-H7UmamEKDSHDcHj2OBtTCPSY+fBYf4kbAhLYZexbLqcYnPSqnOS5WXov1YffBQxIVN8M9GyCvz7SHEPY9EjRfw==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       '@babel/core': ^7.22.0 || ^8.0.0
@@ -1252,7 +1252,7 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@maple-kit/core@0.3.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+  '@maple-kit/core@0.6.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
     dependencies:
       '@standard-schema/spec': 1.0.0
       effect: 3.20.0

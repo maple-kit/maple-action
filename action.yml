@@ -19,9 +19,17 @@ inputs:
   token:
     description: |
       Token used for the API calls. sync needs pull-requests:write;
-      gate needs no write permission at all.
+      gate needs checks:write and pull-requests:read.
     required: false
     default: ${{ github.token }}
+  app-id:
+    description: |
+      The App the token acts as. Only the App that created a check run may
+      modify it, so the gate needs this to update its own run rather than
+      abandon it. Defaults to GitHub Actions, which is what github.token is.
+      Set it when you pass a token belonging to some other App.
+    required: false
+    default: "15368"
 
 outputs:
   open-count:

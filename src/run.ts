@@ -73,7 +73,7 @@ async function reviewOf(context: RunContext, inputs: Inputs): Promise<Review> {
 async function publish(context: RunContext, inputs: Inputs, verdict: GateVerdict): Promise<void> {
   if (context.sha === undefined) return;
 
-  await gateFor(context, inputs.token).publish({
+  await gateFor(context, inputs.token, inputs.appId).publish({
     branch: inputs.branch ?? context.ref,
     sha: context.sha,
     verdict,

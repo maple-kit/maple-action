@@ -87,6 +87,15 @@ wrong in, so it is worth getting right the first time.
 It needs no write access to the pull request: that is `sync`'s job, and the two
 run as separate jobs here for exactly that reason.
 
+**Why `app-id` exists.** GitHub lets only the App that created a check run
+modify it. The gate is published twice by different identities — by this action
+at push time as GitHub Actions, and by the SDK route at resolve time as Maple's
+own App — so without knowing which App it is, the action cannot find its own
+run among them and opens a fresh one every time, leaving the old one at
+`in_progress` for ever. The default is GitHub Actions, which is what
+`github.token` acts as. Set it only if you pass a token belonging to some other
+App.
+
 The pull request is found by the run's head commit — `GET /commits/{sha}/pulls`
 names it rather than inferring it — falling back to the head branch's name and
 then to a comparison that flattens both, because a preview hostname has to be a
@@ -112,6 +121,7 @@ protect.
 | `mode`   | yes      | —                           | `sync` or `gate`.                  |
 | `branch` | no       | the pull request's head ref | Which branch's comments to act on. |
 | `token`  | no       | `${{ github.token }}`       | Token for the API calls.           |
+| `app-id` | no       | `15368` (GitHub Actions)    | The App the token acts as.         |
 
 There is no `fail-on-orphaned` input. A comment Maple could not re-anchor holds
 the gate, because a layout change that orphans a comment must not be a layout

@@ -43,6 +43,14 @@ describe("readInputs", () => {
     expect(() => readInputs({ ...BASE, INPUT_TOKEN: "" })).toThrow(/is required/);
   });
 
+  it("reads the App the token acts as", () => {
+    expect(readInputs({ ...BASE, "INPUT_APP-ID": "15368" }).appId).toBe("15368");
+  });
+
+  it("leaves the App absent when nothing set one", () => {
+    expect(readInputs(BASE).appId).toBeUndefined();
+  });
+
   it("leaves the branch absent when there is no head ref to fall back to", () => {
     expect(readInputs({ INPUT_MODE: "gate", INPUT_TOKEN: "t" }).branch).toBeUndefined();
   });

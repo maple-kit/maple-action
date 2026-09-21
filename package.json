@@ -1,6 +1,6 @@
 {
   "name": "maple-action",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "GitHub Action that syncs Maple's visual review comments and gates the merge",
   "license": "Apache-2.0",
@@ -37,6 +37,6 @@
     "vitest": "5.0.1"
   },
   "dependencies": {
-    "@maple-kit/core": "0.3.0"
+    "@maple-kit/core": "0.6.0"
   }
 }

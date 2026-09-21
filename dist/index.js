@@ -3,7 +3,7 @@ var __webpack_exports__ = {};
 
 ;// CONCATENATED MODULE: external "node:fs"
 const external_node_fs_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/gate/decide.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/gate/decide.js
 //#region src/gate/decide.ts
 const BLOCKING_STATUSES = [
 	"open",
@@ -85,13 +85,14 @@ function plural(count) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/connectors/capabilities.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/connectors/capabilities.js
 //#region src/connectors/capabilities.ts
 const CONNECTOR_METHODS = {
 	store: [
 		"list",
 		"append",
 		"setStatus",
+		"head",
 		"watch"
 	],
 	media: [
@@ -101,14 +102,16 @@ const CONNECTOR_METHODS = {
 	],
 	observability: ["getReplayLink", "fetchEvents"],
 	identity: ["resolveUser"],
-	gate: ["publish", "read"]
+	gate: ["publish", "read"],
+	classifier: ["score", "classify"]
 };
 const REQUIRED_METHODS = {
 	store: ["list", "append"],
 	media: ["putBlob", "getUrl"],
 	observability: ["getReplayLink"],
 	identity: ["resolveUser"],
-	gate: ["publish"]
+	gate: ["publish"],
+	classifier: []
 };
 var MissingCapabilityError = class extends Error {
 	connector;
@@ -140,7 +143,7 @@ function assertUsable(kind, connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/errors.js
 //#region src/errors.ts
 var MapleStoreError = class extends Error {
 	reason;
@@ -20603,7 +20606,7 @@ const TaggedError = tag => {
   return O.BaseEffectError;
 };
 //# sourceMappingURL=Data.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/internal/effect/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/internal/effect/errors.js
 
 //#region src/internal/effect/errors.ts
 var StoreUnavailable = class extends TaggedError("StoreUnavailable") {};
@@ -53256,7 +53259,7 @@ const ensureErrorType = () => effect => effect;
  */
 const ensureRequirementsType = () => effect => effect;
 //# sourceMappingURL=Effect.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/internal/effect/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/internal/effect/store.js
 
 
 
@@ -53315,7 +53318,7 @@ function setCommentStatus(connector, id, status) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/store.js
 
 
 //#region src/store.ts
@@ -53332,7 +53335,7 @@ function createCommentStore(connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/connectors/github-pull.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/connectors/github-pull.js
 //#region src/connectors/github-pull.ts
 function createPullCache() {
 	return { held: /* @__PURE__ */ new Map() };
@@ -53378,7 +53381,7 @@ async function ofMatch(api, identifier, matches) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
 //#region src/lib/stable-stringify.ts
 var CyclicValueError = class extends TypeError {
 	path;
@@ -53417,7 +53420,7 @@ function stableStringify(value, space) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/export/markdown.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/export/markdown.js
 
 //#region src/export/markdown.ts
 const FENCE_VERSION = 1;
@@ -53429,10 +53432,25 @@ const REDUCTIONS = [
 	"context",
 	"quote"
 ];
+const REPO_URL = "https://github.com/maple-kit/maple";
+const ASSET_URL = "https://raw.githubusercontent.com/maple-kit/maple/main/docs/assets";
+const WORDMARK = [
+	"<sub><picture>",
+	`<source media="(prefers-color-scheme: dark)" srcset="${ASSET_URL}/wordmark-dark.svg">`,
+	`<img src="${ASSET_URL}/wordmark.svg" alt="Maple" height="20">`,
+	"</picture></sub>"
+].join("");
+const FENCE_LEAD = "The full comment details in markdown, to copy into an agent:";
+const POWERED_BY = `powered by <a href="${REPO_URL}">Maple</a>`;
 function exportMarkdown(comments, options) {
-	const rendered = markdown_table(comments, hostedOnly(options.screenshots));
+	const head = [
+		introduce(comments),
+		"",
+		markdown_table(comments, hostedOnly(options.screenshots))
+	];
+	const foot = ["", footer(comments)];
 	if (options.fence === false) return {
-		markdown: rendered,
+		markdown: [...head, ...foot].join("\n"),
 		bytes: 0,
 		reduced: [],
 		overBudget: false
@@ -53441,11 +53459,14 @@ function exportMarkdown(comments, options) {
 	const { fence, bytes, reduced } = fit(comments, options.branch, budget);
 	return {
 		markdown: [
-			rendered,
+			...head,
+			"",
+			FENCE_LEAD,
 			"",
 			"```maple",
 			fence,
-			"```"
+			"```",
+			...foot
 		].join("\n"),
 		bytes,
 		reduced,
@@ -53534,6 +53555,33 @@ function essentialContext(context) {
 		colorScheme: context.colorScheme
 	};
 }
+function introduce(comments) {
+	const names = [...new Set(comments.map((comment) => cell(comment.author.name)))].filter(Boolean);
+	const noun = comments.length === 1 ? "Comment" : "Comments";
+	if (names.length === 0) return `${noun} collected via ${WORDMARK} :`;
+	return `${noun} written by ${conjoin(names)} via ${WORDMARK} :`;
+}
+function footer(comments) {
+	return `---\n\n<sub>${stamp(comments[0])}${POWERED_BY}</sub>`;
+}
+function stamp(comment) {
+	if (comment === void 0) return "";
+	const parts = [hostOf(comment.context.url), comment.commit?.slice(0, 7) ?? ""].filter(Boolean);
+	return parts.length === 0 ? "" : `<code>${parts.join(" @ ")}</code> · `;
+}
+function hostOf(url) {
+	try {
+		return new URL(url).host;
+	} catch {
+		return "";
+	}
+}
+function conjoin(names) {
+	return new Intl.ListFormat("en", {
+		style: "long",
+		type: "conjunction"
+	}).format(names);
+}
 function markdown_table(comments, screenshots) {
 	const withShots = comments.some((comment) => screenshots.has(comment.id));
 	const head = [
@@ -53577,7 +53625,7 @@ function markdown_size(text) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/connectors/github.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/connectors/github.js
 
 
 //#region src/connectors/github.ts
@@ -53590,7 +53638,8 @@ function githubStore(options) {
 		name: "github",
 		list: (query) => list(api, query),
 		append: (comment) => github_append(api, comment),
-		setStatus: (id, status, resolution) => setStatus(api, id, status, resolution)
+		setStatus: (id, status, resolution) => setStatus(api, id, status, resolution),
+		head: (branch) => github_head(api, branch)
 	};
 }
 function createClient(options) {
@@ -53642,6 +53691,13 @@ function reader(api) {
 		repo: api.options.repo,
 		get: async (path) => (await api.request(path)).body
 	};
+}
+async function github_head(api, branch) {
+	const pull = await pullFor(api, branch);
+	if (pull === void 0) return void 0;
+	const path = `/repos/${api.options.owner}/${api.options.repo}/pulls/${String(pull)}`;
+	const { body } = await api.request(path);
+	return body.head.sha;
 }
 async function list(api, query) {
 	if (query.limit !== void 0 && query.limit <= 0) throw new RangeError(`limit must be positive, received ${String(query.limit)}`);
@@ -53854,7 +53910,7 @@ function eventPayload(env, read) {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.3.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_293d9d9826c2be32a349a745efff17b2/node_modules/@maple-kit/core/dist/connectors/github-gate.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/connectors/github-gate.js
 //#region src/connectors/github-gate.ts
 const CHECK_NAME = "maple/visual-review";
 const github_gate_DEFAULT_BASE = "https://api.github.com";
@@ -53953,9 +54009,12 @@ async function read(api, target) {
 	};
 }
 async function latest(api, target) {
-	const path = `${repoPath(api)}/commits/${target.sha}/check-runs?check_name=${encodeURIComponent(api.check)}&filter=latest`;
+	const { appId } = api.options;
+	const filter = appId === void 0 ? "latest" : "all";
+	const path = `${repoPath(api)}/commits/${target.sha}/check-runs?check_name=${encodeURIComponent(api.check)}&filter=${filter}`;
 	const { check_runs } = await api.request(path);
-	return check_runs[0];
+	if (appId === void 0) return check_runs[0];
+	return check_runs.filter((run) => String(run.app?.id) === String(appId)).at(-1);
 }
 function conclusionOf(run) {
 	if (run.status !== "completed") return "blocked";
@@ -54012,12 +54071,13 @@ function needsWriteAccess(mode) {
  * unable to reopen. `githubGate` is contract-tested against the property that
  * matters: a blocked commit can become clear with no new push.
  */
-function gateFor(context, token) {
+function gateFor(context, token, appId) {
     return githubGate({
         owner: context.owner,
         repo: context.repo,
         baseUrl: context.apiUrl,
         token,
+        ...(appId === undefined ? {} : { appId }),
     });
 }
 /**
@@ -54069,7 +54129,13 @@ function readInputs(env) {
     if (token === "")
         throw new InvalidInputError("token", "is required");
     const branch = readInput(env, "branch") || (env["GITHUB_HEAD_REF"] ?? "");
-    return { mode, token, ...(branch === "" ? {} : { branch }) };
+    const appId = readInput(env, "app-id");
+    return {
+        mode,
+        token,
+        ...(branch === "" ? {} : { branch }),
+        ...(appId === "" ? {} : { appId }),
+    };
 }
 
 ;// CONCATENATED MODULE: ./src/sync.ts
@@ -54223,7 +54289,7 @@ async function reviewOf(context, inputs) {
 async function run_publish(context, inputs, verdict) {
     if (context.sha === undefined)
         return;
-    await gateFor(context, inputs.token).publish({
+    await gateFor(context, inputs.token, inputs.appId).publish({
         branch: inputs.branch ?? context.ref,
         sha: context.sha,
         verdict,
