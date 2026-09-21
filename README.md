@@ -4,10 +4,11 @@ The GitHub Action for [Maple](https://github.com/maple-kit/maple): it writes the
 visual review comments onto a pull request, and holds the merge until they are
 resolved.
 
-**Status: both modes work, none of it has run against a real pull request yet.**
-The action reads the pull request's Maple comments through `@maple-kit/core`,
-decides with `decideGate`, publishes `maple/visual-review` through `githubGate`,
-and keeps one sticky comment up to date. Every test is against msw.
+**Status: both modes have now run against a real pull request.** The action
+reads the pull request's Maple comments through `@maple-kit/core`, decides with
+`decideGate`, publishes `maple/visual-review` through `githubGate`, and keeps
+one sticky comment up to date. Every test is against msw; the first live run
+was on 2026-09-21, and it found the permission error corrected above.
 
 ## Two modes, in this order
 
@@ -24,7 +25,7 @@ jobs:
     permissions:
       contents: read
       checks: write # gate: the check run it reports
-      pull-requests: write # sync: the comment it writes
+      pull-requests: write # sync writes the comment; gate reads them
     steps:
       - uses: maple-kit/maple-action@v0
         with:
@@ -77,8 +78,14 @@ anything without a preview deployment all reach the gate. A gate that blocks
 them is a gate someone deletes from the ruleset within a week, so it reports
 `neutral` and gets out of the way.
 
-Needs `checks: write`, and nothing else. It reads the comments with the same
-token, which on a pull request needs no extra permission.
+Needs `checks: write` to publish the run and **`pull-requests: read`** to reach
+the comments the verdict is decided from. A token without the second concludes
+`unreadable` rather than failing — the gate does not break, it stops seeing,
+and a gate that cannot see never blocks. That is the quiet direction to be
+wrong in, so it is worth getting right the first time.
+
+It needs no write access to the pull request: that is `sync`'s job, and the two
+run as separate jobs here for exactly that reason.
 
 The pull request is found by the run's head commit — `GET /commits/{sha}/pulls`
 names it rather than inferring it — falling back to the head branch's name and
