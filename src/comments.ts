@@ -9,23 +9,40 @@
 import { createCommentStore } from "@maple-kit/core";
 import { githubStore } from "@maple-kit/core/connectors";
 
-import type { Comment, CommentStore } from "@maple-kit/core";
+import type { Approval, Comment, CommentStore } from "@maple-kit/core";
 import type { RunContext } from "./context.js";
 
 /** Pages one run will follow. 100 comments each; a pull request with more is not a review. */
 const MAX_PAGES = 20;
 
+/**
+ * What one run reads through: the wrapped store, and the approvals the wrapper
+ * does not carry.
+ *
+ * `createCommentStore` exposes `list`, `append` and `setStatus` and nothing
+ * else, so an approval has to be read off the connector itself.
+ */
+export interface ReviewSource {
+  readonly store: CommentStore;
+  /** Absent on a connector that cannot hold one, which the gate reads as neutral. */
+  readonly approvals?: (branch: string) => Promise<readonly Approval[]>;
+}
+
 /** Builds the store this run reads through. */
-export function storeFor(context: RunContext, token: string): CommentStore {
-  return createCommentStore(
-    githubStore({
-      owner: context.owner,
-      repo: context.repo,
-      baseUrl: context.apiUrl,
-      token,
-      pull: { ...(context.sha === undefined ? {} : { commit: context.sha }), matches: sameSurface },
-    }),
-  );
+export function storeFor(context: RunContext, token: string): ReviewSource {
+  const connector = githubStore({
+    owner: context.owner,
+    repo: context.repo,
+    baseUrl: context.apiUrl,
+    token,
+    pull: { ...(context.sha === undefined ? {} : { commit: context.sha }), matches: sameSurface },
+  });
+
+  const read = connector.approvals?.bind(connector);
+  return {
+    store: createCommentStore(connector),
+    ...(read === undefined ? {} : { approvals: read }),
+  };
 }
 
 /**

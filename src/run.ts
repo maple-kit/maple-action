@@ -15,8 +15,9 @@ import { gateFor, isMergeGroup, outputsFor } from "./gate.js";
 import { InvalidInputError, readInputs } from "./inputs.js";
 import { stickyBody, syncSticky } from "./sync.js";
 
-import type { Comment, GateVerdict } from "@maple-kit/core";
+import type { Approval, Comment, GateVerdict } from "@maple-kit/core";
 
+import type { ReviewSource } from "./comments.js";
 import type { RunContext } from "./context.js";
 import type { Inputs } from "./inputs.js";
 
@@ -54,14 +55,40 @@ async function reviewOf(context: RunContext, inputs: Inputs): Promise<Review> {
     throw new InvalidInputError("branch", "is required when the run has no head ref");
   }
 
-  const store = storeFor(context, inputs.token);
-  const comments = await readComments(store, inputs.branch).catch((error: unknown) => {
+  const source = storeFor(context, inputs.token);
+  const comments = await readComments(source.store, inputs.branch).catch((error: unknown) => {
     process.stderr.write(`::warning::Maple could not read the comments: ${messageOf(error)}\n`);
     return undefined;
   });
 
-  const verdict = decideGate(comments, { statusTracked: store.capabilities.setStatus });
+  const approvals = await approvalsOf(source, inputs);
+
+  const verdict = decideGate(comments, {
+    statusTracked: source.store.capabilities.setStatus,
+    requireApproval: inputs.requireApproval,
+    ...(approvals === undefined ? {} : { approvals }),
+    ...(context.sha === undefined ? {} : { commit: context.sha }),
+  });
   return { verdict, ...(comments === undefined ? {} : { comments }) };
+}
+
+/**
+ * The approvals on this surface, or undefined for "I could not look".
+ *
+ * Nothing is read when no approval is required: it is a request per run for an
+ * answer the verdict would ignore. Undefined is the store's own neutral, so a
+ * read that fails is never mistaken for nobody having approved.
+ */
+async function approvalsOf(
+  source: ReviewSource,
+  inputs: Inputs,
+): Promise<readonly Approval[] | undefined> {
+  if (!inputs.requireApproval || source.approvals === undefined) return undefined;
+
+  return await source.approvals(inputs.branch ?? "").catch((error: unknown) => {
+    process.stderr.write(`::warning::Maple could not read the approvals: ${messageOf(error)}\n`);
+    return undefined;
+  });
 }
 
 /**

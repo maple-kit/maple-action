@@ -86,6 +86,62 @@ describe("a pull request with an open comment", () => {
   });
 });
 
+describe("a pull request that has to be approved", () => {
+  /** An approval of the commit under judgement, as a store hands one back. */
+  function approvalOf(commit: string) {
+    return {
+      id: "a_1",
+      branch: "feature/x",
+      commit,
+      author: { id: "u_1", name: "Dana", provenance: "server" as const },
+      at: "2026-09-22T09:00:00.000Z",
+    };
+  }
+
+  it("blocks on an empty surface nobody has approved", async () => {
+    const environment = env({ "INPUT_REQUIRE-APPROVAL": "true" });
+
+    const verdict = await run(environment);
+
+    expect(verdict.conclusion).toBe("blocked");
+    expect(verdict.reason).toBe("awaiting-approval");
+    expect(checks.runsOn(HEAD)[0]).toMatchObject({ status: "in_progress" });
+  });
+
+  it("clears once somebody has approved this commit", async () => {
+    github.approve(approvalOf(HEAD));
+
+    const verdict = await run(env({ "INPUT_REQUIRE-APPROVAL": "true" }));
+
+    expect(verdict.conclusion).toBe("clear");
+    expect(checks.runsOn(HEAD)[0]).toMatchObject({ conclusion: "success" });
+  });
+
+  it("does not count an approval of the commit before this one", async () => {
+    github.approve(approvalOf("older_sha"));
+
+    const verdict = await run(env({ "INPUT_REQUIRE-APPROVAL": "true" }));
+
+    expect(verdict.conclusion).toBe("blocked");
+    expect(verdict.reason).toBe("awaiting-approval");
+  });
+
+  it("lets an open comment outrank a missing approval", async () => {
+    github.put(storedComment({ id: "c_1", status: "open" }));
+
+    const verdict = await run(env({ "INPUT_REQUIRE-APPROVAL": "true" }));
+
+    expect(verdict.reason).toBe("comments-open");
+  });
+
+  it("clears an empty surface when no approval was asked for", async () => {
+    const verdict = await run(env());
+
+    expect(verdict.conclusion).toBe("clear");
+    expect(verdict.reason).toBe("no-comments");
+  });
+});
+
 describe("a pull request with nothing holding it", () => {
   it("completes the check run as a success", async () => {
     github.put(storedComment({ id: "c_1", status: "resolved" }));

@@ -22,6 +22,14 @@ inputs:
       gate needs checks:write and pull-requests:read.
     required: false
     default: ${{ github.token }}
+  require-approval:
+    description: |
+      "true" when a surface with nothing open still has to be approved by
+      somebody in the overlay before it clears. Must match RouteOptions.
+      requireApproval: the route and this action publish the same check name,
+      so a disagreement lets a push clear a gate a reviewer is holding.
+    required: false
+    default: "false"
   app-id:
     description: |
       The App the token acts as. Only the App that created a check run may

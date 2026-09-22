@@ -9,7 +9,7 @@
 import { exportMarkdown } from "@maple-kit/core/export";
 import { http, HttpResponse } from "msw";
 
-import type { Comment } from "@maple-kit/core";
+import type { Approval, Comment } from "@maple-kit/core";
 import type { RequestHandler } from "msw";
 
 const API = "https://api.github.com";
@@ -23,8 +23,15 @@ export interface StoredComment {
 /** A fake repository: one pull request, its comments, and what it answers with. */
 export interface GitHubFake {
   readonly handlers: RequestHandler[];
-  /** Puts `comments` on the pull request, one issue comment each. */
+  /**
+   * Puts `comments` on the pull request as one Maple ledger, which is what a
+   * 0.7 store writes: every comment in one fence, in one issue comment.
+   */
   put(...comments: readonly Comment[]): void;
+  /** Puts approvals in that same ledger. Replaces it, as `put` does. */
+  approve(...approvals: readonly Approval[]): void;
+  /** Adds `count` ordinary comments before the ledger, carrying no fence. */
+  chatter(count: number): void;
   /** Every issue comment on the pull request, including ones a run wrote. */
   issueComments(): readonly StoredComment[];
   /** How many comments each page returns, so a suite can force a second one. */
@@ -46,6 +53,8 @@ export function createGitHubFake(owner = "maple-kit", repo = "app"): GitHubFake 
   let failure: number | undefined;
   let pages = 0;
   let nextId = 2000;
+  let held: readonly Comment[] = [];
+  let approved: readonly Approval[] = [];
   let credentials: string[] = [];
 
   const pull = { number: 42, head: { ref: "feature/x" } };
@@ -107,7 +116,19 @@ export function createGitHubFake(owner = "maple-kit", repo = "app"): GitHubFake 
   return {
     handlers,
     put: (...put) => {
-      issues = put.map(issueComment);
+      held = put;
+      issues = [ledgerComment(held, approved)];
+    },
+    approve: (...approvals) => {
+      approved = approvals;
+      issues = [ledgerComment(held, approved)];
+    },
+    chatter: (count) => {
+      const plain = Array.from({ length: count }, (_, index) => ({
+        id: 900 + index,
+        body: "Looks good to me.",
+      }));
+      issues = [...plain, ledgerComment(held, approved)];
     },
     issueComments: () => issues,
     pageSize: (next) => {
@@ -125,15 +146,26 @@ export function createGitHubFake(owner = "maple-kit", repo = "app"): GitHubFake 
       size = 100;
       failure = undefined;
       pages = 0;
+      held = [];
+      approved = [];
     },
   };
 }
 
-/** What the store wrote: the table a person reads, with the fence under it. */
-function issueComment(comment: Comment, index: number): StoredComment {
+/**
+ * The one Maple comment a pull request carries: the table a person reads, with
+ * every comment and approval in the single fence under it.
+ */
+function ledgerComment(
+  comments: readonly Comment[],
+  approvals: readonly Approval[],
+): StoredComment {
   return {
-    id: 1000 + index,
-    body: exportMarkdown([comment], { branch: comment.branch }).markdown,
+    id: 1000,
+    body: exportMarkdown(comments, {
+      branch: comments[0]?.branch ?? "feature/x",
+      ...(approvals.length === 0 ? {} : { approvals }),
+    }).markdown,
   };
 }
 
