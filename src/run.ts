@@ -15,9 +15,8 @@ import { gateFor, isMergeGroup, outputsFor } from "./gate.js";
 import { InvalidInputError, readInputs } from "./inputs.js";
 import { stickyBody, syncSticky } from "./sync.js";
 
-import type { Approval, Comment, GateVerdict } from "@maple-kit/core";
+import type { Approval, Comment, CommentStore, GateVerdict } from "@maple-kit/core";
 
-import type { ReviewSource } from "./comments.js";
 import type { RunContext } from "./context.js";
 import type { Inputs } from "./inputs.js";
 
@@ -55,16 +54,16 @@ async function reviewOf(context: RunContext, inputs: Inputs): Promise<Review> {
     throw new InvalidInputError("branch", "is required when the run has no head ref");
   }
 
-  const source = storeFor(context, inputs.token);
-  const comments = await readComments(source.store, inputs.branch).catch((error: unknown) => {
+  const store = storeFor(context, inputs.token);
+  const comments = await readComments(store, inputs.branch).catch((error: unknown) => {
     process.stderr.write(`::warning::Maple could not read the comments: ${messageOf(error)}\n`);
     return undefined;
   });
 
-  const approvals = await approvalsOf(source, inputs);
+  const approvals = await approvalsOf(store, inputs);
 
   const verdict = decideGate(comments, {
-    statusTracked: source.store.capabilities.setStatus,
+    statusTracked: store.capabilities.setStatus,
     requireApproval: inputs.requireApproval,
     ...(approvals === undefined ? {} : { approvals }),
     ...(context.sha === undefined ? {} : { commit: context.sha }),
@@ -76,16 +75,17 @@ async function reviewOf(context: RunContext, inputs: Inputs): Promise<Review> {
  * The approvals on this surface, or undefined for "I could not look".
  *
  * Nothing is read when no approval is required: it is a request per run for an
- * answer the verdict would ignore. Undefined is the store's own neutral, so a
- * read that fails is never mistaken for nobody having approved.
+ * answer the verdict would ignore. The store answers undefined where it keeps
+ * none, and a read that fails becomes the same undefined, so neither is ever
+ * mistaken for nobody having approved.
  */
 async function approvalsOf(
-  source: ReviewSource,
+  store: CommentStore,
   inputs: Inputs,
 ): Promise<readonly Approval[] | undefined> {
-  if (!inputs.requireApproval || source.approvals === undefined) return undefined;
+  if (!inputs.requireApproval) return undefined;
 
-  return await source.approvals(inputs.branch ?? "").catch((error: unknown) => {
+  return await store.approvals(inputs.branch ?? "").catch((error: unknown) => {
     process.stderr.write(`::warning::Maple could not read the approvals: ${messageOf(error)}\n`);
     return undefined;
   });
