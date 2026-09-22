@@ -24,7 +24,12 @@ describe("readInput", () => {
 
 describe("readInputs", () => {
   it("accepts a valid environment", () => {
-    expect(readInputs(BASE)).toEqual({ mode: "gate", branch: "feature/x", token: "t" });
+    expect(readInputs(BASE)).toEqual({
+      mode: "gate",
+      branch: "feature/x",
+      token: "t",
+      requireApproval: false,
+    });
   });
 
   it("prefers an explicit branch over the head ref", () => {

@@ -24,7 +24,7 @@ afterEach(() => {
 });
 
 function store() {
-  return storeFor(CONTEXT, "token");
+  return storeFor(CONTEXT, "token").store;
 }
 
 describe("the surface a head branch belongs to", () => {
@@ -48,9 +48,10 @@ describe("reading the comments", () => {
     expect(comments[0]?.status).toBe("open");
   });
 
-  it("follows the cursor rather than stopping at the first page", async () => {
+  it("reads to the end of the listing rather than stopping at the first page", async () => {
     github.pageSize(1);
     github.put(storedComment({ id: "c_1" }), storedComment({ id: "c_2" }));
+    github.chatter(1);
 
     expect(await readComments(store(), "feature/x")).toHaveLength(2);
     expect(github.pages()).toBe(2);

@@ -78,6 +78,36 @@ anything without a preview deployment all reach the gate. A gate that blocks
 them is a gate someone deletes from the ruleset within a week, so it reports
 `neutral` and gets out of the way.
 
+#### Requiring an approval
+
+`require-approval: "true"` makes a surface with nothing open block until
+somebody presses **Approve** in the overlay, instead of clearing. Without it,
+a pull request nobody ever opened a preview for is indistinguishable from one
+that was reviewed and found clean — both are `no-comments`.
+
+```yaml
+- uses: maple-kit/maple-action@v0
+  with:
+    mode: gate
+    require-approval: "true"
+```
+
+**It has to match `RouteOptions.requireApproval`.** The action and the SDK route
+publish the same check name, so if only one of them requires an approval, a push
+clears a gate the other is holding and nothing says why.
+
+Four rules come from `decideGate` rather than from here, and `docs/gate.md` in
+the Maple repository argues each:
+
+- An approval is about a **commit**. A push is a new preview, so the approval
+  before it does not count toward this one.
+- **An open comment outranks a missing approval**, so a reviewer reads
+  `comments-open` rather than being told to approve a surface with work on it.
+- A store with no `approvals` is `approval-untracked` and **neutral**, never a
+  gate that blocks for ever.
+- The route needs an identity connector for this, or anyone holding the preview
+  URL clears a required check as "Guest".
+
 Needs `checks: write` to publish the run and **`pull-requests: read`** to reach
 the comments the verdict is decided from. A token without the second concludes
 `unreadable` rather than failing — the gate does not break, it stops seeing,

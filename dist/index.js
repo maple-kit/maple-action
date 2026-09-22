@@ -3,47 +3,92 @@ var __webpack_exports__ = {};
 
 ;// CONCATENATED MODULE: external "node:fs"
 const external_node_fs_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/gate/decide.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/gate/decide.js
 //#region src/gate/decide.ts
 const BLOCKING_STATUSES = [
 	"open",
 	"needs_reverify",
 	"orphaned"
 ];
+function reverified(comment, options) {
+	if (options.reverifyResolved !== true || options.commit === void 0) return comment;
+	if (comment.status !== "resolved") return comment;
+	const against = comment.resolution?.sha;
+	if (against === void 0 || against === options.commit) return comment;
+	return {
+		...comment,
+		status: "needs_reverify"
+	};
+}
 const LISTED = 10;
 function decideGate(comments, options = {}) {
-	if (options.hasReview === false) return neutral("no-review", "No visual review on this pull request", "Maple is not reviewing this pull request, so this check has nothing to hold it on.");
-	if (comments === void 0) return neutral("unreadable", NOT_CHECKED, `Maple could not read the comments${NO_ANSWER}`);
-	if (options.statusTracked === false) return neutral("status-untracked", NOT_CHECKED, `This store cannot record whether a comment was resolved${NO_ANSWER}`);
+	const cannotTell = unjudgeable(comments, options);
+	if (cannotTell) return cannotTell;
 	const blockOn = options.blockOn ?? BLOCKING_STATUSES;
-	const blocking = comments.filter((comment) => blockOn.includes(comment.status));
+	const all = (comments ?? []).map((comment) => reverified(comment, options));
+	const blocking = all.filter((comment) => blockOn.includes(comment.status));
 	const counts = {
 		open: blocking.length,
-		total: comments.length
+		total: all.length
 	};
-	if (comments.length === 0) return {
-		...counts,
-		conclusion: "clear",
-		...cleared("no-comments")
-	};
-	if (blocking.length === 0) return {
-		...counts,
-		conclusion: "clear",
-		...cleared("all-resolved")
-	};
-	return {
+	if (blocking.length > 0) return {
 		...counts,
 		conclusion: "blocked",
 		reason: "comments-open",
-		title: `${String(blocking.length)} of ${String(comments.length)} ${plural(comments.length)} still open`,
-		summary: listing(comments, blocking)
+		title: `${String(blocking.length)} of ${String(all.length)} ${plural(all.length)} still open`,
+		summary: listing(all, blocking)
+	};
+	const untracked = untrackedApproval(options);
+	if (untracked) return untracked;
+	const approved = approvalFor(options);
+	if (options.requireApproval === true && !approved) return {
+		...counts,
+		conclusion: "blocked",
+		...unapproved(all.length)
+	};
+	return {
+		...counts,
+		conclusion: "clear",
+		...cleared(all.length === 0, approved)
 	};
 }
-function cleared(reason) {
+function unjudgeable(comments, options) {
+	if (options.hasReview === false) return neutral("no-review", "No visual review on this pull request", "Maple is not reviewing this pull request, so this check has nothing to hold it on.");
+	if (comments === void 0) return neutral("unreadable", NOT_CHECKED, `Maple could not read the comments${NO_ANSWER}`);
+	if (options.statusTracked === false) return neutral("status-untracked", NOT_CHECKED, `This store cannot record whether a comment was resolved${NO_ANSWER}`);
+}
+function untrackedApproval(options) {
+	if (options.requireApproval !== true) return void 0;
+	if (options.approvals !== void 0 && options.commit !== void 0) return void 0;
+	const missing = options.approvals === void 0 ? "This store cannot record that anybody approved the preview" : "Nothing here names the commit the preview is serving, so an approval of it cannot be found";
+	return neutral("approval-untracked", NOT_CHECKED, `${missing}${NO_ANSWER}`);
+}
+function approvalFor(options) {
+	if (options.commit === void 0) return void 0;
+	return options.approvals?.find((approval) => approval.commit === options.commit);
+}
+function unapproved(total) {
 	return {
-		reason,
-		title: reason === "no-comments" ? "No visual review comments" : "Every comment is resolved",
-		summary: reason === "no-comments" ? "Nobody has left a visual review comment on this pull request." : "Every visual review comment on this pull request has been resolved."
+		reason: "awaiting-approval",
+		title: "Waiting for somebody to approve the preview",
+		summary: `${total === 0 ? "Nobody has left a visual review comment on this pull request, and nobody has approved it either." : "Every visual review comment on this pull request is resolved, but nobody has approved the preview."}\n\nOpen the preview and approve it from the Maple overlay.`
+	};
+}
+function cleared(empty, approved) {
+	return {
+		reason: empty ? "no-comments" : "all-resolved",
+		...signedOff(empty ? "No visual review comments" : "Every comment is resolved", empty ? "Nobody has left a visual review comment on this pull request." : "Every visual review comment on this pull request has been resolved.", approved)
+	};
+}
+function signedOff(title, summary, approved) {
+	if (!approved) return {
+		title,
+		summary
+	};
+	const note = approved.note === void 0 ? "" : `\n\n> ${oneLine(approved.note)}`;
+	return {
+		title: `Approved by ${approved.author.name}`,
+		summary: `${summary}\n\n${approved.author.name} approved this preview.${note}`
 	};
 }
 const NOT_CHECKED = "Visual review was not checked";
@@ -85,15 +130,19 @@ function plural(count) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/connectors/capabilities.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/connectors/capabilities.js
 //#region src/connectors/capabilities.ts
 const CONNECTOR_METHODS = {
 	store: [
 		"list",
 		"append",
+		"appendMany",
 		"setStatus",
 		"head",
-		"watch"
+		"watch",
+		"approvals",
+		"approve",
+		"unapprove"
 	],
 	media: [
 		"putBlob",
@@ -143,7 +192,7 @@ function assertUsable(kind, connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/errors.js
 //#region src/errors.ts
 var MapleStoreError = class extends Error {
 	reason;
@@ -20606,7 +20655,7 @@ const TaggedError = tag => {
   return O.BaseEffectError;
 };
 //# sourceMappingURL=Data.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/internal/effect/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/internal/effect/errors.js
 
 //#region src/internal/effect/errors.ts
 var StoreUnavailable = class extends TaggedError("StoreUnavailable") {};
@@ -53259,7 +53308,7 @@ const ensureErrorType = () => effect => effect;
  */
 const ensureRequirementsType = () => effect => effect;
 //# sourceMappingURL=Effect.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/internal/effect/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/internal/effect/store.js
 
 
 
@@ -53318,7 +53367,7 @@ function setCommentStatus(connector, id, status) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/store.js
 
 
 //#region src/store.ts
@@ -53335,7 +53384,7 @@ function createCommentStore(connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/connectors/github-pull.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/connectors/github-pull.js
 //#region src/connectors/github-pull.ts
 function createPullCache() {
 	return { held: /* @__PURE__ */ new Map() };
@@ -53381,7 +53430,7 @@ async function ofMatch(api, identifier, matches) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
 //#region src/lib/stable-stringify.ts
 var CyclicValueError = class extends TypeError {
 	path;
@@ -53420,7 +53469,7 @@ function stableStringify(value, space) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/export/markdown.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/export/markdown.js
 
 //#region src/export/markdown.ts
 const FENCE_VERSION = 1;
@@ -53443,12 +53492,17 @@ const WORDMARK = [
 const FENCE_LEAD = "The full comment details in markdown, to copy into an agent:";
 const POWERED_BY = `powered by <a href="${REPO_URL}">Maple</a>`;
 function exportMarkdown(comments, options) {
+	const approvals = options.approvals ?? [];
 	const head = [
 		introduce(comments),
 		"",
 		markdown_table(comments, hostedOnly(options.screenshots))
 	];
-	const foot = ["", footer(comments)];
+	const foot = [
+		...signatures(approvals),
+		"",
+		footer(comments)
+	];
 	if (options.fence === false) return {
 		markdown: [...head, ...foot].join("\n"),
 		bytes: 0,
@@ -53456,7 +53510,7 @@ function exportMarkdown(comments, options) {
 		overBudget: false
 	};
 	const budget = options.budget ?? 8192;
-	const { fence, bytes, reduced } = fit(comments, options.branch, budget);
+	const { fence, bytes, reduced } = fit(comments, options.branch, approvals, budget);
 	return {
 		markdown: [
 			...head,
@@ -53472,6 +53526,18 @@ function exportMarkdown(comments, options) {
 		reduced,
 		overBudget: bytes > budget
 	};
+}
+function signatures(approvals) {
+	if (approvals.length === 0) return [];
+	return [
+		"",
+		"Approved:",
+		"",
+		...approvals.map((one) => `- **${cell(one.author.name)}** at \`${one.commit.slice(0, 7)}\`${noted(one.note)}`)
+	];
+}
+function noted(note) {
+	return note === void 0 ? "" : ` — ${cell(note)}`;
 }
 var UnsupportedFenceError = class extends Error {
 	version;
@@ -53494,16 +53560,17 @@ function parseFence(markdown) {
 		version,
 		branch: typeof document["branch"] === "string" ? document["branch"] : "",
 		comments: Array.isArray(document["comments"]) ? document["comments"] : [],
+		approvals: Array.isArray(document["approvals"]) ? document["approvals"] : [],
 		raw: document
 	};
 }
-function fit(comments, branch, budget) {
+function fit(comments, branch, approvals, budget) {
 	const applied = [];
-	let fence = encode(comments, branch, applied);
+	let fence = encode(comments, branch, approvals, applied);
 	for (const reduction of REDUCTIONS) {
 		if (markdown_size(fence) <= budget) break;
 		applied.push(reduction);
-		fence = encode(comments, branch, applied);
+		fence = encode(comments, branch, approvals, applied);
 	}
 	return {
 		fence,
@@ -53511,11 +53578,12 @@ function fit(comments, branch, budget) {
 		reduced: applied
 	};
 }
-function encode(comments, branch, reduced) {
+function encode(comments, branch, approvals, reduced) {
 	return stableStringify({
 		version: 1,
 		branch,
-		comments: comments.map((comment) => markdown_reduce(comment, reduced))
+		comments: comments.map((comment) => markdown_reduce(comment, reduced)),
+		...approvals.length === 0 ? {} : { approvals }
 	});
 }
 function markdown_reduce(comment, reduced) {
@@ -53584,29 +53652,41 @@ function conjoin(names) {
 }
 function markdown_table(comments, screenshots) {
 	const withShots = comments.some((comment) => screenshots.has(comment.id));
+	const withStatus = comments.some((comment) => comment.status !== "open");
 	const head = [
 		"#",
 		"Where",
 		"Comment",
+		...withStatus ? ["Status"] : [],
 		"Viewport",
 		...withShots ? ["Shot"] : []
 	];
-	const rows = comments.map((comment, index) => row(comment, index + 1, withShots ? screenshots.get(comment.id) : void 0));
+	const rows = comments.map((comment, index) => row(comment, index + 1, {
+		withStatus,
+		...withShots ? { shot: screenshots.get(comment.id) ?? "" } : {}
+	}));
 	return [
 		`| ${head.join(" | ")} |`,
 		`| ${head.map(() => "---").join(" | ")} |`,
 		...rows
 	].join("\n");
 }
-function row(comment, number, shot) {
+function row(comment, number, shape) {
 	return `| ${[
 		String(number),
 		where(comment.anchor),
 		cell(comment.body),
+		...shape.withStatus ? [STATUS_WORDS[comment.status]] : [],
 		`${comment.context.viewportWidth}×${comment.context.viewportHeight}`,
-		...shot === void 0 ? [] : [shot ? `[view](${shot})` : ""]
+		...shape.shot === void 0 ? [] : [shape.shot ? `[view](${shape.shot})` : ""]
 	].join(" | ")} |`;
 }
+const STATUS_WORDS = {
+	open: "Open",
+	resolved: "Resolved",
+	needs_reverify: "Re-verify",
+	orphaned: "Unpinned"
+};
 function where(anchor) {
 	const name = anchor.component ?? anchor.source ?? anchor.selector;
 	return name ? `\`${cell(name)}\`` : "—";
@@ -53625,21 +53705,27 @@ function markdown_size(text) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/connectors/github.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/connectors/github.js
 
 
 //#region src/connectors/github.ts
 const DEFAULT_BASE = "https://api.github.com";
 const github_PAGE_SIZE = 100;
 const ID = /^gh_(\d+)_(\d+)$/;
+const APPROVAL_ID = /^gha_(\d+)_(\d+)$/;
+const LEDGER_BUDGET = 4e4;
 function githubStore(options) {
 	const api = createClient(options);
 	return {
 		name: "github",
 		list: (query) => list(api, query),
-		append: (comment) => github_append(api, comment),
+		append: async (comment) => (await appendMany(api, [comment]))[0],
+		appendMany: (comments) => appendMany(api, comments),
 		setStatus: (id, status, resolution) => setStatus(api, id, status, resolution),
-		head: (branch) => github_head(api, branch)
+		head: (branch) => github_head(api, branch),
+		approvals: (branch) => approvalsOn(api, branch),
+		approve: (approval) => approve(api, approval),
+		unapprove: (id) => unapprove(api, id)
 	};
 }
 function createClient(options) {
@@ -53699,96 +53785,171 @@ async function github_head(api, branch) {
 	const { body } = await api.request(path);
 	return body.head.sha;
 }
+async function readLedger(api, branch) {
+	const pull = await pullFor(api, branch);
+	return pull === void 0 ? void 0 : await readLedgerAt(api, pull, branch);
+}
+async function readLedgerAt(api, pull, branch) {
+	const found = [];
+	for (let page = 1; page <= github_PAGE_SIZE; page += 1) {
+		const path = `/repos/${api.options.owner}/${api.options.repo}/issues/${String(pull)}/comments?per_page=${String(github_PAGE_SIZE)}&page=${String(page)}`;
+		const { body, hasNext } = await api.request(path);
+		for (const issue of body) if (parseFence(issue.body)) found.push({
+			id: issue.id,
+			body: issue.body
+		});
+		if (!hasNext) break;
+	}
+	const newest = found.at(-1);
+	const fence = newest === void 0 ? void 0 : parseFence(newest.body);
+	const surface = branch ?? fence?.branch ?? "";
+	return {
+		branch: surface,
+		pull,
+		issueId: newest?.id,
+		stale: found.slice(0, -1).map((one) => one.id),
+		comments: fence?.comments.map((comment) => ({
+			...comment,
+			branch: surface
+		})) ?? [],
+		approvals: fence?.approvals ?? []
+	};
+}
+async function writeLedger(api, ledger, repost) {
+	const body = await bodyFor(api, ledger);
+	const { owner, repo } = api.options;
+	const gone = [...ledger.stale];
+	if (repost || ledger.issueId === void 0) {
+		await api.request(`/repos/${owner}/${repo}/issues/${String(ledger.pull)}/comments`, {
+			method: "POST",
+			body: JSON.stringify({ body })
+		});
+		if (ledger.issueId !== void 0) gone.push(ledger.issueId);
+	} else await api.request(`/repos/${owner}/${repo}/issues/comments/${String(ledger.issueId)}`, {
+		method: "PATCH",
+		body: JSON.stringify({ body })
+	});
+	for (const id of gone) await github_remove(api, id);
+}
+async function github_remove(api, issueId) {
+	const { owner, repo } = api.options;
+	try {
+		await api.request(`/repos/${owner}/${repo}/issues/comments/${String(issueId)}`, { method: "DELETE" });
+	} catch {}
+}
 async function list(api, query) {
 	if (query.limit !== void 0 && query.limit <= 0) throw new RangeError(`limit must be positive, received ${String(query.limit)}`);
-	const pull = await pullFor(api, query.branch);
-	if (pull === void 0) return { comments: [] };
-	const page = query.cursor === void 0 ? 1 : pageOf(query.cursor);
-	const perPage = Math.min(query.limit ?? github_PAGE_SIZE, github_PAGE_SIZE);
-	const path = `/repos/${api.options.owner}/${api.options.repo}/issues/${String(pull)}/comments?per_page=${String(perPage)}&page=${String(page)}`;
-	const { body, hasNext } = await api.request(path);
+	const ledger = await readLedger(api, query.branch);
+	if (!ledger) return { comments: [] };
+	const matching = ledger.comments.filter((comment) => query.statuses === void 0 || query.statuses.includes(comment.status));
+	const offset = query.cursor === void 0 ? 0 : offsetOf(query.cursor);
+	const page = matching.slice(offset, offset + (query.limit ?? matching.length));
+	const next = offset + page.length;
 	return {
-		comments: body.map((issue) => commentIn(issue, pull, query.branch)).filter((comment) => comment !== void 0).filter((comment) => query.statuses === void 0 || query.statuses.includes(comment.status)),
-		...hasNext ? { cursor: String(page + 1) } : {}
+		comments: page,
+		...next < matching.length ? { cursor: String(next) } : {}
 	};
 }
-function commentIn(issue, pull, branch) {
-	const stored = parseFence(issue.body)?.comments[0];
-	if (!stored) return void 0;
-	return {
-		...stored,
-		id: idOf(pull, issue.id),
-		branch
-	};
-}
-async function github_append(api, comment) {
-	const pull = await pullFor(api, comment.branch);
-	if (pull === void 0) throw new Error(`No pull request for branch ${comment.branch}; Maple has nowhere to post.`);
-	const draft = {
+async function appendMany(api, incoming) {
+	const branch = incoming[0]?.branch;
+	if (branch === void 0) return [];
+	const ledger = await readLedger(api, branch);
+	if (!ledger) throw new Error(`No pull request for branch ${branch}; Maple has nowhere to post.`);
+	let seq = nextSeq(ledger.comments.map((one) => one.id), ID);
+	const stored = incoming.map((comment) => ({
 		...comment,
-		id: "",
+		id: `gh_${String(ledger.pull)}_${String(seq++)}`,
 		status: comment.status ?? "open"
-	};
-	const created = await api.request(`/repos/${api.options.owner}/${api.options.repo}/issues/${String(pull)}/comments`, {
-		method: "POST",
-		body: JSON.stringify({ body: await bodyFor(api, draft) })
-	});
-	const stored = {
-		...draft,
-		id: idOf(pull, created.body.id)
-	};
-	await github_patch(api, created.body.id, await bodyFor(api, stored));
+	}));
+	await writeLedger(api, {
+		...ledger,
+		comments: [...ledger.comments, ...stored]
+	}, true);
 	return stored;
 }
 async function setStatus(api, id, status, resolution) {
 	const located = ID.exec(id);
 	if (!located) throw new Error(`Not a GitHub comment id: ${id}`);
-	const issueId = Number(located[2]);
-	const { body } = await api.request(`/repos/${api.options.owner}/${api.options.repo}/issues/comments/${String(issueId)}`);
-	const stored = parseFence(body.body)?.comments[0];
-	if (!stored) throw new Error(`Comment ${id} carries no Maple fence.`);
+	const ledger = await ledgerHolding(api, Number(located[1]), id, (one) => one.comments.some((held) => held.id === id));
+	const existing = ledger.comments.find((one) => one.id === id);
+	if (!existing) throw new Error(`No comment ${id} on this pull request.`);
 	const updated = {
-		...stored,
-		id,
+		...existing,
 		status,
 		...resolution ? { resolution } : {}
 	};
-	await github_patch(api, issueId, await bodyFor(api, updated));
+	const comments = ledger.comments.map((one) => one.id === id ? updated : one);
+	await writeLedger(api, {
+		...ledger,
+		comments
+	}, false);
 	return updated;
 }
-async function github_patch(api, issueId, body) {
-	await api.request(`/repos/${api.options.owner}/${api.options.repo}/issues/comments/${String(issueId)}`, {
-		method: "PATCH",
-		body: JSON.stringify({ body })
-	});
+function approvalsOn(api, branch) {
+	return readLedger(api, branch).then((ledger) => ledger?.approvals ?? []);
 }
-async function bodyFor(api, comment) {
-	const shot = await shotFor(api, comment);
-	const screenshots = shot === void 0 ? void 0 : /* @__PURE__ */ new Map([[comment.id, shot]]);
-	return exportMarkdown([comment], {
-		branch: comment.branch,
-		...screenshots ? { screenshots } : {}
+async function approve(api, approval) {
+	const ledger = await readLedger(api, approval.branch);
+	if (!ledger) throw new Error(`No pull request for branch ${approval.branch}; Maple has nowhere to post.`);
+	const seq = nextSeq(ledger.approvals.map((one) => one.id), APPROVAL_ID);
+	const stored = {
+		...approval,
+		id: `gha_${String(ledger.pull)}_${String(seq)}`
+	};
+	await writeLedger(api, {
+		...ledger,
+		approvals: [...ledger.approvals, stored]
+	}, true);
+	return stored;
+}
+async function unapprove(api, id) {
+	const located = APPROVAL_ID.exec(id);
+	if (!located) throw new Error(`Not a GitHub approval id: ${id}`);
+	const ledger = await ledgerHolding(api, Number(located[1]), id, (one) => one.approvals.some((approval) => approval.id === id));
+	const approvals = ledger.approvals.filter((one) => one.id !== id);
+	await writeLedger(api, {
+		...ledger,
+		approvals
+	}, false);
+}
+async function ledgerHolding(api, pull, id, holds) {
+	const ledger = await readLedgerAt(api, pull);
+	if (!holds(ledger)) throw new Error(`No Maple record ${id} on this repository.`);
+	return ledger;
+}
+function nextSeq(ids, shape) {
+	const used = ids.map((id) => Number(shape.exec(id)?.[2] ?? 0));
+	return Math.max(0, ...used) + 1;
+}
+async function bodyFor(api, ledger) {
+	const screenshots = await shotsFor(api, ledger.comments);
+	return exportMarkdown(ledger.comments, {
+		branch: ledger.branch,
+		budget: LEDGER_BUDGET,
+		...ledger.approvals.length === 0 ? {} : { approvals: ledger.approvals },
+		...screenshots.size === 0 ? {} : { screenshots }
 	}).markdown;
 }
-async function shotFor(api, comment) {
-	const ref = comment.attachments?.find(isImage);
-	if (!ref || !api.options.media) return void 0;
-	try {
-		return await api.options.media.getUrl(ref);
-	} catch {
-		return;
+async function shotsFor(api, comments) {
+	const shots = /* @__PURE__ */ new Map();
+	const media = api.options.media;
+	if (!media) return shots;
+	for (const comment of comments) {
+		const ref = comment.attachments?.find(isImage);
+		if (!ref) continue;
+		try {
+			shots.set(comment.id, await media.getUrl(ref));
+		} catch {}
 	}
+	return shots;
 }
 function isImage(ref) {
 	return ref.contentType.startsWith("image/");
 }
-function idOf(pull, issueId) {
-	return `gh_${String(pull)}_${String(issueId)}`;
-}
-function pageOf(cursor) {
-	const page = Number(cursor);
-	if (!Number.isInteger(page) || page < 1) throw new RangeError(`Invalid cursor: ${cursor}`);
-	return page;
+function offsetOf(cursor) {
+	const offset = Number(cursor);
+	if (!Number.isInteger(offset) || offset < 0) throw new RangeError(`Invalid cursor: ${cursor}`);
+	return offset;
 }
 //#endregion
 
@@ -53807,13 +53968,18 @@ function pageOf(cursor) {
 const MAX_PAGES = 20;
 /** Builds the store this run reads through. */
 function storeFor(context, token) {
-    return createCommentStore(githubStore({
+    const connector = githubStore({
         owner: context.owner,
         repo: context.repo,
         baseUrl: context.apiUrl,
         token,
         pull: { ...(context.sha === undefined ? {} : { commit: context.sha }), matches: sameSurface },
-    }));
+    });
+    const read = connector.approvals?.bind(connector);
+    return {
+        store: createCommentStore(connector),
+        ...(read === undefined ? {} : { approvals: read }),
+    };
 }
 /**
  * Whether a head branch is the surface an identifier names.
@@ -53910,7 +54076,7 @@ function eventPayload(env, read) {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.6.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_c6e4e6b6bce9946d3abf11b572f7d777/node_modules/@maple-kit/core/dist/connectors/github-gate.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/connectors/github-gate.js
 //#region src/connectors/github-gate.ts
 const CHECK_NAME = "maple/visual-review";
 const github_gate_DEFAULT_BASE = "https://api.github.com";
@@ -54133,9 +54299,17 @@ function readInputs(env) {
     return {
         mode,
         token,
+        requireApproval: readFlag(env, "require-approval"),
         ...(branch === "" ? {} : { branch }),
         ...(appId === "" ? {} : { appId }),
     };
+}
+/**
+ * A boolean input. Only "true" is true: an unset input arrives as the empty
+ * string, and treating anything non-empty as true would make "false" true.
+ */
+function readFlag(env, name) {
+    return readInput(env, name).toLowerCase() === "true";
 }
 
 ;// CONCATENATED MODULE: ./src/sync.ts
@@ -54272,13 +54446,34 @@ async function reviewOf(context, inputs) {
     if (inputs.branch === undefined) {
         throw new InvalidInputError("branch", "is required when the run has no head ref");
     }
-    const store = storeFor(context, inputs.token);
-    const comments = await readComments(store, inputs.branch).catch((error) => {
+    const source = storeFor(context, inputs.token);
+    const comments = await readComments(source.store, inputs.branch).catch((error) => {
         process.stderr.write(`::warning::Maple could not read the comments: ${messageOf(error)}\n`);
         return undefined;
     });
-    const verdict = decideGate(comments, { statusTracked: store.capabilities.setStatus });
+    const approvals = await approvalsOf(source, inputs);
+    const verdict = decideGate(comments, {
+        statusTracked: source.store.capabilities.setStatus,
+        requireApproval: inputs.requireApproval,
+        ...(approvals === undefined ? {} : { approvals }),
+        ...(context.sha === undefined ? {} : { commit: context.sha }),
+    });
     return { verdict, ...(comments === undefined ? {} : { comments }) };
+}
+/**
+ * The approvals on this surface, or undefined for "I could not look".
+ *
+ * Nothing is read when no approval is required: it is a request per run for an
+ * answer the verdict would ignore. Undefined is the store's own neutral, so a
+ * read that fails is never mistaken for nobody having approved.
+ */
+async function approvalsOf(source, inputs) {
+    if (!inputs.requireApproval || source.approvals === undefined)
+        return undefined;
+    return await source.approvals(inputs.branch ?? "").catch((error) => {
+        process.stderr.write(`::warning::Maple could not read the approvals: ${messageOf(error)}\n`);
+        return undefined;
+    });
 }
 /**
  * Publishes the verdict, and fails the step when it cannot.

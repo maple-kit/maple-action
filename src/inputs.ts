@@ -23,6 +23,12 @@ export interface Inputs {
    * entry. Required to read comments, which is where it is asked for.
    */
   readonly branch?: string;
+  /**
+   * True when somebody has to say they looked. It must match what the SDK
+   * route was configured with: the two publish the same check name, so a
+   * disagreement means a push clears a gate a reviewer is being held by.
+   */
+  readonly requireApproval: boolean;
 }
 
 /** Raised when an input is missing or not one of its allowed values. */
@@ -62,7 +68,16 @@ export function readInputs(env: NodeJS.ProcessEnv): Inputs {
   return {
     mode,
     token,
+    requireApproval: readFlag(env, "require-approval"),
     ...(branch === "" ? {} : { branch }),
     ...(appId === "" ? {} : { appId }),
   };
+}
+
+/**
+ * A boolean input. Only "true" is true: an unset input arrives as the empty
+ * string, and treating anything non-empty as true would make "false" true.
+ */
+function readFlag(env: NodeJS.ProcessEnv, name: string): boolean {
+  return readInput(env, name).toLowerCase() === "true";
 }
