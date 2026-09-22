@@ -24,7 +24,7 @@ afterEach(() => {
 });
 
 function store() {
-  return storeFor(CONTEXT, "token").store;
+  return storeFor(CONTEXT, "token");
 }
 
 describe("the surface a head branch belongs to", () => {

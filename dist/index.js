@@ -3,7 +3,7 @@ var __webpack_exports__ = {};
 
 ;// CONCATENATED MODULE: external "node:fs"
 const external_node_fs_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/gate/decide.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/gate/decide.js
 //#region src/gate/decide.ts
 const BLOCKING_STATUSES = [
 	"open",
@@ -130,7 +130,7 @@ function plural(count) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/connectors/capabilities.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/connectors/capabilities.js
 //#region src/connectors/capabilities.ts
 const CONNECTOR_METHODS = {
 	store: [
@@ -192,7 +192,7 @@ function assertUsable(kind, connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/errors.js
 //#region src/errors.ts
 var MapleStoreError = class extends Error {
 	reason;
@@ -20655,7 +20655,7 @@ const TaggedError = tag => {
   return O.BaseEffectError;
 };
 //# sourceMappingURL=Data.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/internal/effect/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/internal/effect/errors.js
 
 //#region src/internal/effect/errors.ts
 var StoreUnavailable = class extends TaggedError("StoreUnavailable") {};
@@ -53308,7 +53308,7 @@ const ensureErrorType = () => effect => effect;
  */
 const ensureRequirementsType = () => effect => effect;
 //# sourceMappingURL=Effect.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/internal/effect/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/internal/effect/store.js
 
 
 
@@ -53316,10 +53316,11 @@ const ensureRequirementsType = () => effect => effect;
 const RETRY_POLICY = Schedule_jittered(Schedule_intersect(Schedule_exponential("100 millis", 2), Schedule_recurs(2)));
 const CALL_TIMEOUT = "10 seconds";
 function isRetryable(cause) {
+	if (cause instanceof RangeError) return false;
 	if (!(cause instanceof Error)) return true;
 	return !/\b(4\d\d|invalid|unauthori[sz]ed|forbidden|not found)\b/i.test(cause.message);
 }
-function call(connector, operation, run) {
+function attempt(connector, operation, run) {
 	return Effect_tryPromise({
 		try: run,
 		catch: (cause) => isRetryable(cause) ? new StoreUnavailable({
@@ -53331,7 +53332,10 @@ function call(connector, operation, run) {
 			operation,
 			cause
 		})
-	}).pipe(Effect_timeoutFail({
+	});
+}
+function call(connector, operation, run) {
+	return attempt(connector, operation, run).pipe(Effect_timeoutFail({
 		duration: CALL_TIMEOUT,
 		onTimeout: () => new StoreUnavailable({
 			connector: connector.name,
@@ -53359,15 +53363,48 @@ function listComments(connector, query) {
 function appendComment(connector, comment) {
 	return store_run(call(connector, "append", () => connector.append(comment)));
 }
-function setCommentStatus(connector, id, status) {
+async function appendComments(connector, comments) {
+	const many = connector.appendMany?.bind(connector);
+	if (many) return await store_run(call(connector, "appendMany", () => many(comments)));
+	const stored = [];
+	for (const comment of comments) stored.push(await appendComment(connector, comment));
+	return stored;
+}
+function setCommentStatus(connector, id, status, resolution) {
 	const setStatus = connector.setStatus?.bind(connector);
 	if (!setStatus) return Promise.resolve(null);
-	return store_run(call(connector, "setStatus", () => setStatus(id, status)));
+	return store_run(call(connector, "setStatus", () => setStatus(id, status, resolution)));
+}
+function headCommit(connector, branch) {
+	const head = connector.head?.bind(connector);
+	if (!head) return Promise.resolve(void 0);
+	return store_run(call(connector, "head", () => head(branch)));
+}
+function watchComments(connector, query, signal) {
+	const watch = connector.watch?.bind(connector);
+	if (!watch) return Promise.resolve(void 0);
+	return store_run(attempt(connector, "watch", () => watch(query, signal)));
+}
+function listApprovals(connector, branch) {
+	const approvals = connector.approvals?.bind(connector);
+	if (!approvals) return Promise.resolve(void 0);
+	return store_run(call(connector, "approvals", () => approvals(branch)));
+}
+function approveSurface(connector, approval) {
+	const approve = connector.approve?.bind(connector);
+	if (!approve) return Promise.resolve(null);
+	return store_run(call(connector, "approve", () => approve(approval)));
+}
+async function unapproveSurface(connector, id) {
+	const unapprove = connector.unapprove?.bind(connector);
+	if (!unapprove) return false;
+	await store_run(call(connector, "unapprove", () => unapprove(id)));
+	return true;
 }
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/store.js
 
 
 //#region src/store.ts
@@ -53378,13 +53415,19 @@ function createCommentStore(connector) {
 		capabilities: capabilitiesOf("store", connector),
 		list: (query) => listComments(connector, query),
 		append: (comment) => appendComment(connector, comment),
-		setStatus: (id, status) => setCommentStatus(connector, id, status)
+		appendMany: (comments) => appendComments(connector, comments),
+		setStatus: (id, status, resolution) => setCommentStatus(connector, id, status, resolution),
+		head: (branch) => headCommit(connector, branch),
+		watch: (query, signal) => watchComments(connector, query, signal),
+		approvals: (branch) => listApprovals(connector, branch),
+		approve: (approval) => approveSurface(connector, approval),
+		unapprove: (id) => unapproveSurface(connector, id)
 	};
 }
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/connectors/github-pull.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/connectors/github-pull.js
 //#region src/connectors/github-pull.ts
 function createPullCache() {
 	return { held: /* @__PURE__ */ new Map() };
@@ -53430,7 +53473,7 @@ async function ofMatch(api, identifier, matches) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
 //#region src/lib/stable-stringify.ts
 var CyclicValueError = class extends TypeError {
 	path;
@@ -53469,7 +53512,7 @@ function stableStringify(value, space) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/export/markdown.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/export/markdown.js
 
 //#region src/export/markdown.ts
 const FENCE_VERSION = 1;
@@ -53705,7 +53748,7 @@ function markdown_size(text) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/connectors/github.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/connectors/github.js
 
 
 //#region src/connectors/github.ts
@@ -53959,8 +54002,9 @@ function offsetOf(cursor) {
  * Reading the comments the gate decides on.
  *
  * The store is built per run from the run's own token. Everything about how it
- * retries, times out and reports a failure is `createCommentStore`'s; what is
- * here is which repository to read and how to follow a cursor to the end.
+ * retries, times out, reports a failure and degrades around a capability the
+ * backend lacks is `createCommentStore`'s; what is here is which repository to
+ * read and how to follow a cursor to the end.
  */
 
 
@@ -53968,18 +54012,13 @@ function offsetOf(cursor) {
 const MAX_PAGES = 20;
 /** Builds the store this run reads through. */
 function storeFor(context, token) {
-    const connector = githubStore({
+    return createCommentStore(githubStore({
         owner: context.owner,
         repo: context.repo,
         baseUrl: context.apiUrl,
         token,
         pull: { ...(context.sha === undefined ? {} : { commit: context.sha }), matches: sameSurface },
-    });
-    const read = connector.approvals?.bind(connector);
-    return {
-        store: createCommentStore(connector),
-        ...(read === undefined ? {} : { approvals: read }),
-    };
+    }));
 }
 /**
  * Whether a head branch is the surface an identifier names.
@@ -54076,7 +54115,7 @@ function eventPayload(env, read) {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.7.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_b4b865acfcea3582420b544b215b2772/node_modules/@maple-kit/core/dist/connectors/github-gate.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/connectors/github-gate.js
 //#region src/connectors/github-gate.ts
 const CHECK_NAME = "maple/visual-review";
 const github_gate_DEFAULT_BASE = "https://api.github.com";
@@ -54446,14 +54485,14 @@ async function reviewOf(context, inputs) {
     if (inputs.branch === undefined) {
         throw new InvalidInputError("branch", "is required when the run has no head ref");
     }
-    const source = storeFor(context, inputs.token);
-    const comments = await readComments(source.store, inputs.branch).catch((error) => {
+    const store = storeFor(context, inputs.token);
+    const comments = await readComments(store, inputs.branch).catch((error) => {
         process.stderr.write(`::warning::Maple could not read the comments: ${messageOf(error)}\n`);
         return undefined;
     });
-    const approvals = await approvalsOf(source, inputs);
+    const approvals = await approvalsOf(store, inputs);
     const verdict = decideGate(comments, {
-        statusTracked: source.store.capabilities.setStatus,
+        statusTracked: store.capabilities.setStatus,
         requireApproval: inputs.requireApproval,
         ...(approvals === undefined ? {} : { approvals }),
         ...(context.sha === undefined ? {} : { commit: context.sha }),
@@ -54464,13 +54503,14 @@ async function reviewOf(context, inputs) {
  * The approvals on this surface, or undefined for "I could not look".
  *
  * Nothing is read when no approval is required: it is a request per run for an
- * answer the verdict would ignore. Undefined is the store's own neutral, so a
- * read that fails is never mistaken for nobody having approved.
+ * answer the verdict would ignore. The store answers undefined where it keeps
+ * none, and a read that fails becomes the same undefined, so neither is ever
+ * mistaken for nobody having approved.
  */
-async function approvalsOf(source, inputs) {
-    if (!inputs.requireApproval || source.approvals === undefined)
+async function approvalsOf(store, inputs) {
+    if (!inputs.requireApproval)
         return undefined;
-    return await source.approvals(inputs.branch ?? "").catch((error) => {
+    return await store.approvals(inputs.branch ?? "").catch((error) => {
         process.stderr.write(`::warning::Maple could not read the approvals: ${messageOf(error)}\n`);
         return undefined;
     });
