@@ -1,6 +1,6 @@
 {
   "name": "maple-action",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "private": true,
   "description": "GitHub Action that syncs Maple's visual review comments and gates the merge",
   "license": "Apache-2.0",
