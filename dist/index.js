@@ -3,7 +3,7 @@ var __webpack_exports__ = {};
 
 ;// CONCATENATED MODULE: external "node:fs"
 const external_node_fs_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/gate/decide.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/gate/decide.js
 //#region src/gate/decide.ts
 const BLOCKING_STATUSES = [
 	"open",
@@ -130,7 +130,7 @@ function plural(count) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/connectors/capabilities.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/connectors/capabilities.js
 //#region src/connectors/capabilities.ts
 const CONNECTOR_METHODS = {
 	store: [
@@ -152,7 +152,11 @@ const CONNECTOR_METHODS = {
 	observability: ["getReplayLink", "fetchEvents"],
 	identity: ["resolveUser"],
 	gate: ["publish", "read"],
-	classifier: ["score", "classify"]
+	classifier: [
+		"score",
+		"classify",
+		"plan"
+	]
 };
 const REQUIRED_METHODS = {
 	store: ["list", "append"],
@@ -192,7 +196,7 @@ function assertUsable(kind, connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/errors.js
 //#region src/errors.ts
 var MapleStoreError = class extends Error {
 	reason;
@@ -20655,7 +20659,7 @@ const TaggedError = tag => {
   return O.BaseEffectError;
 };
 //# sourceMappingURL=Data.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/internal/effect/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/internal/effect/errors.js
 
 //#region src/internal/effect/errors.ts
 var StoreUnavailable = class extends TaggedError("StoreUnavailable") {};
@@ -53308,7 +53312,7 @@ const ensureErrorType = () => effect => effect;
  */
 const ensureRequirementsType = () => effect => effect;
 //# sourceMappingURL=Effect.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/internal/effect/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/internal/effect/store.js
 
 
 
@@ -53404,7 +53408,7 @@ async function unapproveSurface(connector, id) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/store.js
 
 
 //#region src/store.ts
@@ -53427,7 +53431,7 @@ function createCommentStore(connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/connectors/github-pull.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/connectors/github-pull.js
 //#region src/connectors/github-pull.ts
 function createPullCache() {
 	return { held: /* @__PURE__ */ new Map() };
@@ -53473,7 +53477,7 @@ async function ofMatch(api, identifier, matches) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
 //#region src/lib/stable-stringify.ts
 var CyclicValueError = class extends TypeError {
 	path;
@@ -53512,12 +53516,151 @@ function stableStringify(value, space) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/export/markdown.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/mock/recipe.js
+//#region src/mock/recipe.ts
+const RECIPE_VERSION = 2;
+const MOCK_STATES = [
+	"empty",
+	"error",
+	"forbidden",
+	"loading",
+	"one",
+	"many",
+	"long",
+	"sparse",
+	"mixed"
+];
+var InvalidRecipeError = class extends Error {
+	issues;
+	name = "InvalidRecipeError";
+	constructor(issues) {
+		super(["Invalid mock recipe:", ...issues].join("\n  "));
+		this.issues = issues;
+	}
+};
+const KEY = /^[a-z]+:\S/;
+const STATES = new Set(MOCK_STATES);
+function parseRecipe(input) {
+	if (!recipe_isRecord(input)) throw new InvalidRecipeError(["a recipe is an object"]);
+	const issues = [...versionIssues(input["version"])];
+	const calls = parseCalls(input["calls"], issues);
+	const flags = parseFlags(input["flags"], issues);
+	const as = parseIdentity(input["as"], issues);
+	const { request, route } = input;
+	if (request !== void 0 && typeof request !== "string") issues.push("request: must be a string when present");
+	if (route !== void 0 && !(typeof route === "string" && route.startsWith("/"))) issues.push("route: must be a path pattern starting with \"/\" when present");
+	if (issues.length > 0) throw new InvalidRecipeError(issues);
+	return {
+		version: 2,
+		calls,
+		...flags === void 0 ? {} : { flags },
+		...as === void 0 ? {} : { as },
+		...typeof route === "string" ? { route } : {},
+		...typeof request === "string" ? { request } : {}
+	};
+}
+function versionIssues(version) {
+	if (version === 1 || version === 2) return [];
+	if (typeof version === "number" && version > 2) return [`version: ${version} is newer than this build reads (2)`];
+	return [`version: must be 1 or 2`];
+}
+function parseFlags(value, issues) {
+	if (value === void 0) return void 0;
+	if (!recipe_isRecord(value)) {
+		issues.push("flags: must be an object of flag keys when present");
+		return;
+	}
+	const flags = {};
+	for (const [key, flag] of Object.entries(value)) if (key.trim() === "") issues.push("flags: a flag key must not be blank");
+	else if (isFlagValue(flag)) flags[key] = structuredClone(flag);
+	else issues.push(`flags.${key}: must be a JSON value`);
+	return flags;
+}
+function isFlagValue(value) {
+	if (value === null || typeof value === "boolean" || typeof value === "string") return true;
+	if (typeof value === "number") return Number.isFinite(value);
+	if (Array.isArray(value)) return value.every(isFlagValue);
+	return recipe_isRecord(value) && Object.values(value).every(isFlagValue);
+}
+function parseIdentity(value, issues) {
+	if (value === void 0) return void 0;
+	if (!recipe_isRecord(value)) {
+		issues.push("as: must be an object when present");
+		return;
+	}
+	const { role, permissions } = value;
+	if (role === void 0 && permissions === void 0) issues.push("as: must name a role, permissions, or both");
+	const validRole = typeof role === "string" && role.trim() !== "";
+	if (role !== void 0 && !validRole) issues.push("as.role: must be a non-blank string");
+	const granted = parsePermissions(permissions, issues);
+	return {
+		...validRole ? { role } : {},
+		...granted === void 0 ? {} : { permissions: granted }
+	};
+}
+function parsePermissions(value, issues) {
+	if (value === void 0) return void 0;
+	if (!recipe_isRecord(value)) {
+		issues.push("as.permissions: must map each permission to true or false");
+		return;
+	}
+	const permissions = {};
+	for (const [key, granted] of Object.entries(value)) if (key.trim() === "") issues.push("as.permissions: a permission must not be blank");
+	else if (typeof granted === "boolean") permissions[key] = granted;
+	else issues.push(`as.permissions.${key}: must be true or false`);
+	return permissions;
+}
+function describeIdentity(as) {
+	if (as === void 0) return void 0;
+	const permissions = Object.entries(as.permissions ?? {}).map(([permission, granted]) => `${granted ? "with" : "without"} ${permission}`);
+	const words = [...as.role === void 0 ? [] : [as.role], ...permissions];
+	return words.length === 0 ? void 0 : words.join(", ");
+}
+function parseCalls(value, issues) {
+	if (!Array.isArray(value)) {
+		issues.push("calls: must be an array");
+		return [];
+	}
+	const seen = /* @__PURE__ */ new Set();
+	const calls = [];
+	value.forEach((entry, index) => {
+		const call = parseCall(entry, `calls.${index}`, issues);
+		if (call === void 0) return;
+		if (seen.has(call.key)) issues.push(`calls.${index}.key: "${call.key}" appears twice`);
+		seen.add(call.key);
+		calls.push(call);
+	});
+	return calls;
+}
+function parseCall(entry, path, issues) {
+	if (!recipe_isRecord(entry)) {
+		issues.push(`${path}: must be an object`);
+		return;
+	}
+	const { key, state } = entry;
+	const validKey = typeof key === "string" && KEY.test(key);
+	const validState = typeof state === "string" && STATES.has(state);
+	if (!validKey) issues.push(`${path}.key: must look like "codec:name"`);
+	if (!validState) issues.push(`${path}.state: must be one of ${MOCK_STATES.join(", ")}`);
+	return validKey && validState ? {
+		key,
+		state
+	} : void 0;
+}
+function recipe_isRecord(value) {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/export/markdown.js
+
 
 //#region src/export/markdown.ts
 const FENCE_VERSION = 1;
 const FENCE_BUDGET = 8192;
 const REDUCTIONS = [
+	"mock",
 	"quote-context",
 	"regions",
 	"selector",
@@ -53602,7 +53745,7 @@ function parseFence(markdown) {
 	return {
 		version,
 		branch: typeof document["branch"] === "string" ? document["branch"] : "",
-		comments: Array.isArray(document["comments"]) ? document["comments"] : [],
+		comments: Array.isArray(document["comments"]) ? document["comments"].map(readMock) : [],
 		approvals: Array.isArray(document["approvals"]) ? document["approvals"] : [],
 		raw: document
 	};
@@ -53610,8 +53753,10 @@ function parseFence(markdown) {
 function fit(comments, branch, approvals, budget) {
 	const applied = [];
 	let fence = encode(comments, branch, approvals, applied);
+	const mocked = comments.some((comment) => comment.context.mock !== void 0);
 	for (const reduction of REDUCTIONS) {
 		if (markdown_size(fence) <= budget) break;
+		if (reduction === "mock" && !mocked) continue;
 		applied.push(reduction);
 		fence = encode(comments, branch, approvals, applied);
 	}
@@ -53638,10 +53783,30 @@ function markdown_reduce(comment, reduced) {
 }
 function reduceContext(context, reduced) {
 	if (reduced.includes("context")) return essentialContext(context);
-	if (!reduced.includes("regions")) return context;
 	const copy = { ...context };
-	delete copy.regions;
+	if (reduced.includes("regions")) delete copy.regions;
+	if (reduced.includes("mock")) delete copy.mock;
 	return copy;
+}
+function readMock(comment) {
+	const mock = comment.context?.mock;
+	if (mock === void 0) return comment;
+	try {
+		return {
+			...comment,
+			context: {
+				...comment.context,
+				mock: parseRecipe(mock)
+			}
+		};
+	} catch {
+		const context = { ...comment.context };
+		delete context.mock;
+		return {
+			...comment,
+			context
+		};
+	}
 }
 function reduceAnchor(anchor, reduced) {
 	const { quote, selector, ...rest } = anchor;
@@ -53720,9 +53885,14 @@ function row(comment, number, shape) {
 		where(comment.anchor),
 		cell(comment.body),
 		...shape.withStatus ? [STATUS_WORDS[comment.status]] : [],
-		`${comment.context.viewportWidth}×${comment.context.viewportHeight}`,
+		`${comment.context.viewportWidth}×${comment.context.viewportHeight}${mockedWords(comment.context.mock)}`,
 		...shape.shot === void 0 ? [] : [shape.shot ? `[view](${shape.shot})` : ""]
 	].join(" | ")} |`;
+}
+function mockedWords(recipe) {
+	if (recipe === void 0) return "";
+	const as = describeIdentity(recipe.as);
+	return as === void 0 ? " · mocked" : ` · mocked as ${as}`;
 }
 const STATUS_WORDS = {
 	open: "Open",
@@ -53748,7 +53918,7 @@ function markdown_size(text) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/connectors/github.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/connectors/github.js
 
 
 //#region src/connectors/github.ts
@@ -54115,7 +54285,7 @@ function eventPayload(env, read) {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.8.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_typ_6fb675f27bf0dfbda181afdc4701c130/node_modules/@maple-kit/core/dist/connectors/github-gate.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.11.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_7362b23d92d5fb983b5c850b25af2935/node_modules/@maple-kit/core/dist/connectors/github-gate.js
 //#region src/connectors/github-gate.ts
 const CHECK_NAME = "maple/visual-review";
 const github_gate_DEFAULT_BASE = "https://api.github.com";
