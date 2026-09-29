@@ -3,7 +3,51 @@ var __webpack_exports__ = {};
 
 ;// CONCATENATED MODULE: external "node:fs"
 const external_node_fs_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/gate/decide.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/anchor/label.js
+
+//#region src/anchor/label.ts
+const WORD = /[A-Z]+(?![a-z])|[A-Z]?[a-z\d]+|\d+/g;
+const ACRONYM = /^[A-Z\d]{2,}$/;
+function labelFor(source) {
+	const { anchor, element } = source;
+	const covered = anchor ? nameMembers(anchor, { human: true }) : void 0;
+	if (covered) return covered;
+	const written = element ? closestAttribute(element, LABEL_ATTRIBUTE) : void 0;
+	if (written) return written;
+	const component = anchor?.component ?? (element ? closestAttribute(element, NAME_ATTRIBUTE) : void 0);
+	return component ? unpickCamelCase(component) : void 0;
+}
+const QUOTE_NAME = 24;
+function nameMembers(anchor, options = {}) {
+	const [first, ...rest] = anchor.members ?? [];
+	if (!first) return void 0;
+	const { component, quote, selector, source } = first.anchor;
+	const quoted = quote ? `“${quote.exact.trim().slice(0, QUOTE_NAME)}”` : void 0;
+	const name = (options.human === true && component ? unpickCamelCase(component) : component) ?? quoted ?? source ?? selector;
+	return name && (rest.length === 0 ? name : `${name} +${String(rest.length)}`);
+}
+function sourceFor(source) {
+	const { anchor, element } = source;
+	return (element ? closestAttribute(element, SOURCE_ATTRIBUTE) : void 0) ?? anchor?.source;
+}
+function unpickCamelCase(name) {
+	return (name.match(WORD) ?? []).map((word, index) => index === 0 ? leading(word) : trailing(word)).join(" ");
+}
+function leading(word) {
+	if (ACRONYM.test(word)) return word;
+	return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+function trailing(word) {
+	return ACRONYM.test(word) ? word : word.toLowerCase();
+}
+function closestAttribute(element, name) {
+	return element.closest(`[${name}]`)?.getAttribute(name)?.trim() || void 0;
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/gate/decide.js
+
 //#region src/gate/decide.ts
 const BLOCKING_STATUSES = [
 	"open",
@@ -114,7 +158,8 @@ function listing(comments, blocking) {
 	].join("\n");
 }
 function entry(comment) {
-	const anchor = comment.anchor.component ?? comment.anchor.source ?? comment.anchor.selector;
+	const { anchor: recorded } = comment;
+	const anchor = nameMembers(recorded) ?? recorded.component ?? recorded.source ?? recorded.selector;
 	return `${anchor === void 0 ? "" : `\`${anchor}\` — `}${oneLine(comment.body)}${note(comment.status)}`;
 }
 function note(status) {
@@ -130,7 +175,7 @@ function plural(count) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/connectors/capabilities.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/connectors/capabilities.js
 //#region src/connectors/capabilities.ts
 const CONNECTOR_METHODS = {
 	store: [
@@ -196,7 +241,7 @@ function assertUsable(kind, connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/errors.js
 //#region src/errors.ts
 var MapleStoreError = class extends Error {
 	reason;
@@ -20659,7 +20704,7 @@ const TaggedError = tag => {
   return O.BaseEffectError;
 };
 //# sourceMappingURL=Data.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/internal/effect/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/internal/effect/errors.js
 
 //#region src/internal/effect/errors.ts
 var StoreUnavailable = class extends TaggedError("StoreUnavailable") {};
@@ -53312,7 +53357,7 @@ const ensureErrorType = () => effect => effect;
  */
 const ensureRequirementsType = () => effect => effect;
 //# sourceMappingURL=Effect.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/internal/effect/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/internal/effect/store.js
 
 
 
@@ -53408,7 +53453,7 @@ async function unapproveSurface(connector, id) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/store.js
 
 
 //#region src/store.ts
@@ -53431,7 +53476,7 @@ function createCommentStore(connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/connectors/github-pull.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/connectors/github-pull.js
 //#region src/connectors/github-pull.ts
 function createPullCache() {
 	return { held: /* @__PURE__ */ new Map() };
@@ -53480,7 +53525,7 @@ async function ofMatch(api, identifier, matches) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
 //#region src/lib/stable-stringify.ts
 var CyclicValueError = class extends TypeError {
 	path;
@@ -53519,7 +53564,7 @@ function stableStringify(value, space) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/mock/recipe.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/mock/recipe.js
 //#region src/mock/recipe.ts
 const RECIPE_VERSION = 2;
 const MOCK_STATES = [
@@ -53656,7 +53701,8 @@ function recipe_isRecord(value) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/export/markdown.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/export/markdown.js
+
 
 
 //#region src/export/markdown.ts
@@ -53812,12 +53858,25 @@ function readMock(comment) {
 	}
 }
 function reduceAnchor(anchor, reduced) {
-	const { quote, selector, ...rest } = anchor;
+	const { quote, selector, members, ...rest } = anchor;
 	const kept = reduced.includes("quote") ? void 0 : trimQuote(quote, reduced);
 	return {
 		...rest,
+		...members === void 0 ? {} : { members: members.map((member) => reduceMember(member, reduced)) },
 		...selector === void 0 || reduced.includes("selector") ? {} : { selector },
 		...kept === void 0 ? {} : { quote: kept }
+	};
+}
+function reduceMember(member, reduced) {
+	const { quote, selector, ...rest } = member.anchor;
+	const kept = reduced.includes("quote") ? void 0 : trimQuote(quote, reduced);
+	return {
+		...member,
+		anchor: {
+			...rest,
+			...selector === void 0 || reduced.includes("selector") ? {} : { selector },
+			...kept === void 0 ? {} : { quote: kept }
+		}
 	};
 }
 function trimQuote(quote, reduced) {
@@ -53904,7 +53963,7 @@ const STATUS_WORDS = {
 	orphaned: "Unpinned"
 };
 function where(anchor) {
-	const name = anchor.component ?? anchor.source ?? anchor.selector;
+	const name = nameMembers(anchor) ?? anchor.component ?? anchor.source ?? anchor.selector;
 	return name ? `\`${cell(name)}\`` : "—";
 }
 function cell(text) {
@@ -53921,7 +53980,7 @@ function markdown_size(text) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/connectors/github.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/connectors/github.js
 
 
 //#region src/connectors/github.ts
@@ -54288,7 +54347,7 @@ function eventPayload(env, read) {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.14.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_dcdf4d2c5cdc8e0e1073885d8f5a935f/node_modules/@maple-kit/core/dist/connectors/github-gate.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.15.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_40a872ff9c69294538794fe4b4e09cca/node_modules/@maple-kit/core/dist/connectors/github-gate.js
 //#region src/connectors/github-gate.ts
 const CHECK_NAME = "maple/visual-review";
 const github_gate_DEFAULT_BASE = "https://api.github.com";
