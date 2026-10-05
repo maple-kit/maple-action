@@ -144,14 +144,74 @@ doing, and both are what let a reviewer resolve the last comment and watch the
 check go green with no new push — the property its contract suite exists to
 protect.
 
+### `lint`
+
+Lints the deployed preview against the repository's design tokens and reports a
+check run named `maple/design-lint`. It wraps `runCiLint` from `@maple-kit/cli`:
+the rules, the check run and the SARIF file are the CLI's, and the action only
+maps its inputs onto them and sets the outputs. `maple ci lint` runs the same
+thing on a laptop.
+
+```yaml
+jobs:
+  design-lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write # the maple/design-lint check run
+      security-events: write # upload-sarif
+    steps:
+      - uses: actions/checkout@v4
+
+      # The bundled Playwright is 1.63.0; its browser must match.
+      - run: npx playwright@1.63.0 install --with-deps chromium
+
+      - id: lint
+        uses: maple-kit/maple-action@v0
+        with:
+          mode: lint
+          preview-url: ${{ needs.deploy.outputs.preview-url }}
+          token-files: |
+            tokens/colors.json
+            tokens/spacing.json
+          viewports: 1280x800, 375x667
+          bypass-header: "x-vercel-protection-bypass: ${{ secrets.BYPASS }}"
+
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always() && steps.lint.outputs.sarif-path != ''
+        with:
+          sarif_file: ${{ steps.lint.outputs.sarif-path }}
+```
+
+Uploading the SARIF is what gives static findings native file and line
+annotations on the pull request, so it is a separate step you own.
+
+- A `failure` conclusion fails the step; `neutral` (the lint could not see the
+  preview) does not.
+- Off a pull request there is no head commit to publish on, so the run is a
+  dry run: findings and SARIF, no check run.
+- The `bypass-header` value is masked in the log. Pass it from a secret.
+- `app-id` applies here as in `gate`: the check run is looked up as that App's.
+- Writing findings into the ledger is not done by this mode.
+
 ## Inputs
 
 | Input    | Required | Default                     | Meaning                            |
 | -------- | -------- | --------------------------- | ---------------------------------- |
-| `mode`   | yes      | —                           | `sync` or `gate`.                  |
+| `mode`   | yes      | —                           | `sync`, `gate` or `lint`.          |
 | `branch` | no       | the pull request's head ref | Which branch's comments to act on. |
 | `token`  | no       | `${{ github.token }}`       | Token for the API calls.           |
 | `app-id` | no       | `15368` (GitHub Actions)    | The App the token acts as.         |
+
+`lint` also reads these:
+
+| Input           | Required | Default                   | Meaning                                                   |
+| --------------- | -------- | ------------------------- | --------------------------------------------------------- |
+| `preview-url`   | yes      | —                         | The deployed preview to lint.                             |
+| `token-files`   | yes      | —                         | Design token files, one per line or comma-separated.      |
+| `viewports`     | no       | the CLI's default         | `WIDTHxHEIGHT` entries, e.g. `1280x800, 375x667`.         |
+| `bypass-header` | no       | —                         | `Name: value` sent with every request; masked in the log. |
+| `sarif-path`    | no       | `maple-design-lint.sarif` | Where the SARIF file is written.                          |
 
 There is no `fail-on-orphaned` input. A comment Maple could not re-anchor holds
 the gate, because a layout change that orphans a comment must not be a layout
@@ -165,6 +225,9 @@ disagrees says so, and the action will expose it when somebody asks.
 | `open-count` | Comments still holding the gate.                                  |
 | `conclusion` | `blocked`, `clear` or `neutral` — Maple's verdict, not the run's. |
 | `reason`     | `comments-open`, `all-resolved`, `no-comments`, `no-review`, …    |
+
+`lint` sets `conclusion` (`success`, `failure` or `neutral`), `finding-count`,
+`sarif-path` and `check-run-id` (absent on a dry run). It sets no `reason`.
 
 `conclusion` is Maple's vocabulary rather than the check run's, because the two
 are not the same thing: `blocked` is published as `in_progress`, and both

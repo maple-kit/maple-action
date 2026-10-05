@@ -6,8 +6,8 @@
  * and the behaviour easy to test.
  */
 
-/** Which of the two things the action was asked to do. */
-export type Mode = "gate" | "sync";
+/** Which of the things the action was asked to do. */
+export type Mode = "gate" | "sync" | "lint";
 
 /** Every input, already validated. */
 export interface Inputs {
@@ -29,7 +29,27 @@ export interface Inputs {
    * disagreement means a push clears a gate a reviewer is being held by.
    */
   readonly requireApproval: boolean;
+  /** Present only in `lint` mode, where it is required. */
+  readonly lint?: LintInputs;
 }
+
+/** The inputs only `lint` reads. */
+export interface LintInputs {
+  readonly previewUrl: string;
+  readonly tokenFiles: readonly string[];
+  readonly viewports?: readonly Viewport[];
+  readonly bypassHeaders?: Readonly<Record<string, string>>;
+  readonly sarifPath: string;
+}
+
+/** One viewport the preview is rendered at. */
+export interface Viewport {
+  readonly width: number;
+  readonly height: number;
+}
+
+/** Where SARIF goes when the workflow does not say. */
+export const DEFAULT_SARIF_PATH = "maple-design-lint.sarif";
 
 /** Raised when an input is missing or not one of its allowed values. */
 export class InvalidInputError extends Error {
@@ -55,8 +75,8 @@ export function readInput(env: NodeJS.ProcessEnv, name: string): string {
  */
 export function readInputs(env: NodeJS.ProcessEnv): Inputs {
   const mode = readInput(env, "mode");
-  if (mode !== "sync" && mode !== "gate") {
-    throw new InvalidInputError("mode", `must be "sync" or "gate", received "${mode}"`);
+  if (mode !== "sync" && mode !== "gate" && mode !== "lint") {
+    throw new InvalidInputError("mode", `must be "sync", "gate" or "lint", received "${mode}"`);
   }
 
   const token = readInput(env, "token");
@@ -69,6 +89,7 @@ export function readInputs(env: NodeJS.ProcessEnv): Inputs {
     mode,
     token,
     requireApproval: readFlag(env, "require-approval"),
+    ...(mode === "lint" ? { lint: readLintInputs(env) } : {}),
     ...(branch === "" ? {} : { branch }),
     ...(appId === "" ? {} : { appId }),
   };
@@ -80,4 +101,59 @@ export function readInputs(env: NodeJS.ProcessEnv): Inputs {
  */
 function readFlag(env: NodeJS.ProcessEnv, name: string): boolean {
   return readInput(env, name).toLowerCase() === "true";
+}
+
+/** Entries separated by newlines or commas, blanks dropped. */
+function readList(env: NodeJS.ProcessEnv, name: string): string[] {
+  return readInput(env, name)
+    .split(/[\n,]/)
+    .map((entry) => entry.trim())
+    .filter((entry) => entry !== "");
+}
+
+function readLintInputs(env: NodeJS.ProcessEnv): LintInputs {
+  const previewUrl = readInput(env, "preview-url");
+  if (previewUrl === "") throw new InvalidInputError("preview-url", "is required in lint mode");
+  if (!URL.canParse(previewUrl)) throw new InvalidInputError("preview-url", "is not a URL");
+
+  const tokenFiles = readList(env, "token-files");
+  if (tokenFiles.length === 0) {
+    throw new InvalidInputError("token-files", "is required in lint mode");
+  }
+
+  const viewports = readList(env, "viewports").map(parseViewport);
+  const bypassHeaders = parseHeaders(readInput(env, "bypass-header"));
+
+  return {
+    previewUrl,
+    tokenFiles,
+    sarifPath: readInput(env, "sarif-path") || DEFAULT_SARIF_PATH,
+    ...(viewports.length === 0 ? {} : { viewports }),
+    ...(bypassHeaders === undefined ? {} : { bypassHeaders }),
+  };
+}
+
+/** "1280x800" is a viewport; anything else is a mistake worth naming. */
+function parseViewport(entry: string): Viewport {
+  const match = /^(\d+)x(\d+)$/i.exec(entry);
+  if (match === null) {
+    throw new InvalidInputError(
+      "viewports",
+      `has "${entry}", expected WIDTHxHEIGHT such as 1280x800`,
+    );
+  }
+  return { width: Number(match[1]), height: Number(match[2]) };
+}
+
+/** "Name: value" lines, for a preview behind a protection-bypass header. */
+function parseHeaders(raw: string): Record<string, string> | undefined {
+  const headers: Record<string, string> = {};
+  for (const line of raw.split("\n")) {
+    if (line.trim() === "") continue;
+    const colon = line.indexOf(":");
+    const name = line.slice(0, Math.max(colon, 0)).trim();
+    if (name === "") throw new InvalidInputError("bypass-header", 'must be lines of "Name: value"');
+    headers[name] = line.slice(colon + 1).trim();
+  }
+  return Object.keys(headers).length === 0 ? undefined : headers;
 }

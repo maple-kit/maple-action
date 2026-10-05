@@ -8,9 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@maple-kit/cli':
+        specifier: 0.18.0
+        version: 0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(playwright@1.63.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
       '@maple-kit/core':
-        specifier: 0.17.0
-        version: 0.17.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+        specifier: 0.18.0
+        version: 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
     devDependencies:
       '@eslint/js':
         specifier: 10.0.1
@@ -170,8 +173,21 @@ packages:
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
 
-  '@maple-kit/core@0.17.0':
-    resolution: {integrity: sha512-J/ZkTQWLQKNkGdyeP226d0Tp0F+Nhe+nM91wOoVdp1it1WNQN7M4H8N9GyF/qOkF2W40xGu2ru5q++lueIC6Hw==}
+  '@maple-kit/cli@0.18.0':
+    resolution: {integrity: sha512-vKLBt3zw0ZdJ/XqHryhcZbVd8qYus9pzhkFf3eL3DmhCAZHI3AY/kFX9C3UT1icagQDOmBujodpN4Xd7OW26Ag==}
+    engines: {node: '>=24.0.0'}
+    hasBin: true
+    peerDependencies:
+      '@trpc/openapi': 11.19.0-alpha
+      playwright: ^1.50.0
+    peerDependenciesMeta:
+      '@trpc/openapi':
+        optional: true
+      playwright:
+        optional: true
+
+  '@maple-kit/core@0.18.0':
+    resolution: {integrity: sha512-2Y0dqtG4eq/y9DATh3EhwMa8LaUflQBLk3dlD/AKlnxWVFWvKLCsgSOdbeiBMIh7slynhjyg2AxD2zgz5PQQ4Q==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       '@babel/core': ^7.22.0 || ^8.0.0
@@ -184,6 +200,37 @@ packages:
         optional: true
       vitest:
         optional: true
+
+  '@maple-kit/lint@0.2.0':
+    resolution: {integrity: sha512-fw7qWiE4+9FkWc1/Uypecn7tNoM1Ip9F3TysNUgncJ/dN4grZ5+UKXJlgxI3ffhygiMjSmAxYwoWgJx8+flaQw==}
+    engines: {node: '>=24.0.0'}
+    peerDependencies:
+      playwright: ^1.50.0
+
+  '@maple-kit/mock@0.18.0':
+    resolution: {integrity: sha512-6vESbv9zehpV8EELZqJEGaso23tU6//Iiu4WYIgk1CMIMNDCceVOGlrLfjntoaJ/MZPkX86QYO+0HYnUmjhrTA==}
+    engines: {node: '>=24.0.0'}
+    peerDependencies:
+      msw: ^2.0.0
+      vitest: ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      msw:
+        optional: true
+      vitest:
+        optional: true
+
+  '@maple-kit/react@0.18.0':
+    resolution: {integrity: sha512-NQcL18GW0DOC0rzR1wGH5vO3Qv6ScWVexO6iiA7+ynHpt6jNJ7WgeuanyIp7NuMNtW5psRQn58cNqCfelQU/+w==}
+    engines: {node: '>=24.0.0'}
+    peerDependencies:
+      react: ^18.2.0 || ^19.0.0
+
+  '@maple-kit/ui@0.18.0':
+    resolution: {integrity: sha512-fFhO1qHftPoiskRfZwCTkv7T3XAFyTmGrDX2BePBot1bV4yClv+hqFy1IibXfWnrSqFHA28j4ENmS/OqzhXcfQ==}
+    engines: {node: '>=24.0.0'}
+    peerDependencies:
+      react: ^18.2.0 || ^19.0.0
+      react-dom: ^18.2.0 || ^19.0.0
 
   '@mswjs/interceptors@0.41.9':
     resolution: {integrity: sha512-VVPPgHyQ6ShqnrmDWuxjmUIsO9gWyOZFmuOfLd9LfBGQJwZfy0gvv9pbHSJuoFNIYC7ZDX9aoFwowjcdSC4E8w==}
@@ -880,6 +927,16 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
+  playwright-core@1.63.0:
+    resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.63.0:
+    resolution: {integrity: sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
   postcss@8.5.28:
     resolution: {integrity: sha512-RRuzqDtt5Y9h3quz5hWhK+TPnsmVs6WwSU6LkJMeY4HstUEDuYTG8UJSdawMRzmzAtV+KEoG8N3Qg2qLy5vM/A==}
     engines: {node: ^10 || ^12 || >=14}
@@ -904,6 +961,15 @@ packages:
     resolution: {integrity: sha512-+Owyggi9IxT1ePKGafcI87ubSmxol6smwJ+RAHDQlx9+9cPwFWDiKFFCPuWhr9ignlGpZ9vDQLw67N4dcTVFEA==}
     engines: {node: '>=20'}
 
+  react-dom@19.3.0:
+    resolution: {integrity: sha512-JDk8dgif51OjFoDE70+OT9ICyYr+69HlmihNwp1+Nsfbna3t5sIiCa9ZJktDmQ4/1b/rn26hIAR2uYXDMr5r0Q==}
+    peerDependencies:
+      react: ^19.3.0
+
+  react@19.3.0:
+    resolution: {integrity: sha512-E8LUcbtBWt20bbl2YoHfx4ZDBdxVTfOKtCZn9cDSJ4l6/nuoApcpIBcj47t2wZoVX8g2ZHuMHbiShgCR1T5Sog==}
+    engines: {node: '>=0.10.0'}
+
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
@@ -915,6 +981,9 @@ packages:
     resolution: {integrity: sha512-hx/Pv0N1haXRb11qkfnK5MXB/iqr7i0yjWQqmO9uHqZpBgQSqzc8UsSnEpalsh+j1I8qQ2CkXAkJC8Br3dKSlg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
+
+  scheduler@0.28.0:
+    resolution: {integrity: sha512-juorfCmIkIw8tT+p5BXSm6PJjQF/ycEYmKyzURCIt/RaZIhL+PulbQ9Yu2z1HdOJDdqDTlxA1+xKBmHXJsczAw==}
 
   semver@7.8.5:
     resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
@@ -1252,12 +1321,71 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@maple-kit/core@0.17.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+  '@maple-kit/cli@0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(playwright@1.63.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+    dependencies:
+      '@maple-kit/core': 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/lint': 0.2.0(playwright@1.63.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/ui': 0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+    optionalDependencies:
+      playwright: 1.63.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@zumer/snapdom'
+      - msw
+      - react
+      - react-dom
+      - vitest
+
+  '@maple-kit/core@0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
     dependencies:
       '@standard-schema/spec': 1.0.0
       effect: 3.20.0
     optionalDependencies:
       vitest: 5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1))
+
+  '@maple-kit/lint@0.2.0(playwright@1.63.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+    dependencies:
+      '@maple-kit/core': 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      playwright: 1.63.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@zumer/snapdom'
+      - vitest
+
+  '@maple-kit/mock@0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+    dependencies:
+      '@maple-kit/core': 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@mswjs/interceptors': 0.41.9
+    optionalDependencies:
+      msw: 2.15.0(@types/node@26.6.1)(typescript@6.0.3)
+      vitest: 5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1))
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@zumer/snapdom'
+
+  '@maple-kit/react@0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+    dependencies:
+      '@maple-kit/core': 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/mock': 0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      react: 19.3.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@zumer/snapdom'
+      - msw
+      - vitest
+
+  '@maple-kit/ui@0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+    dependencies:
+      '@maple-kit/core': 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/mock': 0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/react': 0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      react: 19.3.0
+      react-dom: 19.3.0(react@19.3.0)
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@zumer/snapdom'
+      - msw
+      - vitest
 
   '@mswjs/interceptors@0.41.9':
     dependencies:
@@ -1878,6 +2006,12 @@ snapshots:
 
   picomatch@4.0.7: {}
 
+  playwright-core@1.63.0: {}
+
+  playwright@1.63.0:
+    dependencies:
+      playwright-core: 1.63.0
+
   postcss@8.5.28:
     dependencies:
       nanoid: 3.3.19
@@ -1895,6 +2029,13 @@ snapshots:
   qified@0.10.1:
     dependencies:
       hookified: 2.2.0
+
+  react-dom@19.3.0(react@19.3.0):
+    dependencies:
+      react: 19.3.0
+      scheduler: 0.28.0
+
+  react@19.3.0: {}
 
   require-directory@2.1.1: {}
 
@@ -1920,6 +2061,8 @@ snapshots:
       '@rolldown/binding-openharmony-arm64': 1.2.9
       '@rolldown/binding-win32-arm64-msvc': 1.2.9
       '@rolldown/binding-win32-x64-msvc': 1.2.9
+
+  scheduler@0.28.0: {}
 
   semver@7.8.5: {}
 

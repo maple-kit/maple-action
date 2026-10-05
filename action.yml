@@ -1,5 +1,5 @@
 name: Maple visual review
-description: Sync Maple's visual review comments onto a pull request, and gate the merge until they are resolved.
+description: Sync Maple's visual review comments onto a pull request, gate the merge until they are resolved, and lint the preview against the design tokens.
 author: The Maple Authors
 
 branding:
@@ -11,6 +11,8 @@ inputs:
     description: |
       "sync" writes the review comment onto the pull request.
       "gate" reports the maple/visual-review check run.
+      "lint" lints the preview URL against the token files and reports the
+      maple/design-lint check run and SARIF.
       Run sync before gate, so a blocked reviewer can see why.
     required: true
   branch:
@@ -19,7 +21,7 @@ inputs:
   token:
     description: |
       Token used for the API calls. sync needs pull-requests:write;
-      gate needs checks:write and pull-requests:read.
+      gate needs checks:write and pull-requests:read; lint needs checks:write.
     required: false
     default: ${{ github.token }}
   require-approval:
@@ -38,14 +40,39 @@ inputs:
       Set it when you pass a token belonging to some other App.
     required: false
     default: "15368"
+  preview-url:
+    description: lint only. The deployed preview to lint. Required in lint mode.
+    required: false
+  token-files:
+    description: lint only. Design token files in the repository, one per line or comma-separated. Required in lint mode.
+    required: false
+  viewports:
+    description: lint only. Viewports to render at as WIDTHxHEIGHT, one per line or comma-separated, e.g. 1280x800. The CLI's default when empty.
+    required: false
+  bypass-header:
+    description: |
+      lint only. A "Name: value" header sent with every request, for a preview
+      behind deployment protection. The value is masked in the log; pass it
+      from a secret.
+    required: false
+  sarif-path:
+    description: lint only. Where the SARIF file is written.
+    required: false
+    default: maple-design-lint.sarif
 
 outputs:
   open-count:
     description: Number of comments holding the gate.
   conclusion:
-    description: '"blocked", "clear" or "neutral" — Maple''s verdict, not the check run''s status.'
+    description: 'gate: "blocked", "clear" or "neutral", Maple''s verdict. lint: "success", "failure" or "neutral".'
   reason:
-    description: Why the verdict was reached, e.g. "comments-open" or "no-review". Branch on this.
+    description: Why the verdict was reached, e.g. "comments-open" or "no-review". Branch on this. Not set by lint.
+  finding-count:
+    description: lint only. Number of findings.
+  sarif-path:
+    description: lint only. The SARIF file written, for github/codeql-action/upload-sarif.
+  check-run-id:
+    description: lint only. The maple/design-lint check run, absent on a dry run.
 
 runs:
   using: node24
