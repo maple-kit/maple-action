@@ -26,8 +26,9 @@ paths = [
 # The committed bundle is generated from src/, which every rule still scans.
 # What it adds is its dependencies' own constants — `effect/ScheduleInterval`
 # and its like — which read as high-entropy strings and trip one rule and no
-# other. Scoped to that rule so a real key in the bundle is still caught.
+# other, as does Playwright's RFC 6455 sample nonce in a chunk. Scoped to that
+# rule so a real key in the bundle is still caught.
 [[allowlists]]
 description = "Vendored constants in the ncc bundle are not credentials"
 targetRules = ["generic-api-key"]
-paths = ['''^dist/index\.js(\.map)?$''']
+paths = ['''^dist/([0-9]+\.)?index\.js(\.map)?$''']

@@ -1,8 +1,8 @@
-export const id = 933;
-export const ids = [933];
+export const id = 176;
+export const ids = [176];
 export const modules = {
 
-/***/ 933:
+/***/ 4176:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 // ESM COMPAT FLAG
@@ -19,12 +19,13 @@ __webpack_require__.d(__webpack_exports__, {
   isSet: () => (/* reexport */ isSet),
   parseArgs: () => (/* reexport */ parseArgs$1),
   renderConnectorKinds: () => (/* reexport */ renderConnectorKinds),
-  run: () => (/* reexport */ run_run)
+  run: () => (/* reexport */ run_run),
+  runCiLint: () => (/* reexport */ runCiLint)
 });
 
 // EXTERNAL MODULE: external "node:util"
-var external_node_util_ = __webpack_require__(975);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/args.js
+var external_node_util_ = __webpack_require__(7975);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/args.js
 
 //#region src/args.ts
 const GLOBAL_FLAGS = {
@@ -36,7 +37,10 @@ var ArgsError = class extends Error {
 	name = "ArgsError";
 };
 function parseArgs$1(argv, spec, { strict = true } = {}) {
-	const options = Object.fromEntries(Object.entries(spec).map(([name, type]) => [name, { type }]));
+	const options = Object.fromEntries(Object.entries(spec).map(([name, type]) => [name, type === "strings" ? {
+		type: "string",
+		multiple: true
+	} : { type }]));
 	let parsed;
 	try {
 		parsed = (0,external_node_util_.parseArgs)({
@@ -49,7 +53,7 @@ function parseArgs$1(argv, spec, { strict = true } = {}) {
 		throw new ArgsError(firstSentence(error));
 	}
 	const flags = {};
-	for (const [name, value] of Object.entries(parsed.values)) if (typeof value === "string" || typeof value === "boolean") flags[name] = value;
+	for (const [name, value] of Object.entries(parsed.values)) if (typeof value === "string" || typeof value === "boolean" || Array.isArray(value)) flags[name] = value;
 	const [command, ...rest] = parsed.positionals;
 	return {
 		...command === void 0 ? {} : { command },
@@ -63,7 +67,7 @@ function firstSentence(error) {
 	return `${sentence}.`;
 }
 function describeFlags(spec) {
-	return Object.entries(spec).map(([name, type]) => type === "string" ? `--${name} <value>` : `--${name}`).join(", ");
+	return Object.entries(spec).map(([name, type]) => type === "boolean" ? `--${name}` : `--${name} <value>`).join(", ");
 }
 function isSet(flags, name) {
 	return flags[name] === true;
@@ -71,9 +75,1810 @@ function isSet(flags, name) {
 //#endregion
 
 
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/capabilities.js
-var capabilities = __webpack_require__(638);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/commands/connectors.js
+// EXTERNAL MODULE: external "node:fs/promises"
+var promises_ = __webpack_require__(1455);
+// EXTERNAL MODULE: external "node:path"
+var external_node_path_ = __webpack_require__(6760);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+lint@0.2.0_playwright@1.63.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@typ_ff7d1303e1b21e03aaad9e1728223e40/node_modules/@maple-kit/lint/dist/named-colors.js
+//#region src/named-colors.ts
+const NAMED_COLORS = {
+	aliceblue: [
+		240,
+		248,
+		255
+	],
+	antiquewhite: [
+		250,
+		235,
+		215
+	],
+	aqua: [
+		0,
+		255,
+		255
+	],
+	aquamarine: [
+		127,
+		255,
+		212
+	],
+	azure: [
+		240,
+		255,
+		255
+	],
+	beige: [
+		245,
+		245,
+		220
+	],
+	bisque: [
+		255,
+		228,
+		196
+	],
+	black: [
+		0,
+		0,
+		0
+	],
+	blanchedalmond: [
+		255,
+		235,
+		205
+	],
+	blue: [
+		0,
+		0,
+		255
+	],
+	blueviolet: [
+		138,
+		43,
+		226
+	],
+	brown: [
+		165,
+		42,
+		42
+	],
+	burlywood: [
+		222,
+		184,
+		135
+	],
+	cadetblue: [
+		95,
+		158,
+		160
+	],
+	chartreuse: [
+		127,
+		255,
+		0
+	],
+	chocolate: [
+		210,
+		105,
+		30
+	],
+	coral: [
+		255,
+		127,
+		80
+	],
+	cornflowerblue: [
+		100,
+		149,
+		237
+	],
+	cornsilk: [
+		255,
+		248,
+		220
+	],
+	crimson: [
+		220,
+		20,
+		60
+	],
+	cyan: [
+		0,
+		255,
+		255
+	],
+	darkblue: [
+		0,
+		0,
+		139
+	],
+	darkcyan: [
+		0,
+		139,
+		139
+	],
+	darkgoldenrod: [
+		184,
+		134,
+		11
+	],
+	darkgray: [
+		169,
+		169,
+		169
+	],
+	darkgreen: [
+		0,
+		100,
+		0
+	],
+	darkgrey: [
+		169,
+		169,
+		169
+	],
+	darkkhaki: [
+		189,
+		183,
+		107
+	],
+	darkmagenta: [
+		139,
+		0,
+		139
+	],
+	darkolivegreen: [
+		85,
+		107,
+		47
+	],
+	darkorange: [
+		255,
+		140,
+		0
+	],
+	darkorchid: [
+		153,
+		50,
+		204
+	],
+	darkred: [
+		139,
+		0,
+		0
+	],
+	darksalmon: [
+		233,
+		150,
+		122
+	],
+	darkseagreen: [
+		143,
+		188,
+		143
+	],
+	darkslateblue: [
+		72,
+		61,
+		139
+	],
+	darkslategray: [
+		47,
+		79,
+		79
+	],
+	darkslategrey: [
+		47,
+		79,
+		79
+	],
+	darkturquoise: [
+		0,
+		206,
+		209
+	],
+	darkviolet: [
+		148,
+		0,
+		211
+	],
+	deeppink: [
+		255,
+		20,
+		147
+	],
+	deepskyblue: [
+		0,
+		191,
+		255
+	],
+	dimgray: [
+		105,
+		105,
+		105
+	],
+	dimgrey: [
+		105,
+		105,
+		105
+	],
+	dodgerblue: [
+		30,
+		144,
+		255
+	],
+	firebrick: [
+		178,
+		34,
+		34
+	],
+	floralwhite: [
+		255,
+		250,
+		240
+	],
+	forestgreen: [
+		34,
+		139,
+		34
+	],
+	fuchsia: [
+		255,
+		0,
+		255
+	],
+	gainsboro: [
+		220,
+		220,
+		220
+	],
+	ghostwhite: [
+		248,
+		248,
+		255
+	],
+	gold: [
+		255,
+		215,
+		0
+	],
+	goldenrod: [
+		218,
+		165,
+		32
+	],
+	gray: [
+		128,
+		128,
+		128
+	],
+	green: [
+		0,
+		128,
+		0
+	],
+	greenyellow: [
+		173,
+		255,
+		47
+	],
+	grey: [
+		128,
+		128,
+		128
+	],
+	honeydew: [
+		240,
+		255,
+		240
+	],
+	hotpink: [
+		255,
+		105,
+		180
+	],
+	indianred: [
+		205,
+		92,
+		92
+	],
+	indigo: [
+		75,
+		0,
+		130
+	],
+	ivory: [
+		255,
+		255,
+		240
+	],
+	khaki: [
+		240,
+		230,
+		140
+	],
+	lavender: [
+		230,
+		230,
+		250
+	],
+	lavenderblush: [
+		255,
+		240,
+		245
+	],
+	lawngreen: [
+		124,
+		252,
+		0
+	],
+	lemonchiffon: [
+		255,
+		250,
+		205
+	],
+	lightblue: [
+		173,
+		216,
+		230
+	],
+	lightcoral: [
+		240,
+		128,
+		128
+	],
+	lightcyan: [
+		224,
+		255,
+		255
+	],
+	lightgoldenrodyellow: [
+		250,
+		250,
+		210
+	],
+	lightgray: [
+		211,
+		211,
+		211
+	],
+	lightgreen: [
+		144,
+		238,
+		144
+	],
+	lightgrey: [
+		211,
+		211,
+		211
+	],
+	lightpink: [
+		255,
+		182,
+		193
+	],
+	lightsalmon: [
+		255,
+		160,
+		122
+	],
+	lightseagreen: [
+		32,
+		178,
+		170
+	],
+	lightskyblue: [
+		135,
+		206,
+		250
+	],
+	lightslategray: [
+		119,
+		136,
+		153
+	],
+	lightslategrey: [
+		119,
+		136,
+		153
+	],
+	lightsteelblue: [
+		176,
+		196,
+		222
+	],
+	lightyellow: [
+		255,
+		255,
+		224
+	],
+	lime: [
+		0,
+		255,
+		0
+	],
+	limegreen: [
+		50,
+		205,
+		50
+	],
+	linen: [
+		250,
+		240,
+		230
+	],
+	magenta: [
+		255,
+		0,
+		255
+	],
+	maroon: [
+		128,
+		0,
+		0
+	],
+	mediumaquamarine: [
+		102,
+		205,
+		170
+	],
+	mediumblue: [
+		0,
+		0,
+		205
+	],
+	mediumorchid: [
+		186,
+		85,
+		211
+	],
+	mediumpurple: [
+		147,
+		112,
+		219
+	],
+	mediumseagreen: [
+		60,
+		179,
+		113
+	],
+	mediumslateblue: [
+		123,
+		104,
+		238
+	],
+	mediumspringgreen: [
+		0,
+		250,
+		154
+	],
+	mediumturquoise: [
+		72,
+		209,
+		204
+	],
+	mediumvioletred: [
+		199,
+		21,
+		133
+	],
+	midnightblue: [
+		25,
+		25,
+		112
+	],
+	mintcream: [
+		245,
+		255,
+		250
+	],
+	mistyrose: [
+		255,
+		228,
+		225
+	],
+	moccasin: [
+		255,
+		228,
+		181
+	],
+	navajowhite: [
+		255,
+		222,
+		173
+	],
+	navy: [
+		0,
+		0,
+		128
+	],
+	oldlace: [
+		253,
+		245,
+		230
+	],
+	olive: [
+		128,
+		128,
+		0
+	],
+	olivedrab: [
+		107,
+		142,
+		35
+	],
+	orange: [
+		255,
+		165,
+		0
+	],
+	orangered: [
+		255,
+		69,
+		0
+	],
+	orchid: [
+		218,
+		112,
+		214
+	],
+	palegoldenrod: [
+		238,
+		232,
+		170
+	],
+	palegreen: [
+		152,
+		251,
+		152
+	],
+	paleturquoise: [
+		175,
+		238,
+		238
+	],
+	palevioletred: [
+		219,
+		112,
+		147
+	],
+	papayawhip: [
+		255,
+		239,
+		213
+	],
+	peachpuff: [
+		255,
+		218,
+		185
+	],
+	peru: [
+		205,
+		133,
+		63
+	],
+	pink: [
+		255,
+		192,
+		203
+	],
+	plum: [
+		221,
+		160,
+		221
+	],
+	powderblue: [
+		176,
+		224,
+		230
+	],
+	purple: [
+		128,
+		0,
+		128
+	],
+	rebeccapurple: [
+		102,
+		51,
+		153
+	],
+	red: [
+		255,
+		0,
+		0
+	],
+	rosybrown: [
+		188,
+		143,
+		143
+	],
+	royalblue: [
+		65,
+		105,
+		225
+	],
+	saddlebrown: [
+		139,
+		69,
+		19
+	],
+	salmon: [
+		250,
+		128,
+		114
+	],
+	sandybrown: [
+		244,
+		164,
+		96
+	],
+	seagreen: [
+		46,
+		139,
+		87
+	],
+	seashell: [
+		255,
+		245,
+		238
+	],
+	sienna: [
+		160,
+		82,
+		45
+	],
+	silver: [
+		192,
+		192,
+		192
+	],
+	skyblue: [
+		135,
+		206,
+		235
+	],
+	slateblue: [
+		106,
+		90,
+		205
+	],
+	slategray: [
+		112,
+		128,
+		144
+	],
+	slategrey: [
+		112,
+		128,
+		144
+	],
+	snow: [
+		255,
+		250,
+		250
+	],
+	springgreen: [
+		0,
+		255,
+		127
+	],
+	steelblue: [
+		70,
+		130,
+		180
+	],
+	tan: [
+		210,
+		180,
+		140
+	],
+	teal: [
+		0,
+		128,
+		128
+	],
+	thistle: [
+		216,
+		191,
+		216
+	],
+	tomato: [
+		255,
+		99,
+		71
+	],
+	turquoise: [
+		64,
+		224,
+		208
+	],
+	violet: [
+		238,
+		130,
+		238
+	],
+	wheat: [
+		245,
+		222,
+		179
+	],
+	white: [
+		255,
+		255,
+		255
+	],
+	whitesmoke: [
+		245,
+		245,
+		245
+	],
+	yellow: [
+		255,
+		255,
+		0
+	],
+	yellowgreen: [
+		154,
+		205,
+		50
+	]
+};
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+lint@0.2.0_playwright@1.63.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@typ_ff7d1303e1b21e03aaad9e1728223e40/node_modules/@maple-kit/lint/dist/color.js
+
+//#region src/color.ts
+const HEX_SHORT = /^#([\da-f])([\da-f])([\da-f])([\da-f])?$/i;
+const HEX_LONG = /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})?$/i;
+const FUNCTIONAL = /^rgba?\(([^)]+)\)$/i;
+const HSL = /^hsla?\(([^)]+)\)$/i;
+const SRGB = /^color\(\s?srgb\s([^)]+)\)$/i;
+const TURNS = {
+	deg: 1,
+	grad: .9,
+	rad: 180 / Math.PI,
+	turn: 360
+};
+function channel(part, scale) {
+	const text = part.trim();
+	const value = Number.parseFloat(text);
+	if (Number.isNaN(value)) return NaN;
+	return text.endsWith("%") ? value / 100 * scale : value;
+}
+function parseHex(text) {
+	const match = HEX_SHORT.exec(text) ?? HEX_LONG.exec(text);
+	if (!match) return void 0;
+	const short = match[0].length <= 5;
+	const read = (part) => Number.parseInt(short ? part + part : part, 16);
+	const alpha = match[4];
+	return {
+		r: read(match[1]),
+		g: read(match[2]),
+		b: read(match[3]),
+		a: alpha === void 0 ? 1 : read(alpha) / 255
+	};
+}
+function argumentsOf(body) {
+	const [channels, slashed] = body.split("/");
+	const parts = channels.trim().split(/[\s,]+/).filter(Boolean);
+	return {
+		parts,
+		alpha: slashed ?? parts[3]
+	};
+}
+function parseFunctional(text) {
+	const call = FUNCTIONAL.exec(text);
+	if (!call) return void 0;
+	const { parts, alpha } = argumentsOf(call[1]);
+	if (parts.length < 3) return void 0;
+	const [r, g, b] = parts.map((part) => channel(part, 255));
+	const a = channel(alpha ?? "1", 1);
+	if ([
+		r,
+		g,
+		b,
+		a
+	].some((value) => Number.isNaN(value))) return void 0;
+	return {
+		r,
+		g,
+		b,
+		a
+	};
+}
+function hue(part) {
+	const text = part.trim();
+	const value = Number.parseFloat(text);
+	if (Number.isNaN(value)) return NaN;
+	const lower = text.toLowerCase();
+	const unit = Object.entries(TURNS).find(([name]) => lower.endsWith(name));
+	return value * (unit === void 0 ? 1 : unit[1]);
+}
+function fromHsl(degrees, saturation, lightness) {
+	const turned = (degrees % 360 + 360) % 360;
+	const reach = saturation * Math.min(lightness, 1 - lightness);
+	const at = (offset) => {
+		const k = (offset + turned / 30) % 12;
+		return (lightness - reach * Math.max(-1, Math.min(k - 3, 9 - k, 1))) * 255;
+	};
+	return {
+		r: at(0),
+		g: at(8),
+		b: at(4)
+	};
+}
+function parseHsl(text) {
+	const call = HSL.exec(text);
+	if (!call) return void 0;
+	const { parts, alpha } = argumentsOf(call[1]);
+	if (parts.length < 3) return void 0;
+	const degrees = hue(parts[0]);
+	const saturation = channel(parts[1], 1) / (parts[1].includes("%") ? 1 : 100);
+	const lightness = channel(parts[2], 1) / (parts[2].includes("%") ? 1 : 100);
+	const a = channel(alpha ?? "1", 1);
+	if ([
+		degrees,
+		saturation,
+		lightness,
+		a
+	].some((value) => Number.isNaN(value))) return void 0;
+	return {
+		...fromHsl(degrees, saturation, lightness),
+		a
+	};
+}
+function parseSrgb(text) {
+	const call = SRGB.exec(text);
+	if (!call) return void 0;
+	const { parts, alpha } = argumentsOf(call[1]);
+	if (parts.length < 3) return void 0;
+	const [r, g, b] = parts.map((part) => channel(part, 1) * 255);
+	const a = channel(alpha ?? "1", 1);
+	if ([
+		r,
+		g,
+		b,
+		a
+	].some((value) => Number.isNaN(value))) return void 0;
+	return {
+		r,
+		g,
+		b,
+		a
+	};
+}
+function parseNamed(text) {
+	const name = text.toLowerCase();
+	if (name === "transparent") return {
+		r: 0,
+		g: 0,
+		b: 0,
+		a: 0
+	};
+	const found = NAMED_COLORS[name];
+	return found === void 0 ? void 0 : {
+		r: found[0],
+		g: found[1],
+		b: found[2],
+		a: 1
+	};
+}
+const PARSERS = [
+	parseHex,
+	parseFunctional,
+	parseHsl,
+	parseSrgb,
+	parseNamed
+];
+const COLOUR_SHAPED = /^(#|rgba?\(|hsla?\(|hwb\(|lab\(|lch\(|oklab\(|oklch\(|color\()/i;
+function isUnreadableColor(value) {
+	const text = value.trim();
+	if (parseColor(text) !== void 0) return false;
+	return COLOUR_SHAPED.test(text);
+}
+function parseColor(value) {
+	const text = value.trim();
+	for (const parse of PARSERS) {
+		const found = parse(text);
+		if (found) return found;
+	}
+}
+function colorKey(color) {
+	const round = (value) => Math.round(value);
+	return `${round(color.r)},${round(color.g)},${round(color.b)},${color.a.toFixed(3)}`;
+}
+function over(color, backdrop) {
+	const mix = (top, bottom) => top * color.a + bottom * (1 - color.a);
+	return {
+		r: mix(color.r, backdrop.r),
+		g: mix(color.g, backdrop.g),
+		b: mix(color.b, backdrop.b),
+		a: 1
+	};
+}
+function relativeLuminance(color) {
+	const [r, g, b] = [
+		color.r,
+		color.g,
+		color.b
+	].map((value) => {
+		const channelValue = value / 255;
+		return channelValue <= .04045 ? channelValue / 12.92 : ((channelValue + .055) / 1.055) ** 2.4;
+	});
+	return .2126 * r + .7152 * g + .0722 * b;
+}
+function contrastRatio(foreground, background) {
+	const first = relativeLuminance(foreground);
+	const second = relativeLuminance(background);
+	const lighter = Math.max(first, second);
+	const darker = Math.min(first, second);
+	return (lighter + .05) / (darker + .05);
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+lint@0.2.0_playwright@1.63.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@typ_ff7d1303e1b21e03aaad9e1728223e40/node_modules/@maple-kit/lint/dist/tokens.js
+
+
+//#region src/tokens.ts
+const ROOT_FONT_SIZE = 16;
+const DECLARATION = /(--\w[\w-]*)\s*:([^;}]+)/g;
+const REFERENCE = /^var\(\s*(--[\w-]+)\s*(?:,([^)]*))?\)$/;
+const MAX_INDIRECTION = 8;
+const LENGTH = /^(-?[\d.]+)(px|rem|em)$/;
+function lengthToPx(value, rootFontSize = 16) {
+	const match = LENGTH.exec(value.trim());
+	if (!match) return void 0;
+	const size = Number.parseFloat(match[1]);
+	return match[2] === "px" ? size : size * rootFontSize;
+}
+function resolve(value, names, depth = 0) {
+	const reference = REFERENCE.exec(value.trim());
+	if (!reference || depth >= MAX_INDIRECTION) return value;
+	const next = names.get(reference[1]) ?? reference[2]?.trim();
+	return next === void 0 ? value : resolve(next, names, depth + 1);
+}
+function parseTokens(css, rootFontSize = 16) {
+	const colors = /* @__PURE__ */ new Set();
+	const fontSizes = /* @__PURE__ */ new Set();
+	const names = /* @__PURE__ */ new Map();
+	const unreadable = /* @__PURE__ */ new Map();
+	for (const [, name, raw] of css.matchAll(DECLARATION)) names.set(name, raw.trim());
+	for (const [name, declared] of names) {
+		const value = resolve(declared, names);
+		const color = parseColor(value);
+		if (color) colors.add(colorKey(color));
+		else if (isUnreadableColor(value)) unreadable.set(name, value);
+		const length = lengthToPx(value, rootFontSize);
+		if (length !== void 0 && isTypeToken(name)) fontSizes.add(length);
+	}
+	return {
+		colors,
+		fontSizes,
+		names,
+		unreadable
+	};
+}
+function isTypeToken(name) {
+	return /(^|-)(text|font|type)(-|$)/.test(name);
+}
+async function readTokenFiles(paths, rootFontSize = 16) {
+	return parseTokens((await Promise.all(paths.map((path) => (0,promises_.readFile)(path, "utf8")))).join("\n"), rootFontSize);
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+lint@0.2.0_playwright@1.63.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@typ_ff7d1303e1b21e03aaad9e1728223e40/node_modules/@maple-kit/lint/dist/rendered/rules.js
+
+//#region src/rendered/rules.ts
+const MOTION_SAFE = ["opacity", "transform"];
+const MIN_TOUCH_TARGET = 24;
+const DOCS = "https://github.com/maple-kit/maple/blob/main/docs/lint.md";
+const RENDERED_RULES = [
+	{
+		id: "maple/rendered-color-token",
+		severity: "error",
+		summary: "Colours come from the token set."
+	},
+	{
+		id: "maple/rendered-type-scale",
+		severity: "error",
+		summary: "Font sizes come from the type scale."
+	},
+	{
+		id: "maple/rendered-touch-target",
+		severity: "error",
+		summary: `Interactive elements are at least 24px on both axes.`
+	},
+	{
+		id: "maple/rendered-contrast",
+		severity: "error",
+		summary: "Text meets WCAG AA contrast."
+	},
+	{
+		id: "maple/rendered-motion-property",
+		severity: "error",
+		summary: "Motion animates only opacity and transform."
+	},
+	{
+		id: "maple/rendered-reduced-motion",
+		severity: "error",
+		summary: "Motion stops under prefers-reduced-motion."
+	}
+];
+const SEVERITY = new Map(RENDERED_RULES.map((rule) => [rule.id, rule.severity]));
+function finding(rule, record, message) {
+	return {
+		rule,
+		tier: "rendered",
+		severity: SEVERITY.get(rule) ?? "warn",
+		message,
+		anchor: record.anchor,
+		url: `${DOCS}#${rule.replace("maple/", "")}`
+	};
+}
+function isTokenColor(color, tokens) {
+	return tokens.colors.has(colorKey(color)) || tokens.colors.has(colorKey({
+		...color,
+		a: 1
+	}));
+}
+function colorFindings(record, tokens) {
+	const rule = "maple/rendered-color-token";
+	if (tokens.colors.size === 0) return [];
+	return [["text colour", record.color], ["background", record.backgroundColor]].flatMap(([what, value]) => {
+		const color = parseColor(value);
+		if (!color || color.a === 0 || isTokenColor(color, tokens)) return [];
+		return [finding(rule, record, `The ${what} ${value} is not a token.`)];
+	});
+}
+function typeScaleFindings(record, tokens) {
+	if (tokens.fontSizes.size === 0 || tokens.fontSizes.has(record.fontSize)) return [];
+	const scale = [...tokens.fontSizes].sort((first, second) => first - second).join("px, ");
+	return [finding("maple/rendered-type-scale", record, `The font size ${record.fontSize}px is off the scale (${scale}px).`)];
+}
+function touchTargetFindings(record) {
+	const tooSmall = record.width < 24 || record.height < 24;
+	if (!record.interactive || !tooSmall || record.width === 0 || record.height === 0) return [];
+	const size = `${Math.round(record.width)}×${Math.round(record.height)}px`;
+	return [finding("maple/rendered-touch-target", record, `This ${record.tag} is ${size}, under the 24px touch target.`)];
+}
+function isLargeText(record) {
+	return record.fontSize >= 24 || record.fontSize >= 18.66 && record.fontWeight >= 700;
+}
+function contrastFindings(record) {
+	if (!record.paintsText || record.text === "") return [];
+	const foreground = parseColor(record.color);
+	const backdrop = parseColor(record.backdrop);
+	if (!foreground || !backdrop) return [];
+	const ratio = contrastRatio(over(foreground, backdrop), backdrop);
+	const required = isLargeText(record) ? 3 : 4.5;
+	if (ratio >= required) return [];
+	return [finding("maple/rendered-contrast", record, `Contrast is ${ratio.toFixed(2)}:1, under the ${required}:1 this text needs.`)];
+}
+function transitioned(record) {
+	return record.transitionProperty.split(",").map((property) => property.trim()).filter((property) => property !== "" && property !== "none");
+}
+function isStill(duration) {
+	return duration.split(",").every((value) => Number.parseFloat(value) === 0 || Number.isNaN(Number.parseFloat(value)));
+}
+function motionPropertyFindings(record) {
+	const rule = "maple/rendered-motion-property";
+	const safe = (property) => MOTION_SAFE.includes(property);
+	const moving = isStill(record.transitionDuration) ? [] : transitioned(record);
+	const animated = isStill(record.animationDuration) ? [] : record.animationProperties;
+	const offending = [.../* @__PURE__ */ new Set([...moving, ...animated])].filter((property) => !safe(property));
+	if (offending.length === 0) return [];
+	return [finding(rule, record, `Motion is on ${offending.join(", ")}, not opacity or transform.`)];
+}
+function renderedFindings(records, tokens) {
+	return records.flatMap((record) => [
+		...colorFindings(record, tokens),
+		...typeScaleFindings(record, tokens),
+		...touchTargetFindings(record),
+		...contrastFindings(record),
+		...motionPropertyFindings(record)
+	]);
+}
+function unreadableColors(records) {
+	const found = /* @__PURE__ */ new Set();
+	for (const record of records) for (const value of [
+		record.color,
+		record.backgroundColor,
+		record.backdrop
+	]) if (isUnreadableColor(value)) found.add(value);
+	return [...found];
+}
+function movesBeyondFade(record) {
+	const moving = isStill(record.transitionDuration) ? [] : transitioned(record);
+	const animated = isStill(record.animationDuration) ? [] : record.animationProperties;
+	const properties = [.../* @__PURE__ */ new Set([...moving, ...animated])];
+	return properties.length > 0 && properties.some((property) => property !== "opacity");
+}
+function reducedMotionFindings(records) {
+	return records.filter((record) => movesBeyondFade(record)).map((record) => finding("maple/rendered-reduced-motion", record, "This still moves under prefers-reduced-motion."));
+}
+//#endregion
+
+
+// EXTERNAL MODULE: external "node:fs"
+var external_node_fs_ = __webpack_require__(3024);
+// EXTERNAL MODULE: external "node:url"
+var external_node_url_ = __webpack_require__(3136);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/logger/sinks/console.js
+//#region src/logger/sinks/console.ts
+const METHOD = {
+	debug: "debug",
+	info: "info",
+	warn: "warn",
+	error: "error"
+};
+function prefix(record) {
+	return `${record.at.slice(11, 23)} ${record.level.padEnd(5)} ${record.message}`;
+}
+function consoleSink() {
+	return {
+		name: "console",
+		write(record) {
+			const write = console[METHOD[record.level]].bind(console);
+			const hasFields = Object.keys(record.fields).length > 0;
+			if (record.error) {
+				write(prefix(record), hasFields ? record.fields : "", record.error);
+				return;
+			}
+			if (hasFields) {
+				write(prefix(record), record.fields);
+				return;
+			}
+			write(prefix(record));
+		}
+	};
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/logger/types.js
+//#region src/logger/types.ts
+const LEVEL_RANK = {
+	debug: 10,
+	info: 20,
+	warn: 30,
+	error: 40
+};
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/logger/logger.js
+
+
+//#region src/logger/logger.ts
+function writeSafely(sink, record) {
+	try {
+		sink.write(record);
+	} catch {}
+}
+function splitErrorArgument(argument) {
+	if (argument instanceof Error) return {
+		fields: {},
+		error: argument
+	};
+	return { fields: argument ?? {} };
+}
+function createLogger(options = {}) {
+	const sinks = options.sinks ?? [consoleSink()];
+	const threshold = LEVEL_RANK[options.level ?? "info"];
+	const bound = options.fields ?? {};
+	function emit(level, message, fields, error) {
+		if (LEVEL_RANK[level] < threshold) return;
+		const record = {
+			level,
+			message,
+			at: (/* @__PURE__ */ new Date()).toISOString(),
+			fields: {
+				...bound,
+				...fields
+			},
+			...error ? { error } : {}
+		};
+		for (const sink of sinks) writeSafely(sink, record);
+	}
+	return {
+		debug: (message, fields = {}) => emit("debug", message, fields),
+		info: (message, fields = {}) => emit("info", message, fields),
+		warn: (message, fields = {}) => emit("warn", message, fields),
+		error: (message, argument) => {
+			const { fields, error } = splitErrorArgument(argument);
+			emit("error", message, fields, error);
+		},
+		child: (fields) => createLogger({
+			sinks,
+			level: options.level ?? "info",
+			fields: {
+				...bound,
+				...fields
+			}
+		})
+	};
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/overlay/context.js
+
+//#region src/overlay/context.ts
+const REGION_SELECTOR = "[role=\"dialog\"], [role=\"complementary\"], [role=\"navigation\"], dialog[open], details[open], [aria-expanded=\"true\"], [data-state=\"open\"]";
+const MINIMUM_REGION_WIDTH = 24;
+function captureContext(options = {}) {
+	const breakpoint = firstMatching(options.breakpoints);
+	const layout = options.layout?.();
+	const mock = activeRecipe();
+	return {
+		url: location.href,
+		viewport: viewport(),
+		scheme: matches("(prefers-color-scheme: dark)") ? "dark" : "light",
+		...breakpoint === void 0 ? {} : { breakpoint },
+		locale: navigator.language,
+		timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+		reducedMotion: matches("(prefers-reduced-motion: reduce)"),
+		regions: regions(),
+		...layout === void 0 ? {} : { layout },
+		...mock === void 0 ? {} : { mock },
+		capturedAt: (/* @__PURE__ */ new Date()).toISOString()
+	};
+}
+function toCommentContext(page) {
+	return {
+		url: page.url,
+		viewportWidth: page.viewport.width,
+		viewportHeight: page.viewport.height,
+		contentWidth: page.viewport.contentWidth,
+		devicePixelRatio: page.viewport.dpr,
+		colorScheme: page.scheme,
+		locale: page.locale,
+		...page.breakpoint === void 0 ? {} : { breakpoint: page.breakpoint },
+		...page.regions.length === 0 ? {} : { regions: page.regions },
+		...page.mock === void 0 ? {} : { mock: page.mock }
+	};
+}
+function formatContext(context, detail = "developer") {
+	const fields = badgeFields(context);
+	return (detail === "developer" ? developerBadge(fields) : defaultBadge(fields)).join(" · ");
+}
+function defaultBadge(fields) {
+	return [
+		`${fields.width}px wide`,
+		fields.scheme,
+		...fields.regions.flatMap((region) => [`${region.width}px covered`, `${region.label ?? region.role} open`])
+	];
+}
+function developerBadge(fields) {
+	return [
+		`${fields.width} window`,
+		`${fields.contentWidth} content`,
+		fields.scheme,
+		...fields.breakpoint === void 0 ? [] : [fields.breakpoint],
+		`${fields.dpr}×`,
+		...fields.locale === void 0 ? [] : [fields.locale],
+		...fields.regions.map((region) => `${region.label ?? region.role} open`)
+	];
+}
+function contextRows(context) {
+	const fields = badgeFields(context);
+	const covered = fields.width - fields.contentWidth;
+	return [
+		{
+			label: "Width",
+			value: `${String(fields.width)}px`,
+			...covered > 0 ? { note: `${String(covered)}px covered` } : {}
+		},
+		{
+			label: "Content",
+			value: `${String(fields.contentWidth)}px`
+		},
+		...fields.breakpoint === void 0 ? [] : [{
+			label: "Breakpoint",
+			value: fields.breakpoint
+		}],
+		{
+			label: "Theme",
+			value: fields.scheme
+		},
+		{
+			label: "Pixel ratio",
+			value: `${String(fields.dpr)}×`
+		},
+		...fields.locale === void 0 ? [] : [{
+			label: "Locale",
+			value: fields.locale,
+			mono: true
+		}],
+		...openRow(fields)
+	];
+}
+function openRow(fields) {
+	if (fields.regions.length === 0) return [];
+	return [{
+		label: "Open",
+		value: fields.regions.map((region) => region.label ?? region.role).join(", ")
+	}];
+}
+function badgeFields(context) {
+	const page = "viewport" in context ? context : void 0;
+	const stored = context;
+	return {
+		width: page ? page.viewport.width : stored.viewportWidth,
+		contentWidth: page ? page.viewport.contentWidth : stored.contentWidth,
+		scheme: page ? page.scheme : stored.colorScheme,
+		breakpoint: context.breakpoint,
+		dpr: page ? page.viewport.dpr : stored.devicePixelRatio,
+		locale: page ? page.locale : stored.locale,
+		regions: context.regions ?? []
+	};
+}
+function viewport() {
+	const visual = window.visualViewport;
+	return {
+		width: window.innerWidth,
+		height: window.innerHeight,
+		contentWidth: document.documentElement.clientWidth,
+		dpr: window.devicePixelRatio,
+		...visual ? { scale: visual.scale } : {}
+	};
+}
+function firstMatching(breakpoints) {
+	return breakpoints?.find(([, query]) => matches(query))?.[0];
+}
+function matches(query) {
+	return window.matchMedia(query).matches;
+}
+function regions() {
+	const found = [];
+	for (const element of document.querySelectorAll(REGION_SELECTOR)) {
+		const width = element.getBoundingClientRect().width;
+		if (width < MINIMUM_REGION_WIDTH) continue;
+		const label = accessibleName(element);
+		found.push({
+			role: element.getAttribute("role") ?? element.tagName.toLowerCase(),
+			...label === void 0 ? {} : { label },
+			width: Math.round(width)
+		});
+	}
+	return found;
+}
+function accessibleName(element) {
+	const label = element.getAttribute("aria-label")?.trim();
+	if (label) return label;
+	const id = element.getAttribute("aria-labelledby");
+	return (id ? document.getElementById(id)?.textContent?.trim() : void 0) || void 0;
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+lint@0.2.0_playwright@1.63.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@typ_ff7d1303e1b21e03aaad9e1728223e40/node_modules/@maple-kit/lint/dist/rendered/audit.js
+
+
+
+
+
+
+//#region src/rendered/audit.ts
+const DEFAULT_VIEWPORTS = [
+	{
+		width: 375,
+		height: 812
+	},
+	{
+		width: 768,
+		height: 1024
+	},
+	{
+		width: 1440,
+		height: 900
+	}
+];
+function warnGaps(log, tokens, seen) {
+	for (const [name, value] of tokens.unreadable) log.warn("Token could not be read, so nothing is checked against it", {
+		token: name,
+		value
+	});
+	if (seen.length > 0) log.warn("Colours on the page could not be read, so they were not judged", { values: seen });
+	if (tokens.colors.size === 0) log.warn("No colour token was found, so the colour rule checked nothing", {});
+	if (tokens.fontSizes.size === 0) log.warn("No type token was found, so the type-scale rule checked nothing", { hint: "a type token is named --…-text-…, --…-font-… or --…-type-…" });
+}
+function label(viewport) {
+	return `${viewport.width}×${viewport.height}`;
+}
+function pageBundle() {
+	const path = (0,external_node_url_.fileURLToPath)(__webpack_require__.ab + "page.iife.js");
+	if ((0,external_node_fs_.existsSync)(path)) return path;
+	throw new Error(`@maple-kit/lint: the page bundle is missing at ${path}. Run \`pnpm --filter @maple-kit/lint build\` before linting from source.`);
+}
+async function read(page) {
+	await page.addScriptTag({ path: pageBundle() });
+	return await page.evaluate(() => {
+		const run = window.__mapleLintRead;
+		if (!run) throw new Error("@maple-kit/lint: the page bundle did not install its reader.");
+		return run();
+	});
+}
+async function collect(context, visit) {
+	const { url, timeout, settleMs } = visit;
+	const page = await context.newPage();
+	try {
+		await page.goto(url, {
+			waitUntil: "load",
+			timeout
+		});
+		if (settleMs > 0) await page.waitForTimeout(settleMs);
+		return await read(page);
+	} finally {
+		await context.close();
+	}
+}
+async function auditViewport(browser, options, viewport, tokens) {
+	const shared = {
+		viewport,
+		bypassCSP: true,
+		...options.bypassHeaders === void 0 ? {} : { extraHTTPHeaders: options.bypassHeaders }
+	};
+	const visit = {
+		url: options.url,
+		timeout: options.timeout ?? 3e4,
+		settleMs: options.settleMs ?? 0
+	};
+	const seen = await collect(await browser.newContext(shared), visit);
+	const reduced = await collect(await browser.newContext({
+		...shared,
+		reducedMotion: "reduce"
+	}), visit);
+	return {
+		viewport,
+		context: toCommentContext(seen.context),
+		unreadable: unreadableColors(seen.records),
+		findings: [...renderedFindings(seen.records, tokens), ...reducedMotionFindings(reduced.records)]
+	};
+}
+function keyOf(found) {
+	const { key, source, component, selector } = found.anchor;
+	const place = [
+		key,
+		source,
+		component,
+		selector
+	].map((rung) => rung ?? "").join("\0");
+	return `${found.rule}\u0000${place}\u0000${found.message}`;
+}
+function dedupe(passes) {
+	const groups = /* @__PURE__ */ new Map();
+	for (const pass of passes) for (const found of pass.findings) {
+		const group = groups.get(keyOf(found)) ?? {
+			found,
+			at: [],
+			context: pass.context
+		};
+		group.at.push(label(pass.viewport));
+		groups.set(keyOf(found), group);
+	}
+	return [...groups.values()].map(({ found, at, context }) => ({
+		finding: at.length === passes.length ? found : {
+			...found,
+			message: `${found.message} At ${at.join(", ")}.`
+		},
+		context
+	}));
+}
+async function launch() {
+	const { chromium } = await Promise.all(/* import() */[__webpack_require__.e(826), __webpack_require__.e(248)]).then(__webpack_require__.bind(__webpack_require__, 8826));
+	return chromium.launch();
+}
+function widest(passes) {
+	const found = [...passes].sort((a, b) => b.viewport.width - a.viewport.width)[0];
+	if (!found) throw new Error("@maple-kit/lint: a run needs at least one viewport.");
+	return found.context;
+}
+async function lintRendered(options) {
+	const tokens = await readTokenFiles(options.tokenFiles);
+	const viewports = options.viewports ?? DEFAULT_VIEWPORTS;
+	const browser = options.browser ?? await launch();
+	try {
+		const passes = [];
+		for (const viewport of viewports) passes.push(await auditViewport(browser, options, viewport, tokens));
+		warnGaps(options.logger ?? createLogger({ level: "warn" }), tokens, [...new Set(passes.flatMap((pass) => pass.unreadable))]);
+		const seen = dedupe(passes);
+		return {
+			findings: seen.map((one) => one.finding),
+			contexts: seen.map((one) => one.context),
+			context: widest(passes)
+		};
+	} finally {
+		if (options.browser === void 0) await browser.close();
+	}
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+lint@0.2.0_playwright@1.63.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@typ_ff7d1303e1b21e03aaad9e1728223e40/node_modules/@maple-kit/lint/dist/report/place.js
+
+//#region src/report/place.ts
+const LOCATION = /^(.+?):(\d+)(?::(\d+))?$/;
+function placeOf(finding, root) {
+	const match = LOCATION.exec(finding.anchor.source ?? "");
+	if (match === null) return void 0;
+	const [, raw = "", line = "", column] = match;
+	const path = (0,external_node_path_.isAbsolute)(raw) ? inside(raw, root) : raw.replace(/^\.\//, "");
+	if (path === void 0 || path === "") return void 0;
+	return {
+		path,
+		line: Number(line),
+		...column === void 0 ? {} : { column: Number(column) }
+	};
+}
+function inside(absolute, root) {
+	if (root === void 0) return void 0;
+	const path = (0,external_node_path_.relative)(root, absolute);
+	if (path.startsWith("..") || (0,external_node_path_.isAbsolute)(path)) return void 0;
+	return path.split(external_node_path_.sep).join("/");
+}
+function describePlace(finding, root) {
+	const place = placeOf(finding, root);
+	if (place === void 0) return finding.anchor.selector ?? finding.anchor.component ?? "";
+	const column = place.column === void 0 ? "" : `:${String(place.column)}`;
+	return `${place.path}:${String(place.line)}${column}`;
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+lint@0.2.0_playwright@1.63.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@typ_ff7d1303e1b21e03aaad9e1728223e40/node_modules/@maple-kit/lint/dist/report/verdict.js
+
+//#region src/report/verdict.ts
+const LISTED = 50;
+function plural(count, noun) {
+	return `${String(count)} ${noun}${count === 1 ? "" : "s"}`;
+}
+function groupByRule(findings) {
+	const groups = /* @__PURE__ */ new Map();
+	for (const found of findings) groups.set(found.rule, [...groups.get(found.rule) ?? [], found]);
+	return groups;
+}
+function listing(findings, root) {
+	const lines = [];
+	for (const [rule, group] of groupByRule(findings)) {
+		lines.push(`### \`${rule}\` (${plural(group.length, "finding")})`, "");
+		for (const found of group) {
+			const place = describePlace(found, root);
+			const where = place === "" ? "" : `\`${place}\` `;
+			lines.push(`- ${where}${found.message}`);
+		}
+		lines.push("");
+	}
+	return lines.join("\n").trimEnd();
+}
+function verdictFor(findings, root) {
+	const errors = findings.filter((found) => found.severity === "error").length;
+	if (findings.length === 0) return {
+		conclusion: "success",
+		title: "No design findings",
+		summary: "No design findings."
+	};
+	const shown = findings.slice(0, LISTED);
+	const rest = findings.length - shown.length;
+	const counts = `${plural(errors, "error")}, ${plural(findings.length - errors, "other finding")}`;
+	const more = rest > 0 ? `\n\n…and ${String(rest)} more.` : "";
+	return {
+		conclusion: errors > 0 ? "failure" : "success",
+		title: `Design lint: ${counts}`,
+		summary: `${listing(shown, root)}${more}`
+	};
+}
+function unreachableVerdict(url, reason) {
+	return {
+		conclusion: "neutral",
+		title: "Preview not reachable",
+		summary: `Maple could not load ${url}, so nothing was checked.\n\n${reason}`
+	};
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+lint@0.2.0_playwright@1.63.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@typ_ff7d1303e1b21e03aaad9e1728223e40/node_modules/@maple-kit/lint/dist/report/sarif.js
+
+//#region src/report/sarif.ts
+const LEVEL = {
+	error: "error",
+	warn: "warning",
+	advice: "note"
+};
+function locationOf(finding, root) {
+	const place = placeOf(finding, root);
+	if (place === void 0) return { logicalLocations: [{
+		name: finding.anchor.selector ?? finding.anchor.component ?? "page",
+		kind: "element"
+	}] };
+	return { physicalLocation: {
+		artifactLocation: { uri: place.path },
+		region: {
+			startLine: place.line,
+			...place.column === void 0 ? {} : { startColumn: place.column }
+		}
+	} };
+}
+function ruleOf(finding) {
+	return {
+		id: finding.rule,
+		...finding.url === void 0 ? {} : { helpUri: finding.url }
+	};
+}
+function toSarif(findings, options = {}) {
+	return {
+		version: "2.1.0",
+		$schema: "https://json.schemastore.org/sarif-2.1.0.json",
+		runs: [{
+			tool: { driver: {
+				name: "maple/design-lint",
+				rules: [...new Map(findings.map((found) => [found.rule, ruleOf(found)])).values()]
+			} },
+			results: findings.map((found) => ({
+				ruleId: found.rule,
+				level: LEVEL[found.severity],
+				message: { text: found.message },
+				locations: [locationOf(found, options.root)]
+			}))
+		}]
+	};
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+lint@0.2.0_playwright@1.63.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@typ_ff7d1303e1b21e03aaad9e1728223e40/node_modules/@maple-kit/lint/dist/report/check-run.js
+
+//#region src/report/check-run.ts
+const DESIGN_LINT_CHECK = "maple/design-lint";
+const ANNOTATIONS_PER_REQUEST = 50;
+const check_run_LEVEL = {
+	error: "failure",
+	warn: "warning",
+	advice: "notice"
+};
+function annotationsFor(findings, root) {
+	return findings.flatMap((found) => {
+		const place = placeOf(found, root);
+		if (place === void 0) return [];
+		return [{
+			path: place.path,
+			start_line: place.line,
+			end_line: place.line,
+			annotation_level: check_run_LEVEL[found.severity],
+			title: found.rule,
+			message: found.message
+		}];
+	});
+}
+async function send(target, path, method, body) {
+	const response = await (target.fetch ?? globalThis.fetch)(`${target.baseUrl ?? "https://api.github.com"}${path}`, {
+		method,
+		headers: {
+			accept: "application/vnd.github+json",
+			authorization: `Bearer ${target.token}`,
+			"content-type": "application/json",
+			"x-github-api-version": "2022-11-28"
+		},
+		body: JSON.stringify(body)
+	});
+	if (!response.ok) {
+		const detail = await response.text().catch(() => "");
+		throw new Error(`GitHub ${String(response.status)} on ${method} ${path}: ${detail}`);
+	}
+	return await response.json();
+}
+async function inFlight(target, repo) {
+	if (target.appId === void 0) return void 0;
+	const call = target.fetch ?? globalThis.fetch;
+	const path = `${repo}/commits/${target.headSha}/check-runs?check_name=${encodeURIComponent(DESIGN_LINT_CHECK)}&filter=all`;
+	const response = await call(`${target.baseUrl ?? "https://api.github.com"}${path}`, { headers: {
+		accept: "application/vnd.github+json",
+		authorization: `Bearer ${target.token}`,
+		"x-github-api-version": "2022-11-28"
+	} });
+	if (!response.ok) throw new Error(`GitHub ${String(response.status)} on GET ${path}`);
+	const { check_runs } = await response.json();
+	const mine = check_runs.filter((run) => String(run.app?.id) === String(target.appId)).at(-1);
+	return mine && mine.status !== "completed" ? mine : void 0;
+}
+async function publishCheckRun(target, verdict, findings) {
+	const repo = `/repos/${target.owner}/${target.repo}`;
+	const all = annotationsFor(findings, target.root);
+	const output = {
+		title: verdict.title,
+		summary: verdict.summary
+	};
+	const body = {
+		status: "completed",
+		conclusion: verdict.conclusion,
+		completed_at: (/* @__PURE__ */ new Date()).toISOString(),
+		output: {
+			...output,
+			annotations: all.slice(0, ANNOTATIONS_PER_REQUEST)
+		}
+	};
+	const open = await inFlight(target, repo);
+	const created = open ? await send(target, `${repo}/check-runs/${String(open.id)}`, "PATCH", body) : await send(target, `${repo}/check-runs`, "POST", {
+		...body,
+		name: DESIGN_LINT_CHECK,
+		head_sha: target.headSha
+	});
+	for (let from = ANNOTATIONS_PER_REQUEST; from < all.length; from += ANNOTATIONS_PER_REQUEST) {
+		const annotations = all.slice(from, from + ANNOTATIONS_PER_REQUEST);
+		await send(target, `${repo}/check-runs/${String(created.id)}`, "PATCH", { output: {
+			...output,
+			annotations
+		} });
+	}
+	return created.id;
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/ci-lint.js
+
+
+
+//#region src/ci-lint.ts
+const UNREACHABLE = /page\.goto|net::ERR_|Timeout \d+ms exceeded/;
+function isUnreachable(error) {
+	return error instanceof Error && UNREACHABLE.test(error.message);
+}
+function lintOptions(options) {
+	return {
+		url: options.url,
+		tokenFiles: options.tokenFiles,
+		...options.viewports === void 0 ? {} : { viewports: options.viewports },
+		...options.bypassHeaders === void 0 ? {} : { bypassHeaders: options.bypassHeaders }
+	};
+}
+async function judge(options, deps, root) {
+	try {
+		const run = await (deps.lint ?? lintRendered)(lintOptions(options));
+		return {
+			findings: run.findings,
+			verdict: verdictFor(run.findings, root)
+		};
+	} catch (error) {
+		if (!isUnreachable(error)) throw error;
+		const reason = error instanceof Error ? error.message : String(error);
+		return {
+			findings: [],
+			verdict: unreachableVerdict(options.url, reason)
+		};
+	}
+}
+async function writeSarif(path, findings, root) {
+	await (0,promises_.mkdir)((0,external_node_path_.dirname)(path), { recursive: true });
+	await (0,promises_.writeFile)(path, `${JSON.stringify(toSarif(findings, { root }), null, 2)}\n`);
+}
+async function runCiLint(options, deps = {}) {
+	const root = deps.root ?? process.cwd();
+	const { findings, verdict } = await judge(options, deps, root);
+	if (options.sarifPath !== void 0) await writeSarif(options.sarifPath, findings, root);
+	const checkRunId = options.publish === void 0 ? void 0 : await publishCheckRun({
+		...options.publish,
+		root,
+		...deps.fetch === void 0 ? {} : { fetch: deps.fetch },
+		...deps.baseUrl === void 0 ? {} : { baseUrl: deps.baseUrl }
+	}, verdict, findings);
+	return {
+		conclusion: verdict.conclusion,
+		findings,
+		...options.sarifPath === void 0 ? {} : { sarifPath: options.sarifPath },
+		...checkRunId === void 0 ? {} : { checkRunId }
+	};
+}
+//#endregion
+
+
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/connectors/capabilities.js
+var capabilities = __webpack_require__(8799);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/commands/connectors.js
 
 //#region src/commands/connectors.ts
 function connectorKindRows() {
@@ -100,7 +1905,7 @@ function renderConnectorKinds(rows) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/commands/setup-app.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/commands/setup-app.js
 
 //#region src/commands/setup-app.ts
 const GITHUB_APP_PERMISSIONS = {
@@ -216,7 +2021,7 @@ function stringFlag(flags, name) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/help.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/help.js
 //#region src/help.ts
 const HELP = `maple — visual review comments on deployed previews
 
@@ -231,7 +2036,9 @@ Commands
   setup app         Print the prefilled GitHub App registration URL and the steps after it
   setup verify      Check that a comment App's Device Flow is on
   setup ci          Print or write the gate workflow, and the ruleset that requires it
-  solo              Keep a preview's comments on this machine: start the bridge, print the link
+  lint              Run the design-system lint against a preview, locally
+  ci lint           Run the design lint as CI does: SARIF and the maple/design-lint check
+  solo             Keep a preview's comments on this machine: start the bridge, print the link
 
 Options
   --json            Print machine-readable output where a command supports it
@@ -243,9 +2050,216 @@ by an agent as easily as by a person.`;
 //#endregion
 
 
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/mock/recipe.js
-var mock_recipe = __webpack_require__(32);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/mock/reading.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/commands/lint.js
+
+
+//#region src/commands/lint.ts
+const LINT_FLAGS = {
+	url: "string",
+	tokens: "strings",
+	viewport: "strings"
+};
+const LINT_USAGE = `Usage
+  maple lint --url=<preview> [--tokens=<file.css>]... [--viewport=<W>x<H>]... [--json]
+
+  --url       The preview to lint.
+  --tokens    A CSS file the design tokens are read from. Repeat for several.
+  --viewport  A size to judge at, such as 375x812. Repeat for several; the
+              default is a phone, a tablet and a laptop.
+
+  Exits 1 when any finding is an error.`;
+function valuesOf(flags, name) {
+	const value = flags[name];
+	if (Array.isArray(value)) return value;
+	return typeof value === "string" ? [value] : [];
+}
+function viewportOf(text) {
+	const match = /^(\d+)x(\d+)$/i.exec(text.trim());
+	if (match === null) return void 0;
+	const [width, height] = [Number(match[1]), Number(match[2])];
+	return width > 0 && height > 0 ? {
+		width,
+		height
+	} : void 0;
+}
+function readInputs(flags) {
+	const url = flags["url"];
+	if (typeof url !== "string" || url.trim() === "") return { error: "--url is required." };
+	const given = valuesOf(flags, "viewport");
+	const viewports = given.map(viewportOf);
+	const bad = given.find((_, index) => viewports[index] === void 0);
+	if (bad !== void 0) return { error: `--viewport must look like 375x812, not "${bad}".` };
+	return {
+		url: url.trim(),
+		tokenFiles: valuesOf(flags, "tokens"),
+		...given.length === 0 ? {} : { viewports }
+	};
+}
+function renderFindings(findings, root) {
+	if (findings.length === 0) return "No design findings.";
+	const lines = [];
+	for (const [rule, group] of groupByRule(findings)) {
+		lines.push(`${rule} (${String(group.length)})`);
+		for (const found of group) {
+			const place = describePlace(found, root);
+			const where = place === "" ? "" : `${place}  `;
+			lines.push(`  ${where}[${found.severity}] ${found.message}`);
+		}
+		lines.push("");
+	}
+	lines.push(verdictFor(findings, root).title);
+	return lines.join("\n");
+}
+async function lint({ flags }, run = lintRendered, root = process.cwd()) {
+	const inputs = readInputs(flags);
+	if ("error" in inputs) return {
+		output: `maple lint: ${inputs.error}\n\n${LINT_USAGE}`,
+		exitCode: 1
+	};
+	let findings;
+	try {
+		findings = (await run(inputs)).findings;
+	} catch (error) {
+		return {
+			output: `maple lint: ${error instanceof Error ? error.message : String(error)}`,
+			exitCode: 1
+		};
+	}
+	const { conclusion } = verdictFor(findings, root);
+	return {
+		output: isSet(flags, "json") ? JSON.stringify({
+			conclusion,
+			findings
+		}, null, 2) : renderFindings(findings, root),
+		exitCode: conclusion === "failure" ? 1 : 0
+	};
+}
+//#endregion
+
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/commands/ci-lint.js
+
+
+
+
+//#region src/commands/ci-lint.ts
+const CI_LINT_FLAGS = {
+	...LINT_FLAGS,
+	sarif: "string",
+	repo: "string",
+	sha: "string",
+	"app-id": "string",
+	"dry-run": "boolean"
+};
+const CI_LINT_USAGE = `Usage
+  maple ci lint --url=<preview> [--tokens=<file.css>]... [--viewport=<W>x<H>]...
+                [--sarif=<path>] [--repo=<owner/name>] [--sha=<sha>] [--dry-run]
+
+  Lints the preview, writes SARIF to --sarif, and publishes the maple/design-lint
+  check run on the head commit.
+
+  --repo     Defaults to GITHUB_REPOSITORY.
+  --sha      Defaults to the pull request's head commit in GITHUB_EVENT_PATH,
+             then GITHUB_SHA.
+  --app-id   The publishing App's id, so its own in-flight run is updated.
+             Defaults to MAPLE_APP_ID.
+  --dry-run  Print the verdict and publish nothing.
+
+  The token is read from MAPLE_GITHUB_TOKEN, then GITHUB_TOKEN. If the preview
+  cannot be reached the check is neutral, not a failure. Exits 1 on a failure.`;
+function ci_lint_text(flags, name) {
+	const value = flags[name];
+	return typeof value === "string" && value.trim() !== "" ? value.trim() : void 0;
+}
+async function headFromEvent(path) {
+	if (path === void 0 || path === "") return void 0;
+	try {
+		const sha = JSON.parse(await (0,promises_.readFile)(path, "utf8")).pull_request?.head?.sha;
+		return typeof sha === "string" ? sha : void 0;
+	} catch {
+		return;
+	}
+}
+async function publishTarget(flags, env) {
+	const [owner = "", repo = ""] = (ci_lint_text(flags, "repo") ?? env["GITHUB_REPOSITORY"] ?? "").split("/");
+	const headSha = ci_lint_text(flags, "sha") ?? await headFromEvent(env["GITHUB_EVENT_PATH"]) ?? env["GITHUB_SHA"];
+	const token = env["MAPLE_GITHUB_TOKEN"] || env["GITHUB_TOKEN"];
+	const missing = [
+		owner === "" || repo === "" ? "--repo (or GITHUB_REPOSITORY)" : "",
+		headSha === void 0 || headSha === "" ? "--sha (or GITHUB_SHA)" : "",
+		token === void 0 || token === "" ? "MAPLE_GITHUB_TOKEN (or GITHUB_TOKEN)" : ""
+	].filter((name) => name !== "");
+	if (missing.length > 0 || headSha === void 0 || token === void 0) return `to publish it needs ${missing.join(", ")}. Add --dry-run to print the verdict only.`;
+	const appId = Number(ci_lint_text(flags, "app-id") ?? env["MAPLE_APP_ID"]);
+	return {
+		token,
+		owner,
+		repo,
+		headSha,
+		...Number.isInteger(appId) && appId > 0 ? { appId } : {}
+	};
+}
+async function writeOutputs(path, result) {
+	if (path === void 0 || path === "") return;
+	const lines = [
+		`conclusion=${result.conclusion}`,
+		`findings=${String(result.findings.length)}`,
+		...result.sarifPath === void 0 ? [] : [`sarif-path=${result.sarifPath}`],
+		...result.checkRunId === void 0 ? [] : [`check-run-id=${String(result.checkRunId)}`]
+	];
+	await (0,promises_.appendFile)(path, `${lines.join("\n")}\n`);
+}
+function describe(result, dryRun) {
+	const lines = [
+		renderFindings(result.findings),
+		"",
+		`maple/design-lint: ${result.conclusion}`
+	];
+	if (result.sarifPath !== void 0) lines.push(`SARIF written to ${result.sarifPath}`);
+	if (result.checkRunId !== void 0) lines.push(`Check run ${String(result.checkRunId)} published`);
+	if (dryRun) lines.push("Dry run: nothing was published.");
+	return lines.join("\n");
+}
+async function ciLint({ flags }, { env = process.env, ...deps } = {}) {
+	const failed = (reason) => ({
+		output: `maple ci lint: ${reason}\n\n${CI_LINT_USAGE}`,
+		exitCode: 1
+	});
+	const inputs = readInputs(flags);
+	if ("error" in inputs) return failed(inputs.error);
+	const dryRun = isSet(flags, "dry-run");
+	const publish = dryRun ? void 0 : await publishTarget(flags, env);
+	if (typeof publish === "string") return failed(publish);
+	const sarif = ci_lint_text(flags, "sarif");
+	const baseUrl = env["GITHUB_API_URL"];
+	let result;
+	try {
+		result = await runCiLint({
+			...inputs,
+			...sarif === void 0 ? {} : { sarifPath: sarif },
+			...publish ? { publish } : {}
+		}, {
+			...baseUrl === void 0 || baseUrl === "" ? {} : { baseUrl },
+			...deps
+		});
+	} catch (error) {
+		return {
+			output: `maple ci lint: ${error instanceof Error ? error.message : String(error)}`,
+			exitCode: 1
+		};
+	}
+	await writeOutputs(env["GITHUB_OUTPUT"], result);
+	return {
+		output: isSet(flags, "json") ? JSON.stringify(result, null, 2) : describe(result, dryRun),
+		exitCode: result.conclusion === "failure" ? 1 : 0
+	};
+}
+//#endregion
+
+
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/mock/recipe.js
+var mock_recipe = __webpack_require__(7817);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/mock/reading.js
 
 //#region src/mock/reading.ts
 const PLAN_FLOOR = .4;
@@ -300,7 +2314,7 @@ function layersOf(plan) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/commands/mock-plan.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/commands/mock-plan.js
 
 //#region src/commands/mock-plan.ts
 const MOCK_PLAN_FLAGS = {
@@ -317,7 +2331,7 @@ const MOCK_PLAN_USAGE = `Usage
   --calls    The calls the page makes, comma-separated, as the box names them:
              "trpc:project.list,rest:GET /api/session".`;
 async function mockPlan(args, fetcher = globalThis.fetch) {
-	const asked = read(args);
+	const asked = mock_plan_read(args);
 	if (asked === void 0) return failed(MOCK_PLAN_USAGE);
 	let response;
 	try {
@@ -362,7 +2376,7 @@ function recipeFrom(plan, asked) {
 		exitCode: 0
 	};
 }
-function read(args) {
+function mock_plan_read(args) {
 	const [, sentence] = args.positionals;
 	const url = parsed(flag(args.flags, "url"));
 	const route = flag(args.flags, "route");
@@ -402,7 +2416,7 @@ function flag(flags, name) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/mock/shape.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/mock/shape.js
 //#region src/mock/shape.ts
 const SHAPE_SOURCES = [
 	"supplied",
@@ -460,7 +2474,7 @@ function createShapeIndex(documents) {
 			const rest = /^rest:([A-Z]+) (.*)$/.exec(key);
 			if (rest === null) return void 0;
 			const segments = rest[2].split("/");
-			return templates.find((template) => template.method === rest[1] && matches(template.segments, segments))?.shape;
+			return templates.find((template) => template.method === rest[1] && shape_matches(template.segments, segments))?.shape;
 		}
 	};
 }
@@ -474,7 +2488,7 @@ function shapesOf(source) {
 		for (const method of METHODS) {
 			const schema = responseSchema(item[method], source.codec);
 			if (schema === void 0) continue;
-			const key = keyOf(source, path, method);
+			const key = shape_keyOf(source, path, method);
 			const root = components === void 0 ? schema : withComponents(schema, components);
 			found.push([key, shapeFor(root, source)]);
 		}
@@ -488,7 +2502,7 @@ function shapeFor(schema, source) {
 		...source.superjson === true ? { superjson: true } : {}
 	};
 }
-function keyOf(source, path, method) {
+function shape_keyOf(source, path, method) {
 	if (source.codec === "trpc") return `trpc:${path.replace(/^\//, "")}`;
 	const full = `${source.prefix ?? ""}${path}`.replace(/\/{2,}/g, "/");
 	return `rest:${method.toUpperCase()} ${full.length > 1 ? full.replace(/\/$/, "") : full}`;
@@ -515,7 +2529,7 @@ function withComponents(schema, components) {
 		components
 	};
 }
-function matches(template, segments) {
+function shape_matches(template, segments) {
 	if (template.length !== segments.length) return false;
 	return template.every((part, index) => /^\{[^}]+\}$/.test(part) || part === segments[index]);
 }
@@ -525,11 +2539,7 @@ function isRecord(value) {
 //#endregion
 
 
-// EXTERNAL MODULE: external "node:fs/promises"
-var promises_ = __webpack_require__(455);
-// EXTERNAL MODULE: external "node:path"
-var external_node_path_ = __webpack_require__(760);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/commands/mock-schema.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/commands/mock-schema.js
 
 
 
@@ -615,7 +2625,7 @@ function mock_schema_flag(flags, name) {
 }
 async function loadGenerator() {
 	try {
-		return (await __webpack_require__(529)(GENERATOR)).generateOpenAPIDocument;
+		return (await __webpack_require__(2586)(GENERATOR)).generateOpenAPIDocument;
 	} catch {
 		return;
 	}
@@ -623,9 +2633,7 @@ async function loadGenerator() {
 //#endregion
 
 
-// EXTERNAL MODULE: external "node:fs"
-var external_node_fs_ = __webpack_require__(24);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/review/package-manager.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/review/package-manager.js
 
 
 //#region src/review/package-manager.ts
@@ -665,8 +2673,8 @@ function scriptCommand(manager, script) {
 
 
 // EXTERNAL MODULE: external "node:child_process"
-var external_node_child_process_ = __webpack_require__(421);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/review/dev-server.js
+var external_node_child_process_ = __webpack_require__(1421);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/review/dev-server.js
 
 
 
@@ -741,7 +2749,7 @@ function startDevServer(options) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/review/csp.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/review/csp.js
 //#region src/review/csp.ts
 const NONCE = /^'nonce-([^']+)'$/i;
 const SCRIPT_CHAIN = [
@@ -831,7 +2839,7 @@ function relaxHeader(header, fresh) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/review/inject.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/review/inject.js
 
 //#region src/review/inject.ts
 const ESCAPES = {
@@ -885,16 +2893,16 @@ function relaxMeta(html, fresh) {
 
 
 // EXTERNAL MODULE: external "node:http"
-var external_node_http_ = __webpack_require__(67);
+var external_node_http_ = __webpack_require__(7067);
 // EXTERNAL MODULE: external "node:crypto"
-var external_node_crypto_ = __webpack_require__(598);
+var external_node_crypto_ = __webpack_require__(7598);
 // EXTERNAL MODULE: external "node:https"
-var external_node_https_ = __webpack_require__(708);
+var external_node_https_ = __webpack_require__(4708);
 // EXTERNAL MODULE: external "node:net"
-var external_node_net_ = __webpack_require__(30);
+var external_node_net_ = __webpack_require__(7030);
 // EXTERNAL MODULE: external "node:tls"
-var external_node_tls_ = __webpack_require__(692);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/review/proxy.js
+var external_node_tls_ = __webpack_require__(1692);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/review/proxy.js
 
 
 
@@ -1051,11 +3059,11 @@ function createUpgradeListener(options) {
 //#endregion
 
 
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/store.js + 148 modules
-var store = __webpack_require__(99);
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/github.js + 1 modules
-var github = __webpack_require__(546);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/local/local-place.js
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/store.js + 148 modules
+var store = __webpack_require__(2584);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/connectors/github.js + 1 modules
+var github = __webpack_require__(645);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/local/local-place.js
 
 
 
@@ -1128,7 +3136,7 @@ async function resolveLocalPlace(options = {}) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/local/local-files.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/local/local-files.js
 
 
 
@@ -1165,7 +3173,7 @@ function withLock(path, task) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/local/file-store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/local/file-store.js
 
 
 
@@ -1309,7 +3317,7 @@ function fileStore(options = {}) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/local/file-media.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/local/file-media.js
 
 
 
@@ -1369,7 +3377,7 @@ function fileMedia(options = {}) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/review/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/review/store.js
 
 
 
@@ -1420,12 +3428,12 @@ async function reviewStore(env, cwd, url) {
 
 
 // EXTERNAL MODULE: external "node:module"
-var external_node_module_ = __webpack_require__(995);
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/errors.js
-var errors = __webpack_require__(510);
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/gate/decide.js
-var decide = __webpack_require__(477);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/gate/publish.js
+var external_node_module_ = __webpack_require__(8995);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/errors.js
+var errors = __webpack_require__(2573);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/gate/decide.js
+var decide = __webpack_require__(7800);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/gate/publish.js
 
 //#region src/gate/publish.ts
 const PAGE = 100;
@@ -1486,7 +3494,7 @@ async function commentsOn(store, branch) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/lib/fnv1a.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/lib/fnv1a.js
 //#region src/lib/fnv1a.ts
 const OFFSET_BASIS = 2166136261;
 const PRIME = 16777619;
@@ -1502,7 +3510,7 @@ function fnv1a32(value) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/approvals.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/approvals.js
 //#region src/route/approvals.ts
 function keepsApprovals(store) {
 	return store.capabilities.approvals && store.capabilities.approve;
@@ -1573,7 +3581,7 @@ function json(body, status) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/classifier.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/connectors/classifier.js
 //#region src/connectors/classifier.ts
 const DEFAULT_PILLARS = [
 	{
@@ -1753,9 +3761,9 @@ function clamp01(value) {
 //#endregion
 
 
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
-var stable_stringify = __webpack_require__(434);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/budget.js
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
+var stable_stringify = __webpack_require__(265);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/budget.js
 
 //#region src/route/budget.ts
 function createCache(size) {
@@ -1810,7 +3818,7 @@ function budget_json(body, status) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/assist.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/assist.js
 
 
 
@@ -1845,7 +3853,7 @@ function createAssist(options) {
 			if (hit) return budget_json(hit, 200);
 			if (!limiter.take(session)) return budget_json({ error: "Too many judgements" }, 429);
 			try {
-				const answer = await judge(classifier, body, pillars, request.signal);
+				const answer = await assist_judge(classifier, body, pillars, request.signal);
 				cache.set(key, answer);
 				return budget_json(answer, 200);
 			} catch (error) {
@@ -1855,7 +3863,7 @@ function createAssist(options) {
 		}
 	};
 }
-async function judge(classifier, body, pillars, signal) {
+async function assist_judge(classifier, body, pillars, signal) {
 	const ask = {
 		body,
 		signal
@@ -1883,7 +3891,7 @@ function assist_idOf(pillar) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/auth/cookie.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/auth/cookie.js
 //#region src/auth/cookie.ts
 const SESSION_COOKIE = "maple_gh";
 const PENDING_COOKIE = "maple_gh_pending";
@@ -1997,7 +4005,7 @@ function fromBase64Url(value) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/auth/device-flow.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/auth/device-flow.js
 //#region src/auth/device-flow.ts
 var DeviceFlowError = class extends Error {
 	reason;
@@ -2101,7 +4109,7 @@ function nextInterval(body, current) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/auth.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/auth.js
 
 
 //#region src/route/auth.ts
@@ -2215,7 +4223,7 @@ function auth_json(body, status, cookies) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/gate.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/gate.js
 //#region src/route/gate.ts
 async function gateFor(chosen, request) {
 	if (chosen === void 0) return null;
@@ -2224,7 +4232,7 @@ async function gateFor(chosen, request) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/mock/pointer.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/mock/pointer.js
 //#region src/mock/pointer.ts
 const REF_HOPS = 8;
 function resolved(root, node) {
@@ -2260,7 +4268,7 @@ function pointer_isNode(value) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/mock/identity.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/mock/identity.js
 
 //#region src/mock/identity.ts
 function isServerIdentity(source) {
@@ -2346,7 +4354,7 @@ function isWords(value) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/mock.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/mock.js
 
 
 //#region src/route/mock.ts
@@ -2387,7 +4395,7 @@ async function documents(source) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/plan.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/connectors/plan.js
 
 //#region src/connectors/plan.ts
 const MOCK_PLAN_STATES = [...mock_recipe/* MOCK_STATES */.CX, "none"];
@@ -2446,7 +4454,7 @@ function plan_argmax(values) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/plan-layers.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/plan-layers.js
 
 //#region src/route/plan-layers.ts
 const MAX_FLAGS = 100;
@@ -2506,14 +4514,14 @@ function plan_layers_isRecord(value) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/summary.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/summary.js
 
 //#region src/route/summary.ts
 const DEPTH = 2;
 const FIELDS = 12;
 const MAX_SAID = 400;
 function summarise(page, schema) {
-	const said = schema === void 0 ? "" : describe(schema, schema, 0);
+	const said = schema === void 0 ? "" : summary_describe(schema, schema, 0);
 	if (covers(page, said)) return page;
 	if (covers(said, page)) return said;
 	return `${page} — ${said}`;
@@ -2522,12 +4530,12 @@ function covers(outer, inner) {
 	const words = new Set(outer.match(/\w+/g));
 	return (inner.match(/\w+/g) ?? []).every((word) => words.has(word));
 }
-function describe(root, node, depth) {
+function summary_describe(root, node, depth) {
 	const { here, name } = resolved(root, node);
 	if (here === void 0 || depth > DEPTH) return "";
 	const parts = [here["title"] ?? name, here["description"]].filter((part) => typeof part === "string" && part !== "");
 	const items = here["items"];
-	if (items !== void 0 && typeof items !== "boolean") parts.push(`list of [${describe(root, items, depth + 1)}]`);
+	if (items !== void 0 && typeof items !== "boolean") parts.push(`list of [${summary_describe(root, items, depth + 1)}]`);
 	const properties = here["properties"];
 	if (pointer_isNode(properties)) {
 		const fields = Object.entries(properties).slice(0, FIELDS).map(([key, value]) => summary_field(root, key, value, depth));
@@ -2538,13 +4546,13 @@ function describe(root, node, depth) {
 function summary_field(root, key, schema, depth) {
 	const items = resolved(root, schema).here?.["items"];
 	if (items === void 0 || typeof items === "boolean") return key;
-	const inner = describe(root, items, depth + 1);
+	const inner = summary_describe(root, items, depth + 1);
 	return inner === "" ? key : `${key} [${inner}]`;
 }
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/plan.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/plan.js
 
 
 
@@ -2676,7 +4684,7 @@ function plan_isRecord(value) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/push-access.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/push-access.js
 //#region src/route/push-access.ts
 var PushAccessError = class extends Error {
 	name = "PushAccessError";
@@ -2723,7 +4731,7 @@ async function digest(token) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/refresh.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/refresh.js
 
 
 
@@ -2790,7 +4798,7 @@ async function branchIn(request) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/handler.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/handler.js
 
 
 
@@ -3142,8 +5150,8 @@ function handler_json(body, status) {
 
 
 // EXTERNAL MODULE: external "node:buffer"
-var external_node_buffer_ = __webpack_require__(573);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/route/node.js
+var external_node_buffer_ = __webpack_require__(4573);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/route/node.js
 
 //#region src/route/node.ts
 function toNodeMiddleware(handle, basePath) {
@@ -3208,7 +5216,7 @@ function toArrayBuffer(buffer) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/review/session.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/review/session.js
 
 
 
@@ -3327,7 +5335,7 @@ async function startReview(options) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/commands/review.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/commands/review.js
 
 
 //#region src/commands/review.ts
@@ -3421,7 +5429,7 @@ async function review(args, options = {}) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/commands/setup-ci.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/commands/setup-ci.js
 
 
 
@@ -3531,7 +5539,7 @@ function setupCi(flags, options = {}) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/commands/setup-verify.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/commands/setup-verify.js
 //#region src/commands/setup-verify.ts
 const SETUP_VERIFY_FLAGS = { "client-id": "string" };
 const SETUP_VERIFY_USAGE = `Usage
@@ -3584,7 +5592,7 @@ function setup_verify_failed(output) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/client/solo.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/client/solo.js
 //#region src/client/solo.ts
 const SOLO_HEADER = "x-maple-solo";
 const SOLO_PARAM = "maple-solo";
@@ -3696,7 +5704,7 @@ function strip(page, options) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/local/bridge.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/local/bridge.js
 
 
 
@@ -3833,7 +5841,7 @@ function shut(server) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/commands/solo.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/commands/solo.js
 
 //#region src/commands/solo.ts
 const SOLO_FLAGS = { port: "string" };
@@ -3894,7 +5902,9 @@ async function solo({ positionals, flags }, options = {}) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/run.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/run.js
+
+
 
 
 
@@ -3907,12 +5917,25 @@ async function solo({ positionals, flags }, options = {}) {
 
 //#region src/run.ts
 const COMMANDS = {
+	"ci lint": {
+		flags: CI_LINT_FLAGS,
+		run: (args, options) => ciLint(args, {
+			...options.env === void 0 ? {} : { env: options.env },
+			...options.lint === void 0 ? {} : { lint: options.lint },
+			...options.fetch === void 0 ? {} : { fetch: options.fetch },
+			...options.cwd === void 0 ? {} : { root: options.cwd }
+		})
+	},
 	connectors: {
 		flags: {},
 		run: ({ flags }) => {
 			const rows = connectorKindRows();
 			return present(isSet(flags, "json"), rows, renderConnectorKinds(rows));
 		}
+	},
+	lint: {
+		flags: LINT_FLAGS,
+		run: (args, options) => lint(args, options.lint, options.cwd)
 	},
 	"mock schema": {
 		flags: MOCK_SCHEMA_FLAGS,
@@ -3944,6 +5967,7 @@ const COMMANDS = {
 	}
 };
 const GROUP_USAGE = {
+	ci: CI_LINT_USAGE,
 	mock: `${MOCK_SCHEMA_USAGE}\n\n${MOCK_PLAN_USAGE}`,
 	setup: `${SETUP_APP_USAGE}\n\n${SETUP_VERIFY_USAGE}\n\n${SETUP_CI_USAGE}`
 };
@@ -4008,7 +6032,8 @@ function pick({ cwd, fs }) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.17.1_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__react-dom@19.3.0__a3e435a0947c3732b3498b96a3d85c2b/node_modules/@maple-kit/cli/dist/index.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+cli@0.18.0_msw@2.15.0_@types+node@26.6.1_typescript@6.0.3__playwright@1.63.0_fd9688466a12d0877868a8b6654e9ceb/node_modules/@maple-kit/cli/dist/index.js
+
 
 
 
@@ -4021,4 +6046,4 @@ function pick({ cwd, fs }) {
 
 };
 
-//# sourceMappingURL=933.index.js.map
+//# sourceMappingURL=176.index.js.map

@@ -150,8 +150,7 @@ Lints the deployed preview against the repository's design tokens and reports a
 check run named `maple/design-lint`. It wraps `runCiLint` from `@maple-kit/cli`:
 the rules, the check run and the SARIF file are the CLI's, and the action only
 maps its inputs onto them and sets the outputs. `maple ci lint` runs the same
-thing on a laptop. **Not live-tested yet:** it needs the CLI release that
-carries `runCiLint`.
+thing on a laptop.
 
 ```yaml
 jobs:
@@ -163,6 +162,9 @@ jobs:
       security-events: write # upload-sarif
     steps:
       - uses: actions/checkout@v4
+
+      # The bundled Playwright is 1.63.0; its browser must match.
+      - run: npx playwright@1.63.0 install --with-deps chromium
 
       - id: lint
         uses: maple-kit/maple-action@v0
@@ -189,6 +191,7 @@ annotations on the pull request, so it is a separate step you own.
 - Off a pull request there is no head commit to publish on, so the run is a
   dry run: findings and SARIF, no check run.
 - The `bypass-header` value is masked in the log. Pass it from a secret.
+- `app-id` applies here as in `gate`: the check run is looked up as that App's.
 - Writing findings into the ledger is not done by this mode.
 
 ## Inputs

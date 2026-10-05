@@ -1,91 +1,322 @@
 import './sourcemap-register.cjs';import { createRequire as __WEBPACK_EXTERNAL_createRequire } from "module";
 /******/ var __webpack_modules__ = ({
 
-/***/ 573:
+/***/ 2613:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("assert");
+
+/***/ }),
+
+/***/ 290:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("async_hooks");
+
+/***/ }),
+
+/***/ 181:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("buffer");
+
+/***/ }),
+
+/***/ 5317:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("child_process");
+
+/***/ }),
+
+/***/ 9140:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("constants");
+
+/***/ }),
+
+/***/ 6982:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("crypto");
+
+/***/ }),
+
+/***/ 2250:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("dns");
+
+/***/ }),
+
+/***/ 4434:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("events");
+
+/***/ }),
+
+/***/ 9896:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("fs");
+
+/***/ }),
+
+/***/ 1943:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("fs/promises");
+
+/***/ }),
+
+/***/ 8611:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("http");
+
+/***/ }),
+
+/***/ 5675:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("http2");
+
+/***/ }),
+
+/***/ 5692:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("https");
+
+/***/ }),
+
+/***/ 264:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("inspector");
+
+/***/ }),
+
+/***/ 3339:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("module");
+
+/***/ }),
+
+/***/ 9278:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("net");
+
+/***/ }),
+
+/***/ 4573:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:buffer");
 
 /***/ }),
 
-/***/ 421:
+/***/ 1421:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:child_process");
 
 /***/ }),
 
-/***/ 598:
+/***/ 7598:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:crypto");
 
 /***/ }),
 
-/***/ 24:
+/***/ 8474:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:events");
+
+/***/ }),
+
+/***/ 3024:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
 
 /***/ }),
 
-/***/ 455:
+/***/ 1455:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs/promises");
 
 /***/ }),
 
-/***/ 67:
+/***/ 7067:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:http");
 
 /***/ }),
 
-/***/ 708:
+/***/ 4708:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:https");
 
 /***/ }),
 
-/***/ 995:
+/***/ 8995:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:module");
 
 /***/ }),
 
-/***/ 30:
+/***/ 7030:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:net");
 
 /***/ }),
 
-/***/ 760:
+/***/ 8161:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:os");
+
+/***/ }),
+
+/***/ 6760:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
 
 /***/ }),
 
-/***/ 692:
+/***/ 1708:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:process");
+
+/***/ }),
+
+/***/ 7075:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:stream");
+
+/***/ }),
+
+/***/ 6466:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:stream/promises");
+
+/***/ }),
+
+/***/ 1692:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:tls");
 
 /***/ }),
 
-/***/ 975:
+/***/ 3136:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:url");
+
+/***/ }),
+
+/***/ 7975:
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:util");
 
 /***/ }),
 
-/***/ 261:
+/***/ 857:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("os");
+
+/***/ }),
+
+/***/ 6928:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("path");
+
+/***/ }),
+
+/***/ 932:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("process");
+
+/***/ }),
+
+/***/ 3785:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("readline");
+
+/***/ }),
+
+/***/ 2203:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("stream");
+
+/***/ }),
+
+/***/ 4756:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("tls");
+
+/***/ }),
+
+/***/ 2018:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("tty");
+
+/***/ }),
+
+/***/ 7016:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("url");
+
+/***/ }),
+
+/***/ 9023:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("util");
+
+/***/ }),
+
+/***/ 9154:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("vm");
+
+/***/ }),
+
+/***/ 3106:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("zlib");
+
+/***/ }),
+
+/***/ 8670:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
@@ -137,7 +368,7 @@ function closestAttribute(element, name) {
 
 /***/ }),
 
-/***/ 638:
+/***/ 8799:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
@@ -215,7 +446,7 @@ function assertUsable(kind, connector) {
 
 /***/ }),
 
-/***/ 546:
+/***/ 645:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 
@@ -224,7 +455,7 @@ __nccwpck_require__.d(__webpack_exports__, {
   $: () => (/* binding */ githubStore)
 });
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/github-pull.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/connectors/github-pull.js
 //#region src/connectors/github-pull.ts
 function createPullCache() {
 	return { held: /* @__PURE__ */ new Map() };
@@ -273,9 +504,9 @@ async function ofMatch(api, identifier, matches) {
 //#endregion
 
 
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/export/markdown.js
-var markdown = __nccwpck_require__(667);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/github.js
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/export/markdown.js
+var markdown = __nccwpck_require__(6138);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/connectors/github.js
 
 
 //#region src/connectors/github.ts
@@ -527,7 +758,7 @@ function offsetOf(cursor) {
 
 /***/ }),
 
-/***/ 510:
+/***/ 2573:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
@@ -554,7 +785,7 @@ var MapleStoreError = class extends Error {
 
 /***/ }),
 
-/***/ 667:
+/***/ 6138:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
@@ -562,9 +793,9 @@ var MapleStoreError = class extends Error {
 /* harmony export */   k4: () => (/* binding */ exportMarkdown)
 /* harmony export */ });
 /* unused harmony exports FENCE_BUDGET, FENCE_VERSION, UnsupportedFenceError */
-/* harmony import */ var _anchor_label_js__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(261);
-/* harmony import */ var _lib_stable_stringify_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(434);
-/* harmony import */ var _mock_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(32);
+/* harmony import */ var _anchor_label_js__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(8670);
+/* harmony import */ var _lib_stable_stringify_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(265);
+/* harmony import */ var _mock_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7817);
 
 
 
@@ -846,14 +1077,14 @@ function size(text) {
 
 /***/ }),
 
-/***/ 477:
+/***/ 7800:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
 /* harmony export */   q: () => (/* binding */ decideGate)
 /* harmony export */ });
 /* unused harmony export BLOCKING_STATUSES */
-/* harmony import */ var _anchor_label_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(261);
+/* harmony import */ var _anchor_label_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(8670);
 
 //#region src/gate/decide.ts
 const BLOCKING_STATUSES = [
@@ -985,7 +1216,7 @@ function plural(count) {
 
 /***/ }),
 
-/***/ 434:
+/***/ 265:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
@@ -1033,7 +1264,7 @@ function stableStringify(value, space) {
 
 /***/ }),
 
-/***/ 32:
+/***/ 7817:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
@@ -1182,7 +1413,7 @@ function isRecord(value) {
 
 /***/ }),
 
-/***/ 99:
+/***/ 2584:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 
@@ -1191,10 +1422,10 @@ __nccwpck_require__.d(__webpack_exports__, {
   V: () => (/* binding */ createCommentStore)
 });
 
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/capabilities.js
-var capabilities = __nccwpck_require__(638);
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/errors.js
-var errors = __nccwpck_require__(510);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/connectors/capabilities.js
+var capabilities = __nccwpck_require__(8799);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/errors.js
+var errors = __nccwpck_require__(2573);
 ;// CONCATENATED MODULE: ./node_modules/.pnpm/effect@3.20.0/node_modules/effect/dist/esm/Function.js
 /**
  * Tests if a value is a `function`.
@@ -21639,7 +21870,7 @@ const TaggedError = tag => {
   return O.BaseEffectError;
 };
 //# sourceMappingURL=Data.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/internal/effect/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/internal/effect/errors.js
 
 //#region src/internal/effect/errors.ts
 var StoreUnavailable = class extends TaggedError("StoreUnavailable") {};
@@ -54292,7 +54523,7 @@ const ensureErrorType = () => effect => effect;
  */
 const ensureRequirementsType = () => effect => effect;
 //# sourceMappingURL=Effect.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/internal/effect/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/internal/effect/store.js
 
 
 
@@ -54388,7 +54619,7 @@ async function unapproveSurface(connector, id) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/store.js
 
 
 //#region src/store.ts
@@ -54452,6 +54683,36 @@ function createCommentStore(connector) {
 /************************************************************************/
 /******/ /* webpack/runtime/asset-relocator-loader */
 /******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = decodeURIComponent(new URL('.', import.meta.url).pathname).slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
+/******/ 
+/******/ /* webpack/runtime/create fake namespace object */
+/******/ (() => {
+/******/ 	var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
+/******/ 	var leafPrototypes;
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 16: return value when it's Promise-like
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__nccwpck_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = this(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if(typeof value === 'object' && value) {
+/******/ 			if((mode & 4) && value.__esModule) return value;
+/******/ 			if((mode & 16) && typeof value.then === 'function') return value;
+/******/ 		}
+/******/ 		var ns = Object.create(null);
+/******/ 		__nccwpck_require__.r(ns);
+/******/ 		var def = {};
+/******/ 		leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
+/******/ 		for(var current = mode & 2 && value; typeof current == 'object' && !~leafPrototypes.indexOf(current); current = getProto(current)) {
+/******/ 			Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
+/******/ 		}
+/******/ 		def['default'] = () => (value);
+/******/ 		__nccwpck_require__.d(ns, def);
+/******/ 		return ns;
+/******/ 	};
+/******/ })();
 /******/ 
 /******/ /* webpack/runtime/define property getters */
 /******/ (() => {
@@ -54570,13 +54831,13 @@ function createCommentStore(connector) {
 var __webpack_exports__ = {};
 
 // EXTERNAL MODULE: external "node:fs"
-var external_node_fs_ = __nccwpck_require__(24);
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/gate/decide.js
-var decide = __nccwpck_require__(477);
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/store.js + 148 modules
-var store = __nccwpck_require__(99);
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/github.js + 1 modules
-var github = __nccwpck_require__(546);
+var external_node_fs_ = __nccwpck_require__(3024);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/gate/decide.js
+var decide = __nccwpck_require__(7800);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/store.js + 148 modules
+var store = __nccwpck_require__(2584);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/connectors/github.js + 1 modules
+var github = __nccwpck_require__(645);
 ;// CONCATENATED MODULE: ./src/comments.ts
 /**
  * Reading the comments the gate decides on.
@@ -54695,7 +54956,7 @@ function eventPayload(env, read) {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/github-gate.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/connectors/github-gate.js
 //#region src/connectors/github-gate.ts
 const CHECK_NAME = "maple/visual-review";
 const DEFAULT_BASE = "https://api.github.com";
@@ -54994,14 +55255,10 @@ function parseHeaders(raw) {
 
 /** The one place the CLI is imported, so a test can pass a fake instead. */
 async function loadRunCiLint() {
-    const cli = (await Promise.all(/* import() */[__nccwpck_require__.e(933), __nccwpck_require__.e(529)]).then(__nccwpck_require__.bind(__nccwpck_require__, 933)));
-    if (cli.runCiLint === undefined) {
-        throw new Error("The bundled @maple-kit/cli has no runCiLint; it is older than lint needs.");
-    }
-    return cli.runCiLint;
+    return (await Promise.all(/* import() */[__nccwpck_require__.e(176), __nccwpck_require__.e(586)]).then(__nccwpck_require__.bind(__nccwpck_require__, 4176))).runCiLint;
 }
 /** The action's inputs as the CLI's options. A run off a pull request is a dry run. */
-function optionsFor(lint, context, token) {
+function optionsFor(lint, context, token, appId) {
     return {
         url: lint.previewUrl,
         tokenFiles: lint.tokenFiles,
@@ -55010,7 +55267,15 @@ function optionsFor(lint, context, token) {
         ...(lint.bypassHeaders === undefined ? {} : { bypassHeaders: lint.bypassHeaders }),
         ...(context.sha === undefined
             ? {}
-            : { publish: { token, owner: context.owner, repo: context.repo, headSha: context.sha } }),
+            : {
+                publish: {
+                    token,
+                    owner: context.owner,
+                    repo: context.repo,
+                    headSha: context.sha,
+                    ...(appId === undefined ? {} : { appId: Number(appId) }),
+                },
+            }),
     };
 }
 /** The outputs, in the CLI's own vocabulary: success, failure or neutral. */
@@ -55027,13 +55292,13 @@ function lintOutputsFor(result) {
  * `neutral` does not, because a lint that could not see found nothing.
  */
 async function runLint(env, context, inputs, runCiLint) {
-    const { lint, token } = inputs;
+    const { lint, token, appId } = inputs;
     // A bypass value is a credential: mask it before anything can print it.
     for (const value of Object.values(lint.bypassHeaders ?? {})) {
         if (value !== "")
             process.stdout.write(`::add-mask::${value}\n`);
     }
-    const result = await runCiLint(optionsFor(lint, context, token));
+    const result = await runCiLint(optionsFor(lint, context, token, appId));
     const file = env["GITHUB_OUTPUT"];
     if (file !== undefined) {
         const lines = Object.entries(lintOutputsFor(result)).map(([k, v]) => `${k}=${v}\n`);
@@ -55045,8 +55310,8 @@ async function runLint(env, context, inputs, runCiLint) {
     return result;
 }
 
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/export/markdown.js
-var markdown = __nccwpck_require__(667);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/export/markdown.js
+var markdown = __nccwpck_require__(6138);
 ;// CONCATENATED MODULE: ./src/sync.ts
 /**
  * The sticky comment `sync` keeps on the pull request.

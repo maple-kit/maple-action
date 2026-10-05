@@ -8,42 +8,27 @@
 
 import { appendFileSync } from "node:fs";
 
+import type { CiLintOptions, CiLintResult } from "@maple-kit/cli";
+
 import type { RunContext } from "./context.js";
 import type { LintInputs } from "./inputs.js";
 
-/*
- * Local mirror of the CLI's contract, until a release carrying `runCiLint`
- * is pinned. Delete it then and import the types from "@maple-kit/cli".
- */
-export interface CiLintOptions {
-  url: string;
-  tokenFiles: readonly string[];
-  viewports?: readonly { width: number; height: number }[];
-  bypassHeaders?: Readonly<Record<string, string>>;
-  sarifPath?: string;
-  publish?: { token: string; owner: string; repo: string; headSha: string };
-}
-
-export interface CiLintResult {
-  conclusion: "success" | "failure" | "neutral";
-  findings: readonly unknown[];
-  sarifPath?: string;
-  checkRunId?: number;
-}
-
 export type RunCiLint = (options: CiLintOptions) => Promise<CiLintResult>;
+
+export type { CiLintOptions, CiLintResult };
 
 /** The one place the CLI is imported, so a test can pass a fake instead. */
 export async function loadRunCiLint(): Promise<RunCiLint> {
-  const cli = (await import("@maple-kit/cli")) as { runCiLint?: RunCiLint };
-  if (cli.runCiLint === undefined) {
-    throw new Error("The bundled @maple-kit/cli has no runCiLint; it is older than lint needs.");
-  }
-  return cli.runCiLint;
+  return (await import("@maple-kit/cli")).runCiLint;
 }
 
 /** The action's inputs as the CLI's options. A run off a pull request is a dry run. */
-export function optionsFor(lint: LintInputs, context: RunContext, token: string): CiLintOptions {
+export function optionsFor(
+  lint: LintInputs,
+  context: RunContext,
+  token: string,
+  appId?: string,
+): CiLintOptions {
   return {
     url: lint.previewUrl,
     tokenFiles: lint.tokenFiles,
@@ -52,7 +37,15 @@ export function optionsFor(lint: LintInputs, context: RunContext, token: string)
     ...(lint.bypassHeaders === undefined ? {} : { bypassHeaders: lint.bypassHeaders }),
     ...(context.sha === undefined
       ? {}
-      : { publish: { token, owner: context.owner, repo: context.repo, headSha: context.sha } }),
+      : {
+          publish: {
+            token,
+            owner: context.owner,
+            repo: context.repo,
+            headSha: context.sha,
+            ...(appId === undefined ? {} : { appId: Number(appId) }),
+          },
+        }),
   };
 }
 
@@ -73,16 +66,16 @@ export function lintOutputsFor(result: CiLintResult): Record<string, string> {
 export async function runLint(
   env: NodeJS.ProcessEnv,
   context: RunContext,
-  inputs: { readonly lint: LintInputs; readonly token: string },
+  inputs: { readonly lint: LintInputs; readonly token: string; readonly appId?: string },
   runCiLint: RunCiLint,
 ): Promise<CiLintResult> {
-  const { lint, token } = inputs;
+  const { lint, token, appId } = inputs;
   // A bypass value is a credential: mask it before anything can print it.
   for (const value of Object.values(lint.bypassHeaders ?? {})) {
     if (value !== "") process.stdout.write(`::add-mask::${value}\n`);
   }
 
-  const result = await runCiLint(optionsFor(lint, context, token));
+  const result = await runCiLint(optionsFor(lint, context, token, appId));
 
   const file = env["GITHUB_OUTPUT"];
   if (file !== undefined) {

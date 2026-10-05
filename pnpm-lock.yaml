@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@maple-kit/cli':
-        specifier: 0.17.1
-        version: 0.17.1(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+        specifier: 0.18.0
+        version: 0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(playwright@1.63.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
       '@maple-kit/core':
-        specifier: 0.17.1
-        version: 0.17.1(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+        specifier: 0.18.0
+        version: 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
     devDependencies:
       '@eslint/js':
         specifier: 10.0.1
@@ -173,18 +173,21 @@ packages:
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
 
-  '@maple-kit/cli@0.17.1':
-    resolution: {integrity: sha512-o8LvokXPDjd+P0bp+VgGP/0ocLxLP8UehI94mMqFSrumvl7FSbylyZ2+BwfVxo4c8IJNh43RtLff9mwVx4VZpA==}
+  '@maple-kit/cli@0.18.0':
+    resolution: {integrity: sha512-vKLBt3zw0ZdJ/XqHryhcZbVd8qYus9pzhkFf3eL3DmhCAZHI3AY/kFX9C3UT1icagQDOmBujodpN4Xd7OW26Ag==}
     engines: {node: '>=24.0.0'}
     hasBin: true
     peerDependencies:
       '@trpc/openapi': 11.19.0-alpha
+      playwright: ^1.50.0
     peerDependenciesMeta:
       '@trpc/openapi':
         optional: true
+      playwright:
+        optional: true
 
-  '@maple-kit/core@0.17.1':
-    resolution: {integrity: sha512-wvWivTyuHQVPyTveUCYSJiv88Te8fKSnprLrNFsHA3rjK2+BL4glzVZ0ah+4nfQuQcLU9jnFM3kxV3JEhlz8rA==}
+  '@maple-kit/core@0.18.0':
+    resolution: {integrity: sha512-2Y0dqtG4eq/y9DATh3EhwMa8LaUflQBLk3dlD/AKlnxWVFWvKLCsgSOdbeiBMIh7slynhjyg2AxD2zgz5PQQ4Q==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       '@babel/core': ^7.22.0 || ^8.0.0
@@ -198,8 +201,14 @@ packages:
       vitest:
         optional: true
 
-  '@maple-kit/mock@0.17.1':
-    resolution: {integrity: sha512-tS/KDR3vgOJkRrPlWc+2omPiwMbCAH9pEarDwrCAKjbmcGsofZ2Vk1e7NCbJUB+FLvw8WNu0WqU4tYH6ZyWEoA==}
+  '@maple-kit/lint@0.2.0':
+    resolution: {integrity: sha512-fw7qWiE4+9FkWc1/Uypecn7tNoM1Ip9F3TysNUgncJ/dN4grZ5+UKXJlgxI3ffhygiMjSmAxYwoWgJx8+flaQw==}
+    engines: {node: '>=24.0.0'}
+    peerDependencies:
+      playwright: ^1.50.0
+
+  '@maple-kit/mock@0.18.0':
+    resolution: {integrity: sha512-6vESbv9zehpV8EELZqJEGaso23tU6//Iiu4WYIgk1CMIMNDCceVOGlrLfjntoaJ/MZPkX86QYO+0HYnUmjhrTA==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       msw: ^2.0.0
@@ -210,14 +219,14 @@ packages:
       vitest:
         optional: true
 
-  '@maple-kit/react@0.17.1':
-    resolution: {integrity: sha512-u05yOhFze9dSPjqj23EuuT+gkIt6rY8JCTZ3VVKGhnvMjVOqC245BUu0GJO/MsxDcsAGIk8Yw+QWt6BT2jjPMg==}
+  '@maple-kit/react@0.18.0':
+    resolution: {integrity: sha512-NQcL18GW0DOC0rzR1wGH5vO3Qv6ScWVexO6iiA7+ynHpt6jNJ7WgeuanyIp7NuMNtW5psRQn58cNqCfelQU/+w==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       react: ^18.2.0 || ^19.0.0
 
-  '@maple-kit/ui@0.17.1':
-    resolution: {integrity: sha512-9kM7xvokFkSOi30Bf0WDuazdwAdZtJrNn5/HDQ2KluPyRHUrCfXt2GVLNMiIzahuO/yQcMrbdIsl2Vdf54AlDQ==}
+  '@maple-kit/ui@0.18.0':
+    resolution: {integrity: sha512-fFhO1qHftPoiskRfZwCTkv7T3XAFyTmGrDX2BePBot1bV4yClv+hqFy1IibXfWnrSqFHA28j4ENmS/OqzhXcfQ==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       react: ^18.2.0 || ^19.0.0
@@ -918,6 +927,16 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
+  playwright-core@1.63.0:
+    resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.63.0:
+    resolution: {integrity: sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
   postcss@8.5.28:
     resolution: {integrity: sha512-RRuzqDtt5Y9h3quz5hWhK+TPnsmVs6WwSU6LkJMeY4HstUEDuYTG8UJSdawMRzmzAtV+KEoG8N3Qg2qLy5vM/A==}
     engines: {node: ^10 || ^12 || >=14}
@@ -1302,10 +1321,13 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@maple-kit/cli@0.17.1(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+  '@maple-kit/cli@0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(playwright@1.63.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
     dependencies:
-      '@maple-kit/core': 0.17.1(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
-      '@maple-kit/ui': 0.17.1(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/core': 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/lint': 0.2.0(playwright@1.63.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/ui': 0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+    optionalDependencies:
+      playwright: 1.63.0
     transitivePeerDependencies:
       - '@babel/core'
       - '@zumer/snapdom'
@@ -1314,16 +1336,25 @@ snapshots:
       - react-dom
       - vitest
 
-  '@maple-kit/core@0.17.1(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+  '@maple-kit/core@0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
     dependencies:
       '@standard-schema/spec': 1.0.0
       effect: 3.20.0
     optionalDependencies:
       vitest: 5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1))
 
-  '@maple-kit/mock@0.17.1(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+  '@maple-kit/lint@0.2.0(playwright@1.63.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
     dependencies:
-      '@maple-kit/core': 0.17.1(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/core': 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      playwright: 1.63.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@zumer/snapdom'
+      - vitest
+
+  '@maple-kit/mock@0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+    dependencies:
+      '@maple-kit/core': 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
       '@mswjs/interceptors': 0.41.9
     optionalDependencies:
       msw: 2.15.0(@types/node@26.6.1)(typescript@6.0.3)
@@ -1332,10 +1363,10 @@ snapshots:
       - '@babel/core'
       - '@zumer/snapdom'
 
-  '@maple-kit/react@0.17.1(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+  '@maple-kit/react@0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
     dependencies:
-      '@maple-kit/core': 0.17.1(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
-      '@maple-kit/mock': 0.17.1(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/core': 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/mock': 0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
       react: 19.3.0
     transitivePeerDependencies:
       - '@babel/core'
@@ -1343,11 +1374,11 @@ snapshots:
       - msw
       - vitest
 
-  '@maple-kit/ui@0.17.1(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
+  '@maple-kit/ui@0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))':
     dependencies:
-      '@maple-kit/core': 0.17.1(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
-      '@maple-kit/mock': 0.17.1(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
-      '@maple-kit/react': 0.17.1(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/core': 0.18.0(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/mock': 0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
+      '@maple-kit/react': 0.18.0(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(react@19.3.0)(vitest@5.0.1(@types/node@26.6.1)(msw@2.15.0(@types/node@26.6.1)(typescript@6.0.3))(vite@8.3.0(@types/node@26.6.1)))
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
     transitivePeerDependencies:
@@ -1974,6 +2005,12 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.7: {}
+
+  playwright-core@1.63.0: {}
+
+  playwright@1.63.0:
+    dependencies:
+      playwright-core: 1.63.0
 
   postcss@8.5.28:
     dependencies:

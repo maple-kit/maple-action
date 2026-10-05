@@ -50,6 +50,9 @@ function outputs(environment: NodeJS.ProcessEnv): Record<string, string> {
 }
 
 /** A fake runCiLint that records its options and answers with `result`. */
+// The action only counts findings, so their contents do not matter here.
+const finding = {} as CiLintResult["findings"][number];
+
 function fake(result: CiLintResult) {
   const calls: CiLintOptions[] = [];
   const load = () =>
@@ -120,7 +123,11 @@ describe("mode: lint", () => {
   });
 
   it("sets the sarif output and does not fail on neutral", async () => {
-    const { load } = fake({ conclusion: "neutral", findings: [{}, {}], sarifPath: "out.sarif" });
+    const { load } = fake({
+      conclusion: "neutral",
+      findings: [finding, finding],
+      sarifPath: "out.sarif",
+    });
     const environment = env();
 
     await expect(main(environment, load)).resolves.toBeUndefined();
@@ -132,11 +139,24 @@ describe("mode: lint", () => {
   });
 
   it("fails the step on failure, after writing the outputs", async () => {
-    const { load } = fake({ conclusion: "failure", findings: [{}], sarifPath: "out.sarif" });
+    const { load } = fake({ conclusion: "failure", findings: [finding], sarifPath: "out.sarif" });
     const environment = env();
 
     await expect(main(environment, load)).rejects.toThrow(/1 finding/);
     expect(outputs(environment)["conclusion"]).toBe("failure");
+  });
+
+  it("publishes as the app-id, so maple/design-lint is owned like the gate's check", async () => {
+    const { load, calls } = fake({ conclusion: "success", findings: [] });
+
+    await main(env({ "INPUT_APP-ID": "5018083" }), load);
+    expect(calls[0]?.publish).toEqual({
+      token: "minted",
+      owner: "o",
+      repo: "r",
+      headSha: "head_sha",
+      appId: 5018083,
+    });
   });
 
   it("is a dry run off a pull request: nothing is published", async () => {
