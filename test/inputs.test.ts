@@ -36,8 +36,10 @@ describe("readInputs", () => {
     expect(readInputs({ ...BASE, INPUT_BRANCH: "explicit" }).branch).toBe("explicit");
   });
 
-  it("rejects a mode that is neither sync nor gate", () => {
-    expect(() => readInputs({ ...BASE, INPUT_MODE: "deploy" })).toThrow(/must be "sync" or "gate"/);
+  it("rejects a mode that is not sync, gate or lint", () => {
+    expect(() => readInputs({ ...BASE, INPUT_MODE: "deploy" })).toThrow(
+      /must be "sync", "gate" or "lint"/,
+    );
   });
 
   it("rejects a missing mode", () => {

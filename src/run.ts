@@ -13,12 +13,14 @@ import { readComments, storeFor } from "./comments.js";
 import { readContext } from "./context.js";
 import { gateFor, isMergeGroup, outputsFor } from "./gate.js";
 import { InvalidInputError, readInputs } from "./inputs.js";
+import { loadRunCiLint, runLint } from "./lint.js";
 import { stickyBody, syncSticky } from "./sync.js";
 
 import type { Approval, Comment, CommentStore, GateVerdict } from "@maple-kit/core";
 
 import type { RunContext } from "./context.js";
 import type { Inputs } from "./inputs.js";
+import type { RunCiLint } from "./lint.js";
 
 /** What a surface Maple is not reviewing concludes: neutral, and saying so. */
 const NO_REVIEW = decideGate(undefined, { hasReview: false });
@@ -137,12 +139,11 @@ function appendSummary(env: NodeJS.ProcessEnv, body: string): void {
  */
 export async function run(env: NodeJS.ProcessEnv): Promise<GateVerdict> {
   const context = readContext(env);
+  const inputs = readInputs(env);
 
   // A merge-queue entry has nobody to comment on it and a run off a pull
-  // request has nothing to read. Both pass, and both are checked before the
-  // inputs, because neither has a head ref for `branch` to fall back to.
+  // request has nothing to read. Both pass: neither has a head ref to read from.
   const reviewed = !isMergeGroup(context.eventName) && context.sha !== undefined;
-  const inputs = readInputs(env);
   const review = reviewed ? await reviewOf(context, inputs) : { verdict: NO_REVIEW };
 
   if (inputs.mode === "sync" && reviewed) await sync(env, context, inputs, review);
@@ -150,4 +151,20 @@ export async function run(env: NodeJS.ProcessEnv): Promise<GateVerdict> {
 
   report(env, review.verdict);
   return review.verdict;
+}
+
+/**
+ * The action's entry: `lint` goes to the CLI, `sync` and `gate` to `run`.
+ * `loadLint` is injected so a test can pass a fake `runCiLint`.
+ */
+export async function main(
+  env: NodeJS.ProcessEnv,
+  loadLint: () => Promise<RunCiLint> = loadRunCiLint,
+): Promise<void> {
+  const inputs = readInputs(env);
+  if (inputs.lint === undefined) {
+    await run(env);
+    return;
+  }
+  await runLint(env, readContext(env), { ...inputs, lint: inputs.lint }, await loadLint());
 }

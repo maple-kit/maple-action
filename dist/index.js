@@ -1,9 +1,97 @@
 import './sourcemap-register.cjs';import { createRequire as __WEBPACK_EXTERNAL_createRequire } from "module";
-var __webpack_exports__ = {};
+/******/ var __webpack_modules__ = ({
 
-;// CONCATENATED MODULE: external "node:fs"
-const external_node_fs_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/anchor/label.js
+/***/ 573:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:buffer");
+
+/***/ }),
+
+/***/ 421:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:child_process");
+
+/***/ }),
+
+/***/ 598:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:crypto");
+
+/***/ }),
+
+/***/ 24:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
+
+/***/ }),
+
+/***/ 455:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs/promises");
+
+/***/ }),
+
+/***/ 67:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:http");
+
+/***/ }),
+
+/***/ 708:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:https");
+
+/***/ }),
+
+/***/ 995:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:module");
+
+/***/ }),
+
+/***/ 30:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:net");
+
+/***/ }),
+
+/***/ 760:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
+
+/***/ }),
+
+/***/ 692:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:tls");
+
+/***/ }),
+
+/***/ 975:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:util");
+
+/***/ }),
+
+/***/ 261:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   PZ: () => (/* binding */ nameMembers)
+/* harmony export */ });
+/* unused harmony exports labelFor, sourceFor, unpickCamelCase */
 
 //#region src/anchor/label.ts
 const WORD = /[A-Z]+(?![a-z])|[A-Z]?[a-z\d]+|\d+/g;
@@ -46,7 +134,726 @@ function closestAttribute(element, name) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/gate/decide.js
+
+/***/ }),
+
+/***/ 638:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   PN: () => (/* binding */ REQUIRED_METHODS),
+/* harmony export */   SF: () => (/* binding */ capabilitiesOf),
+/* harmony export */   jI: () => (/* binding */ assertUsable),
+/* harmony export */   nP: () => (/* binding */ CONNECTOR_METHODS)
+/* harmony export */ });
+/* unused harmony exports MissingCapabilityError, missingRequirements, supports */
+//#region src/connectors/capabilities.ts
+const CONNECTOR_METHODS = {
+	store: [
+		"list",
+		"append",
+		"appendMany",
+		"setStatus",
+		"head",
+		"watch",
+		"approvals",
+		"approve",
+		"unapprove"
+	],
+	media: [
+		"putBlob",
+		"getUrl",
+		"remove"
+	],
+	observability: ["getReplayLink", "fetchEvents"],
+	identity: ["resolveUser"],
+	gate: ["publish", "read"],
+	classifier: [
+		"score",
+		"classify",
+		"plan"
+	]
+};
+const REQUIRED_METHODS = {
+	store: ["list", "append"],
+	media: ["putBlob", "getUrl"],
+	observability: ["getReplayLink"],
+	identity: ["resolveUser"],
+	gate: ["publish"],
+	classifier: []
+};
+var MissingCapabilityError = class extends Error {
+	connector;
+	kind;
+	missing;
+	name = "MissingCapabilityError";
+	constructor(connector, kind, missing) {
+		super(`Connector "${connector}" cannot be used as a ${kind} connector: missing required method(s) ${missing.join(", ")}.`);
+		this.connector = connector;
+		this.kind = kind;
+		this.missing = missing;
+	}
+};
+function supports(connector, method) {
+	return typeof connector[method] === "function";
+}
+function capabilitiesOf(kind, connector) {
+	const report = {};
+	for (const method of CONNECTOR_METHODS[kind]) report[method] = supports(connector, method);
+	return report;
+}
+function missingRequirements(kind, connector) {
+	return REQUIRED_METHODS[kind].filter((method) => !supports(connector, method));
+}
+function assertUsable(kind, connector) {
+	const missing = missingRequirements(kind, connector);
+	if (missing.length > 0) throw new MissingCapabilityError(connector.name, kind, missing);
+}
+//#endregion
+
+
+
+/***/ }),
+
+/***/ 546:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+
+// EXPORTS
+__nccwpck_require__.d(__webpack_exports__, {
+  $: () => (/* binding */ githubStore)
+});
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/github-pull.js
+//#region src/connectors/github-pull.ts
+function createPullCache() {
+	return { held: /* @__PURE__ */ new Map() };
+}
+const PAGE_SIZE = 100;
+function findPull(api, identifier, lookup, cache) {
+	const key = `${api.owner}/${api.repo}#${lookup?.commit ?? identifier}`;
+	const known = cache?.held.get(key);
+	if (known) return known;
+	const forget = () => {
+		cache?.held.delete(key);
+	};
+	const pending = resolve(api, identifier, lookup).then((found) => {
+		if (found === void 0) forget();
+		return found;
+	}, (error) => {
+		forget();
+		throw error;
+	});
+	cache?.held.set(key, pending);
+	return pending;
+}
+async function resolve(api, identifier, lookup) {
+	const exact = lookup?.commit === void 0 ? void 0 : await ofCommit(api, lookup.commit);
+	if (exact !== void 0) return exact;
+	const named = await ofHead(api, identifier);
+	if (named !== void 0) return named;
+	return lookup?.matches === void 0 ? void 0 : ofMatch(api, identifier, lookup.matches);
+}
+async function ofCommit(api, commit) {
+	const path = `/repos/${api.owner}/${api.repo}/commits/${encodeURIComponent(commit)}/pulls`;
+	return (await api.get(path))[0]?.number;
+}
+async function ofHead(api, branch) {
+	const head = encodeURIComponent(`${api.owner}:${branch}`);
+	const base = `/repos/${api.owner}/${api.repo}/pulls?head=${head}&per_page=1`;
+	const open = (await api.get(`${base}&state=open`))[0]?.number;
+	if (open !== void 0) return open;
+	const path = `${base}&state=all&sort=updated&direction=desc`;
+	return (await api.get(path))[0]?.number;
+}
+async function ofMatch(api, identifier, matches) {
+	const path = `/repos/${api.owner}/${api.repo}/pulls?state=open&sort=updated&direction=desc&per_page=${String(PAGE_SIZE)}`;
+	return (await api.get(path)).find((pull) => matches(pull.head.ref, identifier))?.number;
+}
+//#endregion
+
+
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/export/markdown.js
+var markdown = __nccwpck_require__(667);
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/github.js
+
+
+//#region src/connectors/github.ts
+const DEFAULT_BASE = "https://api.github.com";
+const github_PAGE_SIZE = 100;
+const ID = /^gh_(\d+)_(\d+)$/;
+const APPROVAL_ID = /^gha_(\d+)_(\d+)$/;
+const LEDGER_BUDGET = 4e4;
+function githubStore(options) {
+	const api = createClient(options);
+	return {
+		name: "github",
+		list: (query) => list(api, query),
+		append: async (comment) => (await appendMany(api, [comment]))[0],
+		appendMany: (comments) => appendMany(api, comments),
+		setStatus: (id, status, resolution) => setStatus(api, id, status, resolution),
+		head: (branch) => head(api, branch),
+		approvals: (branch) => approvalsOn(api, branch),
+		approve: (approval) => approve(api, approval),
+		unapprove: (id) => unapprove(api, id)
+	};
+}
+function createClient(options) {
+	const base = options.baseUrl ?? DEFAULT_BASE;
+	const call = options.fetch ?? globalThis.fetch;
+	return {
+		options,
+		async request(path, init = {}) {
+			const response = await call(`${base}${path}`, {
+				...init,
+				headers: {
+					accept: "application/vnd.github+json",
+					authorization: `Bearer ${options.token}`,
+					"x-github-api-version": "2022-11-28",
+					...init.body === void 0 ? {} : { "content-type": "application/json" },
+					...init.headers
+				}
+			});
+			if (!response.ok) throw await failure(response, path);
+			return {
+				body: await response.json(),
+				hasNext: hasNextPage(response)
+			};
+		}
+	};
+}
+async function failure(response, path) {
+	const detail = await response.text().catch(() => "");
+	const parsed = detail ? safeJson(detail) : void 0;
+	const message = typeof parsed === "object" && parsed !== null && "message" in parsed ? String(parsed.message) : detail || response.statusText;
+	return /* @__PURE__ */ new Error(`GitHub ${String(response.status)} on ${path}: ${message}`);
+}
+function safeJson(text) {
+	try {
+		return JSON.parse(text);
+	} catch {
+		return;
+	}
+}
+function hasNextPage(response) {
+	return (response.headers.get("link") ?? "").includes("rel=\"next\"");
+}
+function pullFor(api, identifier) {
+	return findPull(reader(api), identifier, api.options.pull, api.options.cache);
+}
+function reader(api) {
+	return {
+		owner: api.options.owner,
+		repo: api.options.repo,
+		get: async (path) => (await api.request(path)).body
+	};
+}
+async function head(api, branch) {
+	const pull = await pullFor(api, branch);
+	if (pull === void 0) return void 0;
+	const path = `/repos/${api.options.owner}/${api.options.repo}/pulls/${String(pull)}`;
+	const { body } = await api.request(path);
+	return body.head.sha;
+}
+async function readLedger(api, branch) {
+	const pull = await pullFor(api, branch);
+	return pull === void 0 ? void 0 : await readLedgerAt(api, pull, branch);
+}
+async function readLedgerAt(api, pull, branch) {
+	const found = [];
+	for (let page = 1; page <= github_PAGE_SIZE; page += 1) {
+		const path = `/repos/${api.options.owner}/${api.options.repo}/issues/${String(pull)}/comments?per_page=${String(github_PAGE_SIZE)}&page=${String(page)}`;
+		const { body, hasNext } = await api.request(path);
+		for (const issue of body) if ((0,markdown/* parseFence */._W)(issue.body)) found.push({
+			id: issue.id,
+			body: issue.body
+		});
+		if (!hasNext) break;
+	}
+	const newest = found.at(-1);
+	const fence = newest === void 0 ? void 0 : (0,markdown/* parseFence */._W)(newest.body);
+	const surface = branch ?? fence?.branch ?? "";
+	return {
+		branch: surface,
+		pull,
+		issueId: newest?.id,
+		stale: found.slice(0, -1).map((one) => one.id),
+		comments: fence?.comments.map((comment) => ({
+			...comment,
+			branch: surface
+		})) ?? [],
+		approvals: fence?.approvals ?? []
+	};
+}
+async function writeLedger(api, ledger, repost) {
+	const body = await bodyFor(api, ledger);
+	const { owner, repo } = api.options;
+	const gone = [...ledger.stale];
+	if (repost || ledger.issueId === void 0) {
+		await api.request(`/repos/${owner}/${repo}/issues/${String(ledger.pull)}/comments`, {
+			method: "POST",
+			body: JSON.stringify({ body })
+		});
+		if (ledger.issueId !== void 0) gone.push(ledger.issueId);
+	} else await api.request(`/repos/${owner}/${repo}/issues/comments/${String(ledger.issueId)}`, {
+		method: "PATCH",
+		body: JSON.stringify({ body })
+	});
+	for (const id of gone) await remove(api, id);
+}
+async function remove(api, issueId) {
+	const { owner, repo } = api.options;
+	try {
+		await api.request(`/repos/${owner}/${repo}/issues/comments/${String(issueId)}`, { method: "DELETE" });
+	} catch {}
+}
+async function list(api, query) {
+	if (query.limit !== void 0 && query.limit <= 0) throw new RangeError(`limit must be positive, received ${String(query.limit)}`);
+	const ledger = await readLedger(api, query.branch);
+	if (!ledger) return { comments: [] };
+	const matching = ledger.comments.filter((comment) => query.statuses === void 0 || query.statuses.includes(comment.status));
+	const offset = query.cursor === void 0 ? 0 : offsetOf(query.cursor);
+	const page = matching.slice(offset, offset + (query.limit ?? matching.length));
+	const next = offset + page.length;
+	return {
+		comments: page,
+		...next < matching.length ? { cursor: String(next) } : {}
+	};
+}
+async function appendMany(api, incoming) {
+	const branch = incoming[0]?.branch;
+	if (branch === void 0) return [];
+	const ledger = await readLedger(api, branch);
+	if (!ledger) throw new Error(`No pull request for branch ${branch}; Maple has nowhere to post.`);
+	let seq = nextSeq(ledger.comments.map((one) => one.id), ID);
+	const stored = incoming.map((comment) => ({
+		...comment,
+		id: `gh_${String(ledger.pull)}_${String(seq++)}`,
+		status: comment.status ?? "open"
+	}));
+	await writeLedger(api, {
+		...ledger,
+		comments: [...ledger.comments, ...stored]
+	}, true);
+	return stored;
+}
+async function setStatus(api, id, status, resolution) {
+	const located = ID.exec(id);
+	if (!located) throw new Error(`Not a GitHub comment id: ${id}`);
+	const ledger = await ledgerHolding(api, Number(located[1]), id, (one) => one.comments.some((held) => held.id === id));
+	const existing = ledger.comments.find((one) => one.id === id);
+	if (!existing) throw new Error(`No comment ${id} on this pull request.`);
+	const updated = {
+		...existing,
+		status,
+		...resolution ? { resolution } : {}
+	};
+	const comments = ledger.comments.map((one) => one.id === id ? updated : one);
+	await writeLedger(api, {
+		...ledger,
+		comments
+	}, false);
+	return updated;
+}
+function approvalsOn(api, branch) {
+	return readLedger(api, branch).then((ledger) => ledger?.approvals ?? []);
+}
+async function approve(api, approval) {
+	const ledger = await readLedger(api, approval.branch);
+	if (!ledger) throw new Error(`No pull request for branch ${approval.branch}; Maple has nowhere to post.`);
+	const seq = nextSeq(ledger.approvals.map((one) => one.id), APPROVAL_ID);
+	const stored = {
+		...approval,
+		id: `gha_${String(ledger.pull)}_${String(seq)}`
+	};
+	await writeLedger(api, {
+		...ledger,
+		approvals: [...ledger.approvals, stored]
+	}, true);
+	return stored;
+}
+async function unapprove(api, id) {
+	const located = APPROVAL_ID.exec(id);
+	if (!located) throw new Error(`Not a GitHub approval id: ${id}`);
+	const ledger = await ledgerHolding(api, Number(located[1]), id, (one) => one.approvals.some((approval) => approval.id === id));
+	const approvals = ledger.approvals.filter((one) => one.id !== id);
+	await writeLedger(api, {
+		...ledger,
+		approvals
+	}, false);
+}
+async function ledgerHolding(api, pull, id, holds) {
+	const ledger = await readLedgerAt(api, pull);
+	if (!holds(ledger)) throw new Error(`No Maple record ${id} on this repository.`);
+	return ledger;
+}
+function nextSeq(ids, shape) {
+	const used = ids.map((id) => Number(shape.exec(id)?.[2] ?? 0));
+	return Math.max(0, ...used) + 1;
+}
+async function bodyFor(api, ledger) {
+	const screenshots = await shotsFor(api, ledger.comments);
+	return (0,markdown/* exportMarkdown */.k4)(ledger.comments, {
+		branch: ledger.branch,
+		budget: LEDGER_BUDGET,
+		...ledger.approvals.length === 0 ? {} : { approvals: ledger.approvals },
+		...screenshots.size === 0 ? {} : { screenshots }
+	}).markdown;
+}
+async function shotsFor(api, comments) {
+	const shots = /* @__PURE__ */ new Map();
+	const media = api.options.media;
+	if (!media) return shots;
+	for (const comment of comments) {
+		const ref = comment.attachments?.find(isImage);
+		if (!ref) continue;
+		try {
+			shots.set(comment.id, await media.getUrl(ref));
+		} catch {}
+	}
+	return shots;
+}
+function isImage(ref) {
+	return ref.contentType.startsWith("image/");
+}
+function offsetOf(cursor) {
+	const offset = Number(cursor);
+	if (!Number.isInteger(offset) || offset < 0) throw new RangeError(`Invalid cursor: ${cursor}`);
+	return offset;
+}
+//#endregion
+
+
+
+/***/ }),
+
+/***/ 510:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   z: () => (/* binding */ MapleStoreError)
+/* harmony export */ });
+//#region src/errors.ts
+var MapleStoreError = class extends Error {
+	reason;
+	connector;
+	operation;
+	cause;
+	name = "MapleStoreError";
+	constructor(reason, connector, operation, cause) {
+		super(`Store "${connector}" failed during ${operation} (${reason}).`);
+		this.reason = reason;
+		this.connector = connector;
+		this.operation = operation;
+		this.cause = cause;
+	}
+};
+//#endregion
+
+
+
+/***/ }),
+
+/***/ 667:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   _W: () => (/* binding */ parseFence),
+/* harmony export */   k4: () => (/* binding */ exportMarkdown)
+/* harmony export */ });
+/* unused harmony exports FENCE_BUDGET, FENCE_VERSION, UnsupportedFenceError */
+/* harmony import */ var _anchor_label_js__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(261);
+/* harmony import */ var _lib_stable_stringify_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(434);
+/* harmony import */ var _mock_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(32);
+
+
+
+//#region src/export/markdown.ts
+const FENCE_VERSION = 1;
+const FENCE_BUDGET = 8192;
+const REDUCTIONS = [
+	"mock",
+	"quote-context",
+	"regions",
+	"selector",
+	"context",
+	"quote"
+];
+const REPO_URL = "https://github.com/maple-kit/maple";
+const ASSET_URL = "https://raw.githubusercontent.com/maple-kit/maple/main/docs/assets";
+const WORDMARK = [
+	"<sub><picture>",
+	`<source media="(prefers-color-scheme: dark)" srcset="${ASSET_URL}/wordmark-dark.svg">`,
+	`<img src="${ASSET_URL}/wordmark.svg" alt="Maple" height="20">`,
+	"</picture></sub>"
+].join("");
+const FENCE_LEAD = "The full comment details in markdown, to copy into an agent:";
+const POWERED_BY = `powered by <a href="${REPO_URL}">Maple</a>`;
+function exportMarkdown(comments, options) {
+	const approvals = options.approvals ?? [];
+	const head = [
+		introduce(comments),
+		"",
+		table(comments, hostedOnly(options.screenshots))
+	];
+	const foot = [
+		...signatures(approvals),
+		"",
+		footer(comments)
+	];
+	if (options.fence === false) return {
+		markdown: [...head, ...foot].join("\n"),
+		bytes: 0,
+		reduced: [],
+		overBudget: false
+	};
+	const budget = options.budget ?? 8192;
+	const { fence, bytes, reduced } = fit(comments, options.branch, approvals, budget);
+	return {
+		markdown: [
+			...head,
+			"",
+			FENCE_LEAD,
+			"",
+			"```maple",
+			fence,
+			"```",
+			...foot
+		].join("\n"),
+		bytes,
+		reduced,
+		overBudget: bytes > budget
+	};
+}
+function signatures(approvals) {
+	if (approvals.length === 0) return [];
+	return [
+		"",
+		"Approved:",
+		"",
+		...approvals.map((one) => `- **${cell(one.author.name)}** at \`${one.commit.slice(0, 7)}\`${noted(one.note)}`)
+	];
+}
+function noted(note) {
+	return note === void 0 ? "" : ` — ${cell(note)}`;
+}
+var UnsupportedFenceError = class extends Error {
+	version;
+	name = "UnsupportedFenceError";
+	constructor(version) {
+		super(`This fence is version ${version}; this build reads version 1.`);
+		this.version = version;
+	}
+};
+const FENCE = /```maple[^\n]*\n([\s\S]*?)\n```/;
+function parseFence(markdown) {
+	const body = FENCE.exec(markdown)?.[1];
+	if (body === void 0) return void 0;
+	const raw = JSON.parse(body);
+	if (typeof raw !== "object" || raw === null) return void 0;
+	const document = raw;
+	const version = typeof document["version"] === "number" ? document["version"] : 0;
+	if (version > 1) throw new UnsupportedFenceError(version);
+	return {
+		version,
+		branch: typeof document["branch"] === "string" ? document["branch"] : "",
+		comments: Array.isArray(document["comments"]) ? document["comments"].map(readMock) : [],
+		approvals: Array.isArray(document["approvals"]) ? document["approvals"] : [],
+		raw: document
+	};
+}
+function fit(comments, branch, approvals, budget) {
+	const applied = [];
+	let fence = encode(comments, branch, approvals, applied);
+	const mocked = comments.some((comment) => comment.context.mock !== void 0);
+	for (const reduction of REDUCTIONS) {
+		if (size(fence) <= budget) break;
+		if (reduction === "mock" && !mocked) continue;
+		applied.push(reduction);
+		fence = encode(comments, branch, approvals, applied);
+	}
+	return {
+		fence,
+		bytes: size(fence),
+		reduced: applied
+	};
+}
+function encode(comments, branch, approvals, reduced) {
+	return (0,_lib_stable_stringify_js__WEBPACK_IMPORTED_MODULE_0__/* .stableStringify */ .J)({
+		version: 1,
+		branch,
+		comments: comments.map((comment) => reduce(comment, reduced)),
+		...approvals.length === 0 ? {} : { approvals }
+	});
+}
+function reduce(comment, reduced) {
+	return {
+		...comment,
+		anchor: reduceAnchor(comment.anchor, reduced),
+		context: reduceContext(comment.context, reduced)
+	};
+}
+function reduceContext(context, reduced) {
+	if (reduced.includes("context")) return essentialContext(context);
+	const copy = { ...context };
+	if (reduced.includes("regions")) delete copy.regions;
+	if (reduced.includes("mock")) delete copy.mock;
+	return copy;
+}
+function readMock(comment) {
+	const mock = comment.context?.mock;
+	if (mock === void 0) return comment;
+	try {
+		return {
+			...comment,
+			context: {
+				...comment.context,
+				mock: (0,_mock_recipe_js__WEBPACK_IMPORTED_MODULE_1__/* .parseRecipe */ .j0)(mock)
+			}
+		};
+	} catch {
+		const context = { ...comment.context };
+		delete context.mock;
+		return {
+			...comment,
+			context
+		};
+	}
+}
+function reduceAnchor(anchor, reduced) {
+	const { quote, selector, members, ...rest } = anchor;
+	const kept = reduced.includes("quote") ? void 0 : trimQuote(quote, reduced);
+	return {
+		...rest,
+		...members === void 0 ? {} : { members: members.map((member) => reduceMember(member, reduced)) },
+		...selector === void 0 || reduced.includes("selector") ? {} : { selector },
+		...kept === void 0 ? {} : { quote: kept }
+	};
+}
+function reduceMember(member, reduced) {
+	const { quote, selector, ...rest } = member.anchor;
+	const kept = reduced.includes("quote") ? void 0 : trimQuote(quote, reduced);
+	return {
+		...member,
+		anchor: {
+			...rest,
+			...selector === void 0 || reduced.includes("selector") ? {} : { selector },
+			...kept === void 0 ? {} : { quote: kept }
+		}
+	};
+}
+function trimQuote(quote, reduced) {
+	if (!quote) return void 0;
+	return reduced.includes("quote-context") ? { exact: quote.exact } : quote;
+}
+function essentialContext(context) {
+	return {
+		url: context.url,
+		viewportWidth: context.viewportWidth,
+		viewportHeight: context.viewportHeight,
+		contentWidth: context.contentWidth,
+		devicePixelRatio: context.devicePixelRatio,
+		colorScheme: context.colorScheme
+	};
+}
+function introduce(comments) {
+	const names = [...new Set(comments.map((comment) => cell(comment.author.name)))].filter(Boolean);
+	const noun = comments.length === 1 ? "Comment" : "Comments";
+	if (names.length === 0) return `${noun} collected via ${WORDMARK} :`;
+	return `${noun} written by ${conjoin(names)} via ${WORDMARK} :`;
+}
+function footer(comments) {
+	return `---\n\n<sub>${stamp(comments[0])}${POWERED_BY}</sub>`;
+}
+function stamp(comment) {
+	if (comment === void 0) return "";
+	const parts = [hostOf(comment.context.url), comment.commit?.slice(0, 7) ?? ""].filter(Boolean);
+	return parts.length === 0 ? "" : `<code>${parts.join(" @ ")}</code> · `;
+}
+function hostOf(url) {
+	try {
+		return new URL(url).host;
+	} catch {
+		return "";
+	}
+}
+function conjoin(names) {
+	return new Intl.ListFormat("en", {
+		style: "long",
+		type: "conjunction"
+	}).format(names);
+}
+function table(comments, screenshots) {
+	const withShots = comments.some((comment) => screenshots.has(comment.id));
+	const withStatus = comments.some((comment) => comment.status !== "open");
+	const head = [
+		"#",
+		"Where",
+		"Comment",
+		...withStatus ? ["Status"] : [],
+		"Viewport",
+		...withShots ? ["Shot"] : []
+	];
+	const rows = comments.map((comment, index) => row(comment, index + 1, {
+		withStatus,
+		...withShots ? { shot: screenshots.get(comment.id) ?? "" } : {}
+	}));
+	return [
+		`| ${head.join(" | ")} |`,
+		`| ${head.map(() => "---").join(" | ")} |`,
+		...rows
+	].join("\n");
+}
+function row(comment, number, shape) {
+	return `| ${[
+		String(number),
+		where(comment.anchor),
+		cell(comment.body),
+		...shape.withStatus ? [STATUS_WORDS[comment.status]] : [],
+		`${comment.context.viewportWidth}×${comment.context.viewportHeight}${mockedWords(comment.context.mock)}`,
+		...shape.shot === void 0 ? [] : [shape.shot ? `[view](${shape.shot})` : ""]
+	].join(" | ")} |`;
+}
+function mockedWords(recipe) {
+	if (recipe === void 0) return "";
+	const as = (0,_mock_recipe_js__WEBPACK_IMPORTED_MODULE_1__/* .describeIdentity */ .Cl)(recipe.as);
+	return as === void 0 ? " · mocked" : ` · mocked as ${as}`;
+}
+const STATUS_WORDS = {
+	open: "Open",
+	resolved: "Resolved",
+	needs_reverify: "Re-verify",
+	orphaned: "Unpinned"
+};
+function where(anchor) {
+	const name = (0,_anchor_label_js__WEBPACK_IMPORTED_MODULE_2__/* .nameMembers */ .PZ)(anchor) ?? anchor.component ?? anchor.source ?? anchor.selector;
+	return name ? `\`${cell(name)}\`` : "—";
+}
+function cell(text) {
+	return text.replaceAll("|", "\\|").replaceAll(/\r?\n/g, "<br>").trim();
+}
+function hostedOnly(screenshots) {
+	const hosted = /* @__PURE__ */ new Map();
+	for (const [id, url] of screenshots ?? []) if (/^https?:\/\//i.test(url)) hosted.set(id, url);
+	return hosted;
+}
+function size(text) {
+	return new TextEncoder().encode(text).length;
+}
+//#endregion
+
+
+
+/***/ }),
+
+/***/ 477:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   q: () => (/* binding */ decideGate)
+/* harmony export */ });
+/* unused harmony export BLOCKING_STATUSES */
+/* harmony import */ var _anchor_label_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(261);
 
 //#region src/gate/decide.ts
 const BLOCKING_STATUSES = [
@@ -159,7 +966,7 @@ function listing(comments, blocking) {
 }
 function entry(comment) {
 	const { anchor: recorded } = comment;
-	const anchor = nameMembers(recorded) ?? recorded.component ?? recorded.source ?? recorded.selector;
+	const anchor = (0,_anchor_label_js__WEBPACK_IMPORTED_MODULE_0__/* .nameMembers */ .PZ)(recorded) ?? recorded.component ?? recorded.source ?? recorded.selector;
 	return `${anchor === void 0 ? "" : `\`${anchor}\` — `}${oneLine(comment.body)}${note(comment.status)}`;
 }
 function note(status) {
@@ -175,91 +982,219 @@ function plural(count) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/connectors/capabilities.js
-//#region src/connectors/capabilities.ts
-const CONNECTOR_METHODS = {
-	store: [
-		"list",
-		"append",
-		"appendMany",
-		"setStatus",
-		"head",
-		"watch",
-		"approvals",
-		"approve",
-		"unapprove"
-	],
-	media: [
-		"putBlob",
-		"getUrl",
-		"remove"
-	],
-	observability: ["getReplayLink", "fetchEvents"],
-	identity: ["resolveUser"],
-	gate: ["publish", "read"],
-	classifier: [
-		"score",
-		"classify",
-		"plan"
-	]
-};
-const REQUIRED_METHODS = {
-	store: ["list", "append"],
-	media: ["putBlob", "getUrl"],
-	observability: ["getReplayLink"],
-	identity: ["resolveUser"],
-	gate: ["publish"],
-	classifier: []
-};
-var MissingCapabilityError = class extends Error {
-	connector;
-	kind;
-	missing;
-	name = "MissingCapabilityError";
-	constructor(connector, kind, missing) {
-		super(`Connector "${connector}" cannot be used as a ${kind} connector: missing required method(s) ${missing.join(", ")}.`);
-		this.connector = connector;
-		this.kind = kind;
-		this.missing = missing;
+
+/***/ }),
+
+/***/ 434:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   J: () => (/* binding */ stableStringify)
+/* harmony export */ });
+/* unused harmony export CyclicValueError */
+//#region src/lib/stable-stringify.ts
+var CyclicValueError = class extends TypeError {
+	path;
+	name = "CyclicValueError";
+	constructor(path) {
+		super(`Cannot stringify a cyclic value; the cycle closes at ${path || "<root>"}.`);
+		this.path = path;
 	}
 };
-function supports(connector, method) {
-	return typeof connector[method] === "function";
+function isDroppable(value) {
+	return value === void 0 || typeof value === "function" || typeof value === "symbol";
 }
-function capabilitiesOf(kind, connector) {
-	const report = {};
-	for (const method of CONNECTOR_METHODS[kind]) report[method] = supports(connector, method);
-	return report;
+function byCodePoint(left, right) {
+	if (left < right) return -1;
+	return left > right ? 1 : 0;
 }
-function missingRequirements(kind, connector) {
-	return REQUIRED_METHODS[kind].filter((method) => !supports(connector, method));
+function sortValue(value, seen, path) {
+	if (value === null || typeof value !== "object") return value;
+	if (seen.has(value)) throw new CyclicValueError(path);
+	seen.add(value);
+	const sorted = Array.isArray(value) ? value.map((item, index) => sortValue(item, seen, `${path}[${index}]`)) : sortEntries(value, seen, path);
+	seen.delete(value);
+	return sorted;
 }
-function assertUsable(kind, connector) {
-	const missing = missingRequirements(kind, connector);
-	if (missing.length > 0) throw new MissingCapabilityError(connector.name, kind, missing);
+function sortEntries(value, seen, path) {
+	const out = {};
+	for (const key of Object.keys(value).sort(byCodePoint)) {
+		if (isDroppable(value[key])) continue;
+		out[key] = sortValue(value[key], seen, path ? `${path}.${key}` : key);
+	}
+	return out;
+}
+function stableStringify(value, space) {
+	return JSON.stringify(sortValue(value, /* @__PURE__ */ new Set(), ""), null, space);
 }
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/errors.js
-//#region src/errors.ts
-var MapleStoreError = class extends Error {
-	reason;
-	connector;
-	operation;
-	cause;
-	name = "MapleStoreError";
-	constructor(reason, connector, operation, cause) {
-		super(`Store "${connector}" failed during ${operation} (${reason}).`);
-		this.reason = reason;
-		this.connector = connector;
-		this.operation = operation;
-		this.cause = cause;
+
+/***/ }),
+
+/***/ 32:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   CX: () => (/* binding */ MOCK_STATES),
+/* harmony export */   Cl: () => (/* binding */ describeIdentity),
+/* harmony export */   M9: () => (/* binding */ RECIPE_VERSION),
+/* harmony export */   j0: () => (/* binding */ parseRecipe)
+/* harmony export */ });
+/* unused harmony export InvalidRecipeError */
+//#region src/mock/recipe.ts
+const RECIPE_VERSION = 2;
+const MOCK_STATES = [
+	"empty",
+	"error",
+	"forbidden",
+	"loading",
+	"one",
+	"many",
+	"long",
+	"sparse",
+	"mixed"
+];
+var InvalidRecipeError = class extends Error {
+	issues;
+	name = "InvalidRecipeError";
+	constructor(issues) {
+		super(["Invalid mock recipe:", ...issues].join("\n  "));
+		this.issues = issues;
 	}
 };
+const KEY = /^[a-z]+:\S/;
+const STATES = new Set(MOCK_STATES);
+function parseRecipe(input) {
+	if (!isRecord(input)) throw new InvalidRecipeError(["a recipe is an object"]);
+	const issues = [...versionIssues(input["version"])];
+	const calls = parseCalls(input["calls"], issues);
+	const flags = parseFlags(input["flags"], issues);
+	const as = parseIdentity(input["as"], issues);
+	const { request, route } = input;
+	if (request !== void 0 && typeof request !== "string") issues.push("request: must be a string when present");
+	if (route !== void 0 && !(typeof route === "string" && route.startsWith("/"))) issues.push("route: must be a path pattern starting with \"/\" when present");
+	if (issues.length > 0) throw new InvalidRecipeError(issues);
+	return {
+		version: 2,
+		calls,
+		...flags === void 0 ? {} : { flags },
+		...as === void 0 ? {} : { as },
+		...typeof route === "string" ? { route } : {},
+		...typeof request === "string" ? { request } : {}
+	};
+}
+function versionIssues(version) {
+	if (version === 1 || version === 2) return [];
+	if (typeof version === "number" && version > 2) return [`version: ${version} is newer than this build reads (2)`];
+	return [`version: must be 1 or 2`];
+}
+function parseFlags(value, issues) {
+	if (value === void 0) return void 0;
+	if (!isRecord(value)) {
+		issues.push("flags: must be an object of flag keys when present");
+		return;
+	}
+	const flags = {};
+	for (const [key, flag] of Object.entries(value)) if (key.trim() === "") issues.push("flags: a flag key must not be blank");
+	else if (isFlagValue(flag)) flags[key] = structuredClone(flag);
+	else issues.push(`flags.${key}: must be a JSON value`);
+	return flags;
+}
+function isFlagValue(value) {
+	if (value === null || typeof value === "boolean" || typeof value === "string") return true;
+	if (typeof value === "number") return Number.isFinite(value);
+	if (Array.isArray(value)) return value.every(isFlagValue);
+	return isRecord(value) && Object.values(value).every(isFlagValue);
+}
+function parseIdentity(value, issues) {
+	if (value === void 0) return void 0;
+	if (!isRecord(value)) {
+		issues.push("as: must be an object when present");
+		return;
+	}
+	const { role, permissions } = value;
+	if (role === void 0 && permissions === void 0) issues.push("as: must name a role, permissions, or both");
+	const validRole = typeof role === "string" && role.trim() !== "";
+	if (role !== void 0 && !validRole) issues.push("as.role: must be a non-blank string");
+	const granted = parsePermissions(permissions, issues);
+	return {
+		...validRole ? { role } : {},
+		...granted === void 0 ? {} : { permissions: granted }
+	};
+}
+function parsePermissions(value, issues) {
+	if (value === void 0) return void 0;
+	if (!isRecord(value)) {
+		issues.push("as.permissions: must map each permission to true or false");
+		return;
+	}
+	const permissions = {};
+	for (const [key, granted] of Object.entries(value)) if (key.trim() === "") issues.push("as.permissions: a permission must not be blank");
+	else if (typeof granted === "boolean") permissions[key] = granted;
+	else issues.push(`as.permissions.${key}: must be true or false`);
+	return permissions;
+}
+function describeIdentity(as) {
+	if (as === void 0) return void 0;
+	const permissions = Object.entries(as.permissions ?? {}).map(([permission, granted]) => `${granted ? "with" : "without"} ${permission}`);
+	const words = [...as.role === void 0 ? [] : [as.role], ...permissions];
+	return words.length === 0 ? void 0 : words.join(", ");
+}
+function parseCalls(value, issues) {
+	if (!Array.isArray(value)) {
+		issues.push("calls: must be an array");
+		return [];
+	}
+	const seen = /* @__PURE__ */ new Set();
+	const calls = [];
+	value.forEach((entry, index) => {
+		const call = parseCall(entry, `calls.${index}`, issues);
+		if (call === void 0) return;
+		if (seen.has(call.key)) issues.push(`calls.${index}.key: "${call.key}" appears twice`);
+		seen.add(call.key);
+		calls.push(call);
+	});
+	return calls;
+}
+function parseCall(entry, path, issues) {
+	if (!isRecord(entry)) {
+		issues.push(`${path}: must be an object`);
+		return;
+	}
+	const { key, state } = entry;
+	const validKey = typeof key === "string" && KEY.test(key);
+	const validState = typeof state === "string" && STATES.has(state);
+	if (!validKey) issues.push(`${path}.key: must look like "codec:name"`);
+	if (!validState) issues.push(`${path}.state: must be one of ${MOCK_STATES.join(", ")}`);
+	return validKey && validState ? {
+		key,
+		state
+	} : void 0;
+}
+function isRecord(value) {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 //#endregion
 
 
+
+/***/ }),
+
+/***/ 99:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+
+// EXPORTS
+__nccwpck_require__.d(__webpack_exports__, {
+  V: () => (/* binding */ createCommentStore)
+});
+
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/capabilities.js
+var capabilities = __nccwpck_require__(638);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/errors.js
+var errors = __nccwpck_require__(510);
 ;// CONCATENATED MODULE: ./node_modules/.pnpm/effect@3.20.0/node_modules/effect/dist/esm/Function.js
 /**
  * Tests if a value is a `function`.
@@ -20704,7 +21639,7 @@ const TaggedError = tag => {
   return O.BaseEffectError;
 };
 //# sourceMappingURL=Data.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/internal/effect/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/internal/effect/errors.js
 
 //#region src/internal/effect/errors.ts
 var StoreUnavailable = class extends TaggedError("StoreUnavailable") {};
@@ -53357,7 +54292,7 @@ const ensureErrorType = () => effect => effect;
  */
 const ensureRequirementsType = () => effect => effect;
 //# sourceMappingURL=Effect.js.map
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/internal/effect/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/internal/effect/store.js
 
 
 
@@ -53398,7 +54333,7 @@ function call(connector, operation, run) {
 }
 function toPublicError(error) {
 	const reason = error._tag === "StoreUnavailable" ? "unavailable" : "rejected";
-	return new MapleStoreError(reason, error.connector, error.operation, error.cause);
+	return new errors/* MapleStoreError */.z(reason, error.connector, error.operation, error.cause);
 }
 async function store_run(program) {
 	const exit = await Effect_runPromiseExit(program.pipe(Effect_mapError(toPublicError)));
@@ -53453,15 +54388,15 @@ async function unapproveSurface(connector, id) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/store.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/store.js
 
 
 //#region src/store.ts
 function createCommentStore(connector) {
-	assertUsable("store", connector);
+	(0,capabilities/* assertUsable */.jI)("store", connector);
 	return {
 		name: connector.name,
-		capabilities: capabilitiesOf("store", connector),
+		capabilities: (0,capabilities/* capabilitiesOf */.SF)("store", connector),
 		list: (query) => listComments(connector, query),
 		append: (comment) => appendComment(connector, comment),
 		appendMany: (comments) => appendComments(connector, comments),
@@ -53476,759 +54411,172 @@ function createCommentStore(connector) {
 //#endregion
 
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/connectors/github-pull.js
-//#region src/connectors/github-pull.ts
-function createPullCache() {
-	return { held: /* @__PURE__ */ new Map() };
-}
-const PAGE_SIZE = 100;
-function findPull(api, identifier, lookup, cache) {
-	const key = `${api.owner}/${api.repo}#${lookup?.commit ?? identifier}`;
-	const known = cache?.held.get(key);
-	if (known) return known;
-	const forget = () => {
-		cache?.held.delete(key);
-	};
-	const pending = resolve(api, identifier, lookup).then((found) => {
-		if (found === void 0) forget();
-		return found;
-	}, (error) => {
-		forget();
-		throw error;
-	});
-	cache?.held.set(key, pending);
-	return pending;
-}
-async function resolve(api, identifier, lookup) {
-	const exact = lookup?.commit === void 0 ? void 0 : await ofCommit(api, lookup.commit);
-	if (exact !== void 0) return exact;
-	const named = await ofHead(api, identifier);
-	if (named !== void 0) return named;
-	return lookup?.matches === void 0 ? void 0 : ofMatch(api, identifier, lookup.matches);
-}
-async function ofCommit(api, commit) {
-	const path = `/repos/${api.owner}/${api.repo}/commits/${encodeURIComponent(commit)}/pulls`;
-	return (await api.get(path))[0]?.number;
-}
-async function ofHead(api, branch) {
-	const head = encodeURIComponent(`${api.owner}:${branch}`);
-	const base = `/repos/${api.owner}/${api.repo}/pulls?head=${head}&per_page=1`;
-	const open = (await api.get(`${base}&state=open`))[0]?.number;
-	if (open !== void 0) return open;
-	const path = `${base}&state=all&sort=updated&direction=desc`;
-	return (await api.get(path))[0]?.number;
-}
-async function ofMatch(api, identifier, matches) {
-	const path = `/repos/${api.owner}/${api.repo}/pulls?state=open&sort=updated&direction=desc&per_page=${String(PAGE_SIZE)}`;
-	return (await api.get(path)).find((pull) => matches(pull.head.ref, identifier))?.number;
-}
-//#endregion
 
+/***/ })
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/lib/stable-stringify.js
-//#region src/lib/stable-stringify.ts
-var CyclicValueError = class extends TypeError {
-	path;
-	name = "CyclicValueError";
-	constructor(path) {
-		super(`Cannot stringify a cyclic value; the cycle closes at ${path || "<root>"}.`);
-		this.path = path;
-	}
-};
-function isDroppable(value) {
-	return value === void 0 || typeof value === "function" || typeof value === "symbol";
-}
-function byCodePoint(left, right) {
-	if (left < right) return -1;
-	return left > right ? 1 : 0;
-}
-function sortValue(value, seen, path) {
-	if (value === null || typeof value !== "object") return value;
-	if (seen.has(value)) throw new CyclicValueError(path);
-	seen.add(value);
-	const sorted = Array.isArray(value) ? value.map((item, index) => sortValue(item, seen, `${path}[${index}]`)) : sortEntries(value, seen, path);
-	seen.delete(value);
-	return sorted;
-}
-function sortEntries(value, seen, path) {
-	const out = {};
-	for (const key of Object.keys(value).sort(byCodePoint)) {
-		if (isDroppable(value[key])) continue;
-		out[key] = sortValue(value[key], seen, path ? `${path}.${key}` : key);
-	}
-	return out;
-}
-function stableStringify(value, space) {
-	return JSON.stringify(sortValue(value, /* @__PURE__ */ new Set(), ""), null, space);
-}
-//#endregion
+/******/ });
+/************************************************************************/
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __nccwpck_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
+/******/ 	}
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		// no module.id needed
+/******/ 		// no module.loaded needed
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	var threw = true;
+/******/ 	try {
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __nccwpck_require__);
+/******/ 		threw = false;
+/******/ 	} finally {
+/******/ 		if(threw) delete __webpack_module_cache__[moduleId];
+/******/ 	}
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
+/******/ // expose the modules object (__webpack_modules__)
+/******/ __nccwpck_require__.m = __webpack_modules__;
+/******/ 
+/************************************************************************/
+/******/ /* webpack/runtime/asset-relocator-loader */
+/******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = decodeURIComponent(new URL('.', import.meta.url).pathname).slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
+/******/ 
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__nccwpck_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/ensure chunk */
+/******/ (() => {
+/******/ 	__nccwpck_require__.f = {};
+/******/ 	// This file contains only the entry chunk.
+/******/ 	// The chunk loading function for additional chunks
+/******/ 	__nccwpck_require__.e = (chunkId) => {
+/******/ 		return Promise.all(Object.keys(__nccwpck_require__.f).reduce((promises, key) => {
+/******/ 			__nccwpck_require__.f[key](chunkId, promises);
+/******/ 			return promises;
+/******/ 		}, []));
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/get javascript chunk filename */
+/******/ (() => {
+/******/ 	// This function allow to reference async chunks
+/******/ 	__nccwpck_require__.u = (chunkId) => {
+/******/ 		// return url for filenames based on template
+/******/ 		return "" + chunkId + ".index.js";
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__nccwpck_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/import chunk loading */
+/******/ (() => {
+/******/ 	// no baseURI
+/******/ 	
+/******/ 	// object to store loaded and loading chunks
+/******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 	// [resolve, Promise] = chunk loading, 0 = chunk loaded
+/******/ 	var installedChunks = {
+/******/ 		792: 0
+/******/ 	};
+/******/ 	
+/******/ 	var installChunk = (data) => {
+/******/ 		var {ids, modules, runtime} = data;
+/******/ 		// add "modules" to the modules object,
+/******/ 		// then flag all "ids" as loaded and fire callback
+/******/ 		var moduleId, chunkId, i = 0;
+/******/ 		for(moduleId in modules) {
+/******/ 			if(__nccwpck_require__.o(modules, moduleId)) {
+/******/ 				__nccwpck_require__.m[moduleId] = modules[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 		if(runtime) runtime(__nccwpck_require__);
+/******/ 		for(;i < ids.length; i++) {
+/******/ 			chunkId = ids[i];
+/******/ 			if(__nccwpck_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 				installedChunks[chunkId][0]();
+/******/ 			}
+/******/ 			installedChunks[ids[i]] = 0;
+/******/ 		}
+/******/ 	
+/******/ 	}
+/******/ 	
+/******/ 	__nccwpck_require__.f.j = (chunkId, promises) => {
+/******/ 			// import() chunk loading for javascript
+/******/ 			var installedChunkData = __nccwpck_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
+/******/ 			if(installedChunkData !== 0) { // 0 means "already installed".
+/******/ 	
+/******/ 				// a Promise means "currently loading".
+/******/ 				if(installedChunkData) {
+/******/ 					promises.push(installedChunkData[1]);
+/******/ 				} else {
+/******/ 					if(true) { // all chunks have JS
+/******/ 						// setup Promise in chunk cache
+/******/ 						var promise = import("./" + __nccwpck_require__.u(chunkId)).then(installChunk, (e) => {
+/******/ 							if(installedChunks[chunkId] !== 0) installedChunks[chunkId] = undefined;
+/******/ 							throw e;
+/******/ 						});
+/******/ 						var promise = Promise.race([promise, new Promise((resolve) => (installedChunkData = installedChunks[chunkId] = [resolve]))])
+/******/ 						promises.push(installedChunkData[1] = promise);
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 	};
+/******/ 	
+/******/ 	// no prefetching
+/******/ 	
+/******/ 	// no preloaded
+/******/ 	
+/******/ 	// no external install chunk
+/******/ 	
+/******/ 	// no on chunks loaded
+/******/ })();
+/******/ 
+/************************************************************************/
+var __webpack_exports__ = {};
 
-
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/mock/recipe.js
-//#region src/mock/recipe.ts
-const RECIPE_VERSION = 2;
-const MOCK_STATES = [
-	"empty",
-	"error",
-	"forbidden",
-	"loading",
-	"one",
-	"many",
-	"long",
-	"sparse",
-	"mixed"
-];
-var InvalidRecipeError = class extends Error {
-	issues;
-	name = "InvalidRecipeError";
-	constructor(issues) {
-		super(["Invalid mock recipe:", ...issues].join("\n  "));
-		this.issues = issues;
-	}
-};
-const KEY = /^[a-z]+:\S/;
-const STATES = new Set(MOCK_STATES);
-function parseRecipe(input) {
-	if (!recipe_isRecord(input)) throw new InvalidRecipeError(["a recipe is an object"]);
-	const issues = [...versionIssues(input["version"])];
-	const calls = parseCalls(input["calls"], issues);
-	const flags = parseFlags(input["flags"], issues);
-	const as = parseIdentity(input["as"], issues);
-	const { request, route } = input;
-	if (request !== void 0 && typeof request !== "string") issues.push("request: must be a string when present");
-	if (route !== void 0 && !(typeof route === "string" && route.startsWith("/"))) issues.push("route: must be a path pattern starting with \"/\" when present");
-	if (issues.length > 0) throw new InvalidRecipeError(issues);
-	return {
-		version: 2,
-		calls,
-		...flags === void 0 ? {} : { flags },
-		...as === void 0 ? {} : { as },
-		...typeof route === "string" ? { route } : {},
-		...typeof request === "string" ? { request } : {}
-	};
-}
-function versionIssues(version) {
-	if (version === 1 || version === 2) return [];
-	if (typeof version === "number" && version > 2) return [`version: ${version} is newer than this build reads (2)`];
-	return [`version: must be 1 or 2`];
-}
-function parseFlags(value, issues) {
-	if (value === void 0) return void 0;
-	if (!recipe_isRecord(value)) {
-		issues.push("flags: must be an object of flag keys when present");
-		return;
-	}
-	const flags = {};
-	for (const [key, flag] of Object.entries(value)) if (key.trim() === "") issues.push("flags: a flag key must not be blank");
-	else if (isFlagValue(flag)) flags[key] = structuredClone(flag);
-	else issues.push(`flags.${key}: must be a JSON value`);
-	return flags;
-}
-function isFlagValue(value) {
-	if (value === null || typeof value === "boolean" || typeof value === "string") return true;
-	if (typeof value === "number") return Number.isFinite(value);
-	if (Array.isArray(value)) return value.every(isFlagValue);
-	return recipe_isRecord(value) && Object.values(value).every(isFlagValue);
-}
-function parseIdentity(value, issues) {
-	if (value === void 0) return void 0;
-	if (!recipe_isRecord(value)) {
-		issues.push("as: must be an object when present");
-		return;
-	}
-	const { role, permissions } = value;
-	if (role === void 0 && permissions === void 0) issues.push("as: must name a role, permissions, or both");
-	const validRole = typeof role === "string" && role.trim() !== "";
-	if (role !== void 0 && !validRole) issues.push("as.role: must be a non-blank string");
-	const granted = parsePermissions(permissions, issues);
-	return {
-		...validRole ? { role } : {},
-		...granted === void 0 ? {} : { permissions: granted }
-	};
-}
-function parsePermissions(value, issues) {
-	if (value === void 0) return void 0;
-	if (!recipe_isRecord(value)) {
-		issues.push("as.permissions: must map each permission to true or false");
-		return;
-	}
-	const permissions = {};
-	for (const [key, granted] of Object.entries(value)) if (key.trim() === "") issues.push("as.permissions: a permission must not be blank");
-	else if (typeof granted === "boolean") permissions[key] = granted;
-	else issues.push(`as.permissions.${key}: must be true or false`);
-	return permissions;
-}
-function describeIdentity(as) {
-	if (as === void 0) return void 0;
-	const permissions = Object.entries(as.permissions ?? {}).map(([permission, granted]) => `${granted ? "with" : "without"} ${permission}`);
-	const words = [...as.role === void 0 ? [] : [as.role], ...permissions];
-	return words.length === 0 ? void 0 : words.join(", ");
-}
-function parseCalls(value, issues) {
-	if (!Array.isArray(value)) {
-		issues.push("calls: must be an array");
-		return [];
-	}
-	const seen = /* @__PURE__ */ new Set();
-	const calls = [];
-	value.forEach((entry, index) => {
-		const call = parseCall(entry, `calls.${index}`, issues);
-		if (call === void 0) return;
-		if (seen.has(call.key)) issues.push(`calls.${index}.key: "${call.key}" appears twice`);
-		seen.add(call.key);
-		calls.push(call);
-	});
-	return calls;
-}
-function parseCall(entry, path, issues) {
-	if (!recipe_isRecord(entry)) {
-		issues.push(`${path}: must be an object`);
-		return;
-	}
-	const { key, state } = entry;
-	const validKey = typeof key === "string" && KEY.test(key);
-	const validState = typeof state === "string" && STATES.has(state);
-	if (!validKey) issues.push(`${path}.key: must look like "codec:name"`);
-	if (!validState) issues.push(`${path}.state: must be one of ${MOCK_STATES.join(", ")}`);
-	return validKey && validState ? {
-		key,
-		state
-	} : void 0;
-}
-function recipe_isRecord(value) {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-//#endregion
-
-
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/export/markdown.js
-
-
-
-//#region src/export/markdown.ts
-const FENCE_VERSION = 1;
-const FENCE_BUDGET = 8192;
-const REDUCTIONS = [
-	"mock",
-	"quote-context",
-	"regions",
-	"selector",
-	"context",
-	"quote"
-];
-const REPO_URL = "https://github.com/maple-kit/maple";
-const ASSET_URL = "https://raw.githubusercontent.com/maple-kit/maple/main/docs/assets";
-const WORDMARK = [
-	"<sub><picture>",
-	`<source media="(prefers-color-scheme: dark)" srcset="${ASSET_URL}/wordmark-dark.svg">`,
-	`<img src="${ASSET_URL}/wordmark.svg" alt="Maple" height="20">`,
-	"</picture></sub>"
-].join("");
-const FENCE_LEAD = "The full comment details in markdown, to copy into an agent:";
-const POWERED_BY = `powered by <a href="${REPO_URL}">Maple</a>`;
-function exportMarkdown(comments, options) {
-	const approvals = options.approvals ?? [];
-	const head = [
-		introduce(comments),
-		"",
-		markdown_table(comments, hostedOnly(options.screenshots))
-	];
-	const foot = [
-		...signatures(approvals),
-		"",
-		footer(comments)
-	];
-	if (options.fence === false) return {
-		markdown: [...head, ...foot].join("\n"),
-		bytes: 0,
-		reduced: [],
-		overBudget: false
-	};
-	const budget = options.budget ?? 8192;
-	const { fence, bytes, reduced } = fit(comments, options.branch, approvals, budget);
-	return {
-		markdown: [
-			...head,
-			"",
-			FENCE_LEAD,
-			"",
-			"```maple",
-			fence,
-			"```",
-			...foot
-		].join("\n"),
-		bytes,
-		reduced,
-		overBudget: bytes > budget
-	};
-}
-function signatures(approvals) {
-	if (approvals.length === 0) return [];
-	return [
-		"",
-		"Approved:",
-		"",
-		...approvals.map((one) => `- **${cell(one.author.name)}** at \`${one.commit.slice(0, 7)}\`${noted(one.note)}`)
-	];
-}
-function noted(note) {
-	return note === void 0 ? "" : ` — ${cell(note)}`;
-}
-var UnsupportedFenceError = class extends Error {
-	version;
-	name = "UnsupportedFenceError";
-	constructor(version) {
-		super(`This fence is version ${version}; this build reads version 1.`);
-		this.version = version;
-	}
-};
-const FENCE = /```maple[^\n]*\n([\s\S]*?)\n```/;
-function parseFence(markdown) {
-	const body = FENCE.exec(markdown)?.[1];
-	if (body === void 0) return void 0;
-	const raw = JSON.parse(body);
-	if (typeof raw !== "object" || raw === null) return void 0;
-	const document = raw;
-	const version = typeof document["version"] === "number" ? document["version"] : 0;
-	if (version > 1) throw new UnsupportedFenceError(version);
-	return {
-		version,
-		branch: typeof document["branch"] === "string" ? document["branch"] : "",
-		comments: Array.isArray(document["comments"]) ? document["comments"].map(readMock) : [],
-		approvals: Array.isArray(document["approvals"]) ? document["approvals"] : [],
-		raw: document
-	};
-}
-function fit(comments, branch, approvals, budget) {
-	const applied = [];
-	let fence = encode(comments, branch, approvals, applied);
-	const mocked = comments.some((comment) => comment.context.mock !== void 0);
-	for (const reduction of REDUCTIONS) {
-		if (markdown_size(fence) <= budget) break;
-		if (reduction === "mock" && !mocked) continue;
-		applied.push(reduction);
-		fence = encode(comments, branch, approvals, applied);
-	}
-	return {
-		fence,
-		bytes: markdown_size(fence),
-		reduced: applied
-	};
-}
-function encode(comments, branch, approvals, reduced) {
-	return stableStringify({
-		version: 1,
-		branch,
-		comments: comments.map((comment) => markdown_reduce(comment, reduced)),
-		...approvals.length === 0 ? {} : { approvals }
-	});
-}
-function markdown_reduce(comment, reduced) {
-	return {
-		...comment,
-		anchor: reduceAnchor(comment.anchor, reduced),
-		context: reduceContext(comment.context, reduced)
-	};
-}
-function reduceContext(context, reduced) {
-	if (reduced.includes("context")) return essentialContext(context);
-	const copy = { ...context };
-	if (reduced.includes("regions")) delete copy.regions;
-	if (reduced.includes("mock")) delete copy.mock;
-	return copy;
-}
-function readMock(comment) {
-	const mock = comment.context?.mock;
-	if (mock === void 0) return comment;
-	try {
-		return {
-			...comment,
-			context: {
-				...comment.context,
-				mock: parseRecipe(mock)
-			}
-		};
-	} catch {
-		const context = { ...comment.context };
-		delete context.mock;
-		return {
-			...comment,
-			context
-		};
-	}
-}
-function reduceAnchor(anchor, reduced) {
-	const { quote, selector, members, ...rest } = anchor;
-	const kept = reduced.includes("quote") ? void 0 : trimQuote(quote, reduced);
-	return {
-		...rest,
-		...members === void 0 ? {} : { members: members.map((member) => reduceMember(member, reduced)) },
-		...selector === void 0 || reduced.includes("selector") ? {} : { selector },
-		...kept === void 0 ? {} : { quote: kept }
-	};
-}
-function reduceMember(member, reduced) {
-	const { quote, selector, ...rest } = member.anchor;
-	const kept = reduced.includes("quote") ? void 0 : trimQuote(quote, reduced);
-	return {
-		...member,
-		anchor: {
-			...rest,
-			...selector === void 0 || reduced.includes("selector") ? {} : { selector },
-			...kept === void 0 ? {} : { quote: kept }
-		}
-	};
-}
-function trimQuote(quote, reduced) {
-	if (!quote) return void 0;
-	return reduced.includes("quote-context") ? { exact: quote.exact } : quote;
-}
-function essentialContext(context) {
-	return {
-		url: context.url,
-		viewportWidth: context.viewportWidth,
-		viewportHeight: context.viewportHeight,
-		contentWidth: context.contentWidth,
-		devicePixelRatio: context.devicePixelRatio,
-		colorScheme: context.colorScheme
-	};
-}
-function introduce(comments) {
-	const names = [...new Set(comments.map((comment) => cell(comment.author.name)))].filter(Boolean);
-	const noun = comments.length === 1 ? "Comment" : "Comments";
-	if (names.length === 0) return `${noun} collected via ${WORDMARK} :`;
-	return `${noun} written by ${conjoin(names)} via ${WORDMARK} :`;
-}
-function footer(comments) {
-	return `---\n\n<sub>${stamp(comments[0])}${POWERED_BY}</sub>`;
-}
-function stamp(comment) {
-	if (comment === void 0) return "";
-	const parts = [hostOf(comment.context.url), comment.commit?.slice(0, 7) ?? ""].filter(Boolean);
-	return parts.length === 0 ? "" : `<code>${parts.join(" @ ")}</code> · `;
-}
-function hostOf(url) {
-	try {
-		return new URL(url).host;
-	} catch {
-		return "";
-	}
-}
-function conjoin(names) {
-	return new Intl.ListFormat("en", {
-		style: "long",
-		type: "conjunction"
-	}).format(names);
-}
-function markdown_table(comments, screenshots) {
-	const withShots = comments.some((comment) => screenshots.has(comment.id));
-	const withStatus = comments.some((comment) => comment.status !== "open");
-	const head = [
-		"#",
-		"Where",
-		"Comment",
-		...withStatus ? ["Status"] : [],
-		"Viewport",
-		...withShots ? ["Shot"] : []
-	];
-	const rows = comments.map((comment, index) => row(comment, index + 1, {
-		withStatus,
-		...withShots ? { shot: screenshots.get(comment.id) ?? "" } : {}
-	}));
-	return [
-		`| ${head.join(" | ")} |`,
-		`| ${head.map(() => "---").join(" | ")} |`,
-		...rows
-	].join("\n");
-}
-function row(comment, number, shape) {
-	return `| ${[
-		String(number),
-		where(comment.anchor),
-		cell(comment.body),
-		...shape.withStatus ? [STATUS_WORDS[comment.status]] : [],
-		`${comment.context.viewportWidth}×${comment.context.viewportHeight}${mockedWords(comment.context.mock)}`,
-		...shape.shot === void 0 ? [] : [shape.shot ? `[view](${shape.shot})` : ""]
-	].join(" | ")} |`;
-}
-function mockedWords(recipe) {
-	if (recipe === void 0) return "";
-	const as = describeIdentity(recipe.as);
-	return as === void 0 ? " · mocked" : ` · mocked as ${as}`;
-}
-const STATUS_WORDS = {
-	open: "Open",
-	resolved: "Resolved",
-	needs_reverify: "Re-verify",
-	orphaned: "Unpinned"
-};
-function where(anchor) {
-	const name = nameMembers(anchor) ?? anchor.component ?? anchor.source ?? anchor.selector;
-	return name ? `\`${cell(name)}\`` : "—";
-}
-function cell(text) {
-	return text.replaceAll("|", "\\|").replaceAll(/\r?\n/g, "<br>").trim();
-}
-function hostedOnly(screenshots) {
-	const hosted = /* @__PURE__ */ new Map();
-	for (const [id, url] of screenshots ?? []) if (/^https?:\/\//i.test(url)) hosted.set(id, url);
-	return hosted;
-}
-function markdown_size(text) {
-	return new TextEncoder().encode(text).length;
-}
-//#endregion
-
-
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/connectors/github.js
-
-
-//#region src/connectors/github.ts
-const DEFAULT_BASE = "https://api.github.com";
-const github_PAGE_SIZE = 100;
-const ID = /^gh_(\d+)_(\d+)$/;
-const APPROVAL_ID = /^gha_(\d+)_(\d+)$/;
-const LEDGER_BUDGET = 4e4;
-function githubStore(options) {
-	const api = createClient(options);
-	return {
-		name: "github",
-		list: (query) => list(api, query),
-		append: async (comment) => (await appendMany(api, [comment]))[0],
-		appendMany: (comments) => appendMany(api, comments),
-		setStatus: (id, status, resolution) => setStatus(api, id, status, resolution),
-		head: (branch) => github_head(api, branch),
-		approvals: (branch) => approvalsOn(api, branch),
-		approve: (approval) => approve(api, approval),
-		unapprove: (id) => unapprove(api, id)
-	};
-}
-function createClient(options) {
-	const base = options.baseUrl ?? DEFAULT_BASE;
-	const call = options.fetch ?? globalThis.fetch;
-	return {
-		options,
-		async request(path, init = {}) {
-			const response = await call(`${base}${path}`, {
-				...init,
-				headers: {
-					accept: "application/vnd.github+json",
-					authorization: `Bearer ${options.token}`,
-					"x-github-api-version": "2022-11-28",
-					...init.body === void 0 ? {} : { "content-type": "application/json" },
-					...init.headers
-				}
-			});
-			if (!response.ok) throw await failure(response, path);
-			return {
-				body: await response.json(),
-				hasNext: hasNextPage(response)
-			};
-		}
-	};
-}
-async function failure(response, path) {
-	const detail = await response.text().catch(() => "");
-	const parsed = detail ? safeJson(detail) : void 0;
-	const message = typeof parsed === "object" && parsed !== null && "message" in parsed ? String(parsed.message) : detail || response.statusText;
-	return /* @__PURE__ */ new Error(`GitHub ${String(response.status)} on ${path}: ${message}`);
-}
-function safeJson(text) {
-	try {
-		return JSON.parse(text);
-	} catch {
-		return;
-	}
-}
-function hasNextPage(response) {
-	return (response.headers.get("link") ?? "").includes("rel=\"next\"");
-}
-function pullFor(api, identifier) {
-	return findPull(reader(api), identifier, api.options.pull, api.options.cache);
-}
-function reader(api) {
-	return {
-		owner: api.options.owner,
-		repo: api.options.repo,
-		get: async (path) => (await api.request(path)).body
-	};
-}
-async function github_head(api, branch) {
-	const pull = await pullFor(api, branch);
-	if (pull === void 0) return void 0;
-	const path = `/repos/${api.options.owner}/${api.options.repo}/pulls/${String(pull)}`;
-	const { body } = await api.request(path);
-	return body.head.sha;
-}
-async function readLedger(api, branch) {
-	const pull = await pullFor(api, branch);
-	return pull === void 0 ? void 0 : await readLedgerAt(api, pull, branch);
-}
-async function readLedgerAt(api, pull, branch) {
-	const found = [];
-	for (let page = 1; page <= github_PAGE_SIZE; page += 1) {
-		const path = `/repos/${api.options.owner}/${api.options.repo}/issues/${String(pull)}/comments?per_page=${String(github_PAGE_SIZE)}&page=${String(page)}`;
-		const { body, hasNext } = await api.request(path);
-		for (const issue of body) if (parseFence(issue.body)) found.push({
-			id: issue.id,
-			body: issue.body
-		});
-		if (!hasNext) break;
-	}
-	const newest = found.at(-1);
-	const fence = newest === void 0 ? void 0 : parseFence(newest.body);
-	const surface = branch ?? fence?.branch ?? "";
-	return {
-		branch: surface,
-		pull,
-		issueId: newest?.id,
-		stale: found.slice(0, -1).map((one) => one.id),
-		comments: fence?.comments.map((comment) => ({
-			...comment,
-			branch: surface
-		})) ?? [],
-		approvals: fence?.approvals ?? []
-	};
-}
-async function writeLedger(api, ledger, repost) {
-	const body = await bodyFor(api, ledger);
-	const { owner, repo } = api.options;
-	const gone = [...ledger.stale];
-	if (repost || ledger.issueId === void 0) {
-		await api.request(`/repos/${owner}/${repo}/issues/${String(ledger.pull)}/comments`, {
-			method: "POST",
-			body: JSON.stringify({ body })
-		});
-		if (ledger.issueId !== void 0) gone.push(ledger.issueId);
-	} else await api.request(`/repos/${owner}/${repo}/issues/comments/${String(ledger.issueId)}`, {
-		method: "PATCH",
-		body: JSON.stringify({ body })
-	});
-	for (const id of gone) await github_remove(api, id);
-}
-async function github_remove(api, issueId) {
-	const { owner, repo } = api.options;
-	try {
-		await api.request(`/repos/${owner}/${repo}/issues/comments/${String(issueId)}`, { method: "DELETE" });
-	} catch {}
-}
-async function list(api, query) {
-	if (query.limit !== void 0 && query.limit <= 0) throw new RangeError(`limit must be positive, received ${String(query.limit)}`);
-	const ledger = await readLedger(api, query.branch);
-	if (!ledger) return { comments: [] };
-	const matching = ledger.comments.filter((comment) => query.statuses === void 0 || query.statuses.includes(comment.status));
-	const offset = query.cursor === void 0 ? 0 : offsetOf(query.cursor);
-	const page = matching.slice(offset, offset + (query.limit ?? matching.length));
-	const next = offset + page.length;
-	return {
-		comments: page,
-		...next < matching.length ? { cursor: String(next) } : {}
-	};
-}
-async function appendMany(api, incoming) {
-	const branch = incoming[0]?.branch;
-	if (branch === void 0) return [];
-	const ledger = await readLedger(api, branch);
-	if (!ledger) throw new Error(`No pull request for branch ${branch}; Maple has nowhere to post.`);
-	let seq = nextSeq(ledger.comments.map((one) => one.id), ID);
-	const stored = incoming.map((comment) => ({
-		...comment,
-		id: `gh_${String(ledger.pull)}_${String(seq++)}`,
-		status: comment.status ?? "open"
-	}));
-	await writeLedger(api, {
-		...ledger,
-		comments: [...ledger.comments, ...stored]
-	}, true);
-	return stored;
-}
-async function setStatus(api, id, status, resolution) {
-	const located = ID.exec(id);
-	if (!located) throw new Error(`Not a GitHub comment id: ${id}`);
-	const ledger = await ledgerHolding(api, Number(located[1]), id, (one) => one.comments.some((held) => held.id === id));
-	const existing = ledger.comments.find((one) => one.id === id);
-	if (!existing) throw new Error(`No comment ${id} on this pull request.`);
-	const updated = {
-		...existing,
-		status,
-		...resolution ? { resolution } : {}
-	};
-	const comments = ledger.comments.map((one) => one.id === id ? updated : one);
-	await writeLedger(api, {
-		...ledger,
-		comments
-	}, false);
-	return updated;
-}
-function approvalsOn(api, branch) {
-	return readLedger(api, branch).then((ledger) => ledger?.approvals ?? []);
-}
-async function approve(api, approval) {
-	const ledger = await readLedger(api, approval.branch);
-	if (!ledger) throw new Error(`No pull request for branch ${approval.branch}; Maple has nowhere to post.`);
-	const seq = nextSeq(ledger.approvals.map((one) => one.id), APPROVAL_ID);
-	const stored = {
-		...approval,
-		id: `gha_${String(ledger.pull)}_${String(seq)}`
-	};
-	await writeLedger(api, {
-		...ledger,
-		approvals: [...ledger.approvals, stored]
-	}, true);
-	return stored;
-}
-async function unapprove(api, id) {
-	const located = APPROVAL_ID.exec(id);
-	if (!located) throw new Error(`Not a GitHub approval id: ${id}`);
-	const ledger = await ledgerHolding(api, Number(located[1]), id, (one) => one.approvals.some((approval) => approval.id === id));
-	const approvals = ledger.approvals.filter((one) => one.id !== id);
-	await writeLedger(api, {
-		...ledger,
-		approvals
-	}, false);
-}
-async function ledgerHolding(api, pull, id, holds) {
-	const ledger = await readLedgerAt(api, pull);
-	if (!holds(ledger)) throw new Error(`No Maple record ${id} on this repository.`);
-	return ledger;
-}
-function nextSeq(ids, shape) {
-	const used = ids.map((id) => Number(shape.exec(id)?.[2] ?? 0));
-	return Math.max(0, ...used) + 1;
-}
-async function bodyFor(api, ledger) {
-	const screenshots = await shotsFor(api, ledger.comments);
-	return exportMarkdown(ledger.comments, {
-		branch: ledger.branch,
-		budget: LEDGER_BUDGET,
-		...ledger.approvals.length === 0 ? {} : { approvals: ledger.approvals },
-		...screenshots.size === 0 ? {} : { screenshots }
-	}).markdown;
-}
-async function shotsFor(api, comments) {
-	const shots = /* @__PURE__ */ new Map();
-	const media = api.options.media;
-	if (!media) return shots;
-	for (const comment of comments) {
-		const ref = comment.attachments?.find(isImage);
-		if (!ref) continue;
-		try {
-			shots.set(comment.id, await media.getUrl(ref));
-		} catch {}
-	}
-	return shots;
-}
-function isImage(ref) {
-	return ref.contentType.startsWith("image/");
-}
-function offsetOf(cursor) {
-	const offset = Number(cursor);
-	if (!Number.isInteger(offset) || offset < 0) throw new RangeError(`Invalid cursor: ${cursor}`);
-	return offset;
-}
-//#endregion
-
-
+// EXTERNAL MODULE: external "node:fs"
+var external_node_fs_ = __nccwpck_require__(24);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/gate/decide.js
+var decide = __nccwpck_require__(477);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/store.js + 148 modules
+var store = __nccwpck_require__(99);
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/github.js + 1 modules
+var github = __nccwpck_require__(546);
 ;// CONCATENATED MODULE: ./src/comments.ts
 /**
  * Reading the comments the gate decides on.
@@ -54244,7 +54592,7 @@ function offsetOf(cursor) {
 const MAX_PAGES = 20;
 /** Builds the store this run reads through. */
 function storeFor(context, token) {
-    return createCommentStore(githubStore({
+    return (0,store/* createCommentStore */.V)((0,github/* githubStore */.$)({
         owner: context.owner,
         repo: context.repo,
         baseUrl: context.apiUrl,
@@ -54305,7 +54653,7 @@ class MissingContextError extends Error {
     }
 }
 /** Reads the context out of the environment. `read` is injected in tests. */
-function readContext(env, read = (path) => (0,external_node_fs_namespaceObject.readFileSync)(path, "utf8")) {
+function readContext(env, read = (path) => (0,external_node_fs_.readFileSync)(path, "utf8")) {
     const repository = env["GITHUB_REPOSITORY"] ?? "";
     const [owner, repo] = repository.split("/");
     if (owner === undefined || repo === undefined || repo === "") {
@@ -54347,20 +54695,20 @@ function eventPayload(env, read) {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_e33553fedeafcdd33edb44166254a8f9/node_modules/@maple-kit/core/dist/connectors/github-gate.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/connectors/github-gate.js
 //#region src/connectors/github-gate.ts
 const CHECK_NAME = "maple/visual-review";
-const github_gate_DEFAULT_BASE = "https://api.github.com";
+const DEFAULT_BASE = "https://api.github.com";
 function githubGate(options) {
-	const api = github_gate_createClient(options);
+	const api = createClient(options);
 	return {
 		name: "github",
 		publish: (report) => publish(api, report),
 		read: (target) => read(api, target)
 	};
 }
-function github_gate_createClient(options) {
-	const base = options.baseUrl ?? github_gate_DEFAULT_BASE;
+function createClient(options) {
+	const base = options.baseUrl ?? DEFAULT_BASE;
 	const call = options.fetch ?? globalThis.fetch;
 	return {
 		options,
@@ -54376,18 +54724,18 @@ function github_gate_createClient(options) {
 					...init.headers
 				}
 			});
-			if (!response.ok) throw await github_gate_failure(response, path);
+			if (!response.ok) throw await failure(response, path);
 			return await response.json();
 		}
 	};
 }
-async function github_gate_failure(response, path) {
+async function failure(response, path) {
 	const detail = await response.text().catch(() => "");
-	const parsed = detail ? github_gate_safeJson(detail) : void 0;
+	const parsed = detail ? safeJson(detail) : void 0;
 	const message = typeof parsed === "object" && parsed !== null && "message" in parsed ? String(parsed.message) : detail || response.statusText;
 	return /* @__PURE__ */ new Error(`GitHub ${String(response.status)} on ${path}: ${message}`);
 }
-function github_gate_safeJson(text) {
+function safeJson(text) {
 	try {
 		return JSON.parse(text);
 	} catch {
@@ -54465,7 +54813,7 @@ function externalId(verdict) {
 	});
 }
 function countsIn(externalId) {
-	const parsed = externalId === null ? void 0 : github_gate_safeJson(externalId);
+	const parsed = externalId === null ? void 0 : safeJson(externalId);
 	if (typeof parsed !== "object" || parsed === null) return {
 		reason: "unreadable",
 		open: 0,
@@ -54539,6 +54887,8 @@ function outputsFor(verdict) {
  * uppercased and spaces replaced. Reading them directly keeps the bundle small
  * and the behaviour easy to test.
  */
+/** Where SARIF goes when the workflow does not say. */
+const DEFAULT_SARIF_PATH = "maple-design-lint.sarif";
 /** Raised when an input is missing or not one of its allowed values. */
 class InvalidInputError extends Error {
     input;
@@ -54559,8 +54909,8 @@ function readInput(env, name) {
  */
 function readInputs(env) {
     const mode = readInput(env, "mode");
-    if (mode !== "sync" && mode !== "gate") {
-        throw new InvalidInputError("mode", `must be "sync" or "gate", received "${mode}"`);
+    if (mode !== "sync" && mode !== "gate" && mode !== "lint") {
+        throw new InvalidInputError("mode", `must be "sync", "gate" or "lint", received "${mode}"`);
     }
     const token = readInput(env, "token");
     if (token === "")
@@ -54571,6 +54921,7 @@ function readInputs(env) {
         mode,
         token,
         requireApproval: readFlag(env, "require-approval"),
+        ...(mode === "lint" ? { lint: readLintInputs(env) } : {}),
         ...(branch === "" ? {} : { branch }),
         ...(appId === "" ? {} : { appId }),
     };
@@ -54582,7 +54933,120 @@ function readInputs(env) {
 function readFlag(env, name) {
     return readInput(env, name).toLowerCase() === "true";
 }
+/** Entries separated by newlines or commas, blanks dropped. */
+function readList(env, name) {
+    return readInput(env, name)
+        .split(/[\n,]/)
+        .map((entry) => entry.trim())
+        .filter((entry) => entry !== "");
+}
+function readLintInputs(env) {
+    const previewUrl = readInput(env, "preview-url");
+    if (previewUrl === "")
+        throw new InvalidInputError("preview-url", "is required in lint mode");
+    if (!URL.canParse(previewUrl))
+        throw new InvalidInputError("preview-url", "is not a URL");
+    const tokenFiles = readList(env, "token-files");
+    if (tokenFiles.length === 0) {
+        throw new InvalidInputError("token-files", "is required in lint mode");
+    }
+    const viewports = readList(env, "viewports").map(parseViewport);
+    const bypassHeaders = parseHeaders(readInput(env, "bypass-header"));
+    return {
+        previewUrl,
+        tokenFiles,
+        sarifPath: readInput(env, "sarif-path") || DEFAULT_SARIF_PATH,
+        ...(viewports.length === 0 ? {} : { viewports }),
+        ...(bypassHeaders === undefined ? {} : { bypassHeaders }),
+    };
+}
+/** "1280x800" is a viewport; anything else is a mistake worth naming. */
+function parseViewport(entry) {
+    const match = /^(\d+)x(\d+)$/i.exec(entry);
+    if (match === null) {
+        throw new InvalidInputError("viewports", `has "${entry}", expected WIDTHxHEIGHT such as 1280x800`);
+    }
+    return { width: Number(match[1]), height: Number(match[2]) };
+}
+/** "Name: value" lines, for a preview behind a protection-bypass header. */
+function parseHeaders(raw) {
+    const headers = {};
+    for (const line of raw.split("\n")) {
+        if (line.trim() === "")
+            continue;
+        const colon = line.indexOf(":");
+        const name = line.slice(0, Math.max(colon, 0)).trim();
+        if (name === "")
+            throw new InvalidInputError("bypass-header", 'must be lines of "Name: value"');
+        headers[name] = line.slice(colon + 1).trim();
+    }
+    return Object.keys(headers).length === 0 ? undefined : headers;
+}
 
+;// CONCATENATED MODULE: ./src/lint.ts
+/**
+ * `mode: lint`: map the inputs onto `runCiLint` and report what it returns.
+ *
+ * `runCiLint` in `@maple-kit/cli` does the work, including publishing the
+ * `maple/design-lint` check run and writing SARIF. Nothing is restated here,
+ * for the same reason as the gate: a second copy drifts.
+ */
+
+/** The one place the CLI is imported, so a test can pass a fake instead. */
+async function loadRunCiLint() {
+    const cli = (await Promise.all(/* import() */[__nccwpck_require__.e(933), __nccwpck_require__.e(529)]).then(__nccwpck_require__.bind(__nccwpck_require__, 933)));
+    if (cli.runCiLint === undefined) {
+        throw new Error("The bundled @maple-kit/cli has no runCiLint; it is older than lint needs.");
+    }
+    return cli.runCiLint;
+}
+/** The action's inputs as the CLI's options. A run off a pull request is a dry run. */
+function optionsFor(lint, context, token) {
+    return {
+        url: lint.previewUrl,
+        tokenFiles: lint.tokenFiles,
+        sarifPath: lint.sarifPath,
+        ...(lint.viewports === undefined ? {} : { viewports: lint.viewports }),
+        ...(lint.bypassHeaders === undefined ? {} : { bypassHeaders: lint.bypassHeaders }),
+        ...(context.sha === undefined
+            ? {}
+            : { publish: { token, owner: context.owner, repo: context.repo, headSha: context.sha } }),
+    };
+}
+/** The outputs, in the CLI's own vocabulary: success, failure or neutral. */
+function lintOutputsFor(result) {
+    return {
+        conclusion: result.conclusion,
+        "finding-count": String(result.findings.length),
+        ...(result.sarifPath === undefined ? {} : { "sarif-path": result.sarifPath }),
+        ...(result.checkRunId === undefined ? {} : { "check-run-id": String(result.checkRunId) }),
+    };
+}
+/**
+ * Runs lint once. A `failure` fails the step, after the outputs are written;
+ * `neutral` does not, because a lint that could not see found nothing.
+ */
+async function runLint(env, context, inputs, runCiLint) {
+    const { lint, token } = inputs;
+    // A bypass value is a credential: mask it before anything can print it.
+    for (const value of Object.values(lint.bypassHeaders ?? {})) {
+        if (value !== "")
+            process.stdout.write(`::add-mask::${value}\n`);
+    }
+    const result = await runCiLint(optionsFor(lint, context, token));
+    const file = env["GITHUB_OUTPUT"];
+    if (file !== undefined) {
+        const lines = Object.entries(lintOutputsFor(result)).map(([k, v]) => `${k}=${v}\n`);
+        (0,external_node_fs_.appendFileSync)(file, lines.join(""), "utf8");
+    }
+    if (result.conclusion === "failure") {
+        throw new Error(`Maple design lint found ${result.findings.length} finding(s); see maple/design-lint.`);
+    }
+    return result;
+}
+
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.17.1_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_d97d2ec0096a46dcc0ad5cf9f2e5fc2c/node_modules/@maple-kit/core/dist/export/markdown.js
+var markdown = __nccwpck_require__(667);
 ;// CONCATENATED MODULE: ./src/sync.ts
 /**
  * The sticky comment `sync` keeps on the pull request.
@@ -54601,7 +55065,7 @@ const MARKER = "<!-- maple:visual-review -->";
 function stickyBody(verdict, comments, branch) {
     const detail = comments === undefined || comments.length === 0
         ? verdict.summary
-        : exportMarkdown(comments, { branch, fence: false }).markdown;
+        : (0,markdown/* exportMarkdown */.k4)(comments, { branch, fence: false }).markdown;
     return [MARKER, `### ${verdict.title}`, "", detail, "", FOOTER].join("\n");
 }
 /**
@@ -54624,25 +55088,25 @@ async function syncSticky(context, token, body) {
         return "skipped";
     const existing = await findSticky(context, token);
     if (existing === undefined) {
-        await sync_request(context, token, `/issues/${String(context.pull)}/comments`, post("POST", body));
+        await request(context, token, `/issues/${String(context.pull)}/comments`, post("POST", body));
         return "created";
     }
-    await sync_request(context, token, `/issues/comments/${String(existing.id)}`, post("PATCH", body));
+    await request(context, token, `/issues/comments/${String(existing.id)}`, post("PATCH", body));
     return "updated";
 }
 /** The pages GitHub will be asked for before this gives up looking. */
 const sync_MAX_PAGES = 20;
-const sync_PAGE_SIZE = 100;
+const PAGE_SIZE = 100;
 /** The comment this action last wrote, or undefined when it never has. */
 async function findSticky(context, token) {
     for (let page = 1; page <= sync_MAX_PAGES; page += 1) {
         const path = `/issues/${String(context.pull ?? 0)}/comments` +
-            `?per_page=${String(sync_PAGE_SIZE)}&page=${String(page)}`;
-        const listed = await sync_request(context, token, path);
+            `?per_page=${String(PAGE_SIZE)}&page=${String(page)}`;
+        const listed = await request(context, token, path);
         const found = listed.find((comment) => comment.body.includes(MARKER));
         if (found)
             return found;
-        if (listed.length < sync_PAGE_SIZE)
+        if (listed.length < PAGE_SIZE)
             return undefined;
     }
     return undefined;
@@ -54652,7 +55116,7 @@ function post(method, body) {
     return { method, body: JSON.stringify({ body }) };
 }
 /** The three calls this file makes, with GitHub's own message on a failure. */
-async function sync_request(context, token, path, init = {}) {
+async function request(context, token, path, init = {}) {
     const url = `${context.apiUrl}/repos/${context.owner}/${context.repo}${path}`;
     const response = await fetch(url, {
         ...init,
@@ -54693,15 +55157,16 @@ async function detail(response) {
 
 
 
+
 /** What a surface Maple is not reviewing concludes: neutral, and saying so. */
-const NO_REVIEW = decideGate(undefined, { hasReview: false });
+const NO_REVIEW = (0,decide/* decideGate */.q)(undefined, { hasReview: false });
 /** Writes the outputs, the only supported way since the set-output removal. */
 function report(env, verdict) {
     const file = env["GITHUB_OUTPUT"];
     if (file === undefined)
         return;
     const lines = Object.entries(outputsFor(verdict)).map(([name, value]) => `${name}=${value}\n`);
-    (0,external_node_fs_namespaceObject.appendFileSync)(file, lines.join(""), "utf8");
+    (0,external_node_fs_.appendFileSync)(file, lines.join(""), "utf8");
 }
 function messageOf(error) {
     return error instanceof Error ? error.message : String(error);
@@ -54723,7 +55188,7 @@ async function reviewOf(context, inputs) {
         return undefined;
     });
     const approvals = await approvalsOf(store, inputs);
-    const verdict = decideGate(comments, {
+    const verdict = (0,decide/* decideGate */.q)(comments, {
         statusTracked: store.capabilities.setStatus,
         requireApproval: inputs.requireApproval,
         ...(approvals === undefined ? {} : { approvals }),
@@ -54767,7 +55232,7 @@ async function run_publish(context, inputs, verdict) {
  * failing: a fork's token is read-only whatever the workflow asked for, and a
  * contributor who did nothing wrong should not meet a failed step.
  */
-async function run_sync(env, context, inputs, review) {
+async function sync(env, context, inputs, review) {
     const body = stickyBody(review.verdict, review.comments, inputs.branch ?? context.ref);
     const written = await syncSticky(context, inputs.token, body).catch((error) => {
         process.stderr.write(`::warning::Maple could not write the comment: ${messageOf(error)}\n`);
@@ -54780,7 +55245,7 @@ async function run_sync(env, context, inputs, review) {
 function appendSummary(env, body) {
     const file = env["GITHUB_STEP_SUMMARY"];
     if (file !== undefined)
-        (0,external_node_fs_namespaceObject.appendFileSync)(file, `${body}\n`, "utf8");
+        (0,external_node_fs_.appendFileSync)(file, `${body}\n`, "utf8");
 }
 /**
  * Runs the action once.
@@ -54788,31 +55253,42 @@ function appendSummary(env, body) {
  * @throws {Error} on anything that leaves the gate unreported. A read that
  * fails is not one of those; a publish that fails is.
  */
-async function run_run(env) {
+async function run(env) {
     const context = readContext(env);
-    // A merge-queue entry has nobody to comment on it and a run off a pull
-    // request has nothing to read. Both pass, and both are checked before the
-    // inputs, because neither has a head ref for `branch` to fall back to.
-    const reviewed = !isMergeGroup(context.eventName) && context.sha !== undefined;
     const inputs = readInputs(env);
+    // A merge-queue entry has nobody to comment on it and a run off a pull
+    // request has nothing to read. Both pass: neither has a head ref to read from.
+    const reviewed = !isMergeGroup(context.eventName) && context.sha !== undefined;
     const review = reviewed ? await reviewOf(context, inputs) : { verdict: NO_REVIEW };
     if (inputs.mode === "sync" && reviewed)
-        await run_sync(env, context, inputs, review);
+        await sync(env, context, inputs, review);
     if (inputs.mode === "gate")
         await run_publish(context, inputs, review.verdict);
     report(env, review.verdict);
     return review.verdict;
 }
+/**
+ * The action's entry: `lint` goes to the CLI, `sync` and `gate` to `run`.
+ * `loadLint` is injected so a test can pass a fake `runCiLint`.
+ */
+async function main(env, loadLint = loadRunCiLint) {
+    const inputs = readInputs(env);
+    if (inputs.lint === undefined) {
+        await run(env);
+        return;
+    }
+    await runLint(env, readContext(env), { ...inputs, lint: inputs.lint }, await loadLint());
+}
 
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
- * The action's entrypoint: run once, and turn a throw into a failed step.
+ * The action's entrypoint: run once (`main`), and turn a throw into a failed step.
  *
  * Everything else is in `run.ts`, which takes the environment as an argument
  * so a test can drive the whole path without a process.
  */
 
-run_run(process.env).catch((error) => {
+main(process.env).catch((error) => {
     process.stderr.write(`::error::${error instanceof Error ? error.message : String(error)}\n`);
     process.exitCode = 1;
 });
