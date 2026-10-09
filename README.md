@@ -313,6 +313,11 @@ queue hung, and that failure has sunk this exact feature in other tools.
 Tagged `v0.x.y`, with a moving **`v0`** that every release advances. Pin `@v0`
 to follow patches, or a full `v0.1.0` to pin exactly.
 
+To release, bump `version` in `package.json` in a pull request. Merging it tags
+`vX.Y.Z`, moves `v0` to the same commit and publishes the GitHub Release with
+generated notes (`.github/workflows/release.yml`). The workflow refuses to tag
+when `dist/` is out of date, and does nothing when the tag already exists.
+
 It is `v0` rather than `v1` because nothing here promises a stable interface
 yet, which is the same reason every `@maple-kit/*` package is 0.x. `uses:` reads
 a major tag the same way whichever number it carries.
