@@ -100,8 +100,8 @@ function post(method: "PATCH" | "POST", body: string): RequestInit {
   return { method, body: JSON.stringify({ body }) };
 }
 
-/** The three calls this file makes, with GitHub's own message on a failure. */
-async function request<T>(
+/** A call to this repository's API, with GitHub's own message on a failure. */
+export async function request<T>(
   context: RunContext,
   token: string,
   path: string,

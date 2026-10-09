@@ -69,11 +69,12 @@ export function readInput(env: NodeJS.ProcessEnv, name: string): string {
 }
 
 /**
- * Validates every input at once.
+ * Validates every input at once. `headRef` is the branch to fall back to when
+ * neither the input nor `GITHUB_HEAD_REF` names one.
  *
  * @throws {InvalidInputError} on the first input that is missing or invalid.
  */
-export function readInputs(env: NodeJS.ProcessEnv): Inputs {
+export function readInputs(env: NodeJS.ProcessEnv, headRef = ""): Inputs {
   const mode = readInput(env, "mode");
   if (mode !== "sync" && mode !== "gate" && mode !== "lint") {
     throw new InvalidInputError("mode", `must be "sync", "gate" or "lint", received "${mode}"`);
@@ -82,7 +83,7 @@ export function readInputs(env: NodeJS.ProcessEnv): Inputs {
   const token = readInput(env, "token");
   if (token === "") throw new InvalidInputError("token", "is required");
 
-  const branch = readInput(env, "branch") || (env["GITHUB_HEAD_REF"] ?? "");
+  const branch = readInput(env, "branch") || (env["GITHUB_HEAD_REF"] ?? "") || headRef;
   const appId = readInput(env, "app-id");
 
   return {

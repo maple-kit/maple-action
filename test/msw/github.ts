@@ -38,6 +38,10 @@ export interface GitHubFake {
   pageSize(size: number): void;
   /** Answers every comment listing with this status instead of the comments. */
   failWith(status: number): void;
+  /** Answers `GET /pulls/{n}` with this status instead of the pull request. */
+  failPullWith(status: number): void;
+  /** `GET /pulls/{n}` requests served, for asserting that none was made. */
+  pullLookups(): number;
   /** Comment listings served, for asserting that a cursor was followed. */
   pages(): number;
   /** The `authorization` header of every listing served. */
@@ -52,6 +56,8 @@ export function createGitHubFake(owner = "maple-kit", repo = "app"): GitHubFake 
   let size = 100;
   let failure: number | undefined;
   let pages = 0;
+  let pullFailure: number | undefined;
+  let pullLookups = 0;
   let nextId = 2000;
   let held: readonly Comment[] = [];
   let approved: readonly Approval[] = [];
@@ -63,6 +69,20 @@ export function createGitHubFake(owner = "maple-kit", repo = "app"): GitHubFake 
     http.get(`${API}/repos/${owner}/${repo}/commits/:sha/pulls`, ({ params }) =>
       HttpResponse.json(String(params["sha"]) === "commit_sha" ? [pull] : []),
     ),
+
+    http.get(`${API}/repos/${owner}/${repo}/pulls/:number`, ({ params }) => {
+      pullLookups += 1;
+      if (pullFailure !== undefined) {
+        return HttpResponse.json({ message: "Not Found" }, { status: pullFailure });
+      }
+      if (Number(params["number"]) !== pull.number) {
+        return HttpResponse.json({ message: "Not Found" }, { status: 404 });
+      }
+      return HttpResponse.json({
+        number: pull.number,
+        head: { sha: "commit_sha", ref: pull.head.ref, repo: { full_name: `${owner}/${repo}` } },
+      });
+    }),
 
     // Two lookups share this path: the head-branch one carries `head`, and the
     // fallback that `matches` filters lists every open pull request.
@@ -137,6 +157,10 @@ export function createGitHubFake(owner = "maple-kit", repo = "app"): GitHubFake 
     failWith: (status) => {
       failure = status;
     },
+    failPullWith: (status) => {
+      pullFailure = status;
+    },
+    pullLookups: () => pullLookups,
     pages: () => pages,
     credentials: () => credentials,
     reset: () => {
@@ -146,6 +170,8 @@ export function createGitHubFake(owner = "maple-kit", repo = "app"): GitHubFake 
       size = 100;
       failure = undefined;
       pages = 0;
+      pullFailure = undefined;
+      pullLookups = 0;
       held = [];
       approved = [];
     },

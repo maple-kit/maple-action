@@ -211,6 +211,53 @@ describe("when something is broken", () => {
   });
 });
 
+describe("an issue_comment event", () => {
+  const COMMENT_ON_PULL = { issue: { number: 42, pull_request: {} }, comment: { id: 1 } };
+  const COMMENT_ON_ISSUE = { issue: { number: 7 }, comment: { id: 1 } };
+  const commentEnv = (overrides: NodeJS.ProcessEnv = {}, payload: unknown = COMMENT_ON_PULL) =>
+    env(
+      {
+        GITHUB_EVENT_NAME: "issue_comment",
+        GITHUB_HEAD_REF: "",
+        GITHUB_REF_NAME: "main",
+        ...overrides,
+      },
+      payload,
+    );
+
+  it("gates the pull request's head, with the branch fetched from the API", async () => {
+    github.put(storedComment({ id: "c_1", status: "open" }));
+
+    const verdict = await run(commentEnv());
+
+    expect(verdict.conclusion).toBe("blocked");
+    expect(github.pullLookups()).toBe(1);
+    expect(checks.runsOn(HEAD)).toHaveLength(1);
+  });
+
+  it("syncs the sticky comment onto the pull request", async () => {
+    github.put(storedComment({ id: "c_1", status: "open" }));
+
+    await run(commentEnv({ INPUT_MODE: "sync" }));
+
+    expect(github.issueComments().some((c) => c.body.includes("maple:visual-review"))).toBe(true);
+  });
+
+  it("is no review on a plain issue, and asks the API for nothing", async () => {
+    const verdict = await run(commentEnv({}, COMMENT_ON_ISSUE));
+
+    expect(verdict.conclusion).toBe("neutral");
+    expect(github.pullLookups()).toBe(0);
+    expect(github.pages()).toBe(0);
+  });
+
+  it("fails the step when the pull request cannot be read", async () => {
+    github.failPullWith(404);
+
+    await expect(run(commentEnv())).rejects.toThrow(/404 on \/pulls\/42/);
+  });
+});
+
 describe("sync mode", () => {
   /** The sticky comment, found the way the action finds it again. */
   function sticky() {

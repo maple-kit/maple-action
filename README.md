@@ -234,6 +234,60 @@ are not the same thing: `blocked` is published as `in_progress`, and both
 `clear` and `neutral` pass. Branch on `reason` when a workflow needs to tell a
 fork from a store it could not read.
 
+## Re-running when the ledger is edited
+
+The overlay edits the Maple ledger comment in place when a reviewer resolves a
+comment, and nothing about a pull request changes when it does. To re-run
+`sync` and `gate` then, trigger on `issue_comment`:
+
+```yaml
+name: Maple (ledger edited)
+on:
+  issue_comment:
+    types: [edited]
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '<!-- maple:visual-review -->')
+    runs-on: ubuntu-latest
+    concurrency:
+      group: maple-${{ github.event.issue.number }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: maple-kit/maple-action@v0
+        with:
+          mode: sync
+
+      - uses: maple-kit/maple-action@v0
+        with:
+          mode: gate
+```
+
+An `issue_comment` payload names the pull request but not its head, so the
+action asks the API (`GET /pulls/{n}`) for the head commit, branch and
+repository, and publishes `maple/visual-review` on that commit. It checks
+nothing out and runs no code from the pull request, which is what keeps this
+safe on a comment from anyone. A comment on a plain issue is `no-review`
+(`neutral`) and makes no API call. If the pull request cannot be read, the
+step fails with GitHub's status rather than publishing on a guess.
+
+- **The workflow file is the default branch's.** `issue_comment` workflows run
+  from the default branch, whatever the pull request changes, so edit the file
+  there; a change on the pull request's own branch is not picked up.
+- **Keep the `if:`.** Without it every edited comment on every pull request
+  starts a run.
+- **The `concurrency` group is per pull request**, so two quick edits do not
+  race to publish the same check run.
+- It runs alongside the `pull_request` workflow above, not instead of it: that
+  one still covers pushes.
+
 ## Merge queues
 
 A `merge_group` run passes immediately: it reads no comments and publishes a
