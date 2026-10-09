@@ -36,6 +36,15 @@ describe("readInputs", () => {
     expect(readInputs({ ...BASE, INPUT_BRANCH: "explicit" }).branch).toBe("explicit");
   });
 
+  it("falls back to a fetched head ref when there is no input or GITHUB_HEAD_REF", () => {
+    const env = { INPUT_MODE: "gate", INPUT_TOKEN: "t" };
+
+    expect(readInputs(env, "feature/fetched").branch).toBe("feature/fetched");
+    expect(readInputs({ ...env, INPUT_BRANCH: "explicit" }, "feature/fetched").branch).toBe(
+      "explicit",
+    );
+  });
+
   it("rejects a mode that is not sync, gate or lint", () => {
     expect(() => readInputs({ ...BASE, INPUT_MODE: "deploy" })).toThrow(
       /must be "sync", "gate" or "lint"/,

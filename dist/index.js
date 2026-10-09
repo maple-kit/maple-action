@@ -54897,6 +54897,104 @@ async function readComments(store, branch) {
     throw new Error(`More than ${String(MAX_PAGES)} pages of comments on ${branch}.`);
 }
 
+// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/export/markdown.js
+var markdown = __nccwpck_require__(6138);
+;// CONCATENATED MODULE: ./src/sync.ts
+/**
+ * The sticky comment `sync` keeps on the pull request.
+ *
+ * One comment, rewritten in place, so a reviewer who hits a blocked merge can
+ * read on the pull request which comments are holding it. It is found again by
+ * a marker rather than by remembering an id anywhere.
+ */
+
+/**
+ * How the comment finds itself again. Hidden, because it is for this action and
+ * not for a reader — unlike the fences, which are visible on purpose.
+ */
+const MARKER = "<!-- maple:visual-review -->";
+/** What the sticky comment says: the verdict's own title and table. */
+function stickyBody(verdict, comments, branch) {
+    const detail = comments === undefined || comments.length === 0
+        ? verdict.summary
+        : (0,markdown/* exportMarkdown */.k4)(comments, { branch, fence: false }).markdown;
+    return [MARKER, `### ${verdict.title}`, "", detail, "", FOOTER].join("\n");
+}
+/**
+ * Why this comment carries no ```maple fence, where a reader will look for one.
+ * `docs/connectors.md` in maple has what a second fence would cost.
+ */
+const FOOTER = "_Each comment above is a comment of its own on this pull request, carrying " +
+    "the `maple` JSON fence an agent reads; this summary carries none, because a " +
+    "second copy reads back as a comment nobody can resolve. Resolve a comment in " +
+    "the overlay and `maple/visual-review` clears with no new push._";
+/**
+ * Writes the sticky comment, or says why it could not.
+ *
+ * A fork's token is read-only whatever the workflow asked for, so there the
+ * body goes to the step summary instead: degrading is right where failing
+ * would block a contributor who did nothing wrong.
+ */
+async function syncSticky(context, token, body) {
+    if (context.pull === undefined || context.fork)
+        return "skipped";
+    const existing = await findSticky(context, token);
+    if (existing === undefined) {
+        await request(context, token, `/issues/${String(context.pull)}/comments`, post("POST", body));
+        return "created";
+    }
+    await request(context, token, `/issues/comments/${String(existing.id)}`, post("PATCH", body));
+    return "updated";
+}
+/** The pages GitHub will be asked for before this gives up looking. */
+const sync_MAX_PAGES = 20;
+const PAGE_SIZE = 100;
+/** The comment this action last wrote, or undefined when it never has. */
+async function findSticky(context, token) {
+    for (let page = 1; page <= sync_MAX_PAGES; page += 1) {
+        const path = `/issues/${String(context.pull ?? 0)}/comments` +
+            `?per_page=${String(PAGE_SIZE)}&page=${String(page)}`;
+        const listed = await request(context, token, path);
+        const found = listed.find((comment) => comment.body.includes(MARKER));
+        if (found)
+            return found;
+        if (listed.length < PAGE_SIZE)
+            return undefined;
+    }
+    return undefined;
+}
+/** A write of one comment body, as fetch takes it. */
+function post(method, body) {
+    return { method, body: JSON.stringify({ body }) };
+}
+/** A call to this repository's API, with GitHub's own message on a failure. */
+async function request(context, token, path, init = {}) {
+    const url = `${context.apiUrl}/repos/${context.owner}/${context.repo}${path}`;
+    const response = await fetch(url, {
+        ...init,
+        headers: {
+            accept: "application/vnd.github+json",
+            authorization: `Bearer ${token}`,
+            "x-github-api-version": "2022-11-28",
+            ...(init.body === undefined ? {} : { "content-type": "application/json" }),
+        },
+    });
+    if (!response.ok) {
+        throw new Error(`GitHub ${String(response.status)} on ${path}: ${await detail(response)}`);
+    }
+    return (await response.json());
+}
+async function detail(response) {
+    const text = await response.text().catch(() => "");
+    try {
+        const { message } = JSON.parse(text);
+        return typeof message === "string" ? message : text;
+    }
+    catch {
+        return text || response.statusText;
+    }
+}
+
 ;// CONCATENATED MODULE: ./src/context.ts
 /**
  * What the run itself says about where it is.
@@ -54905,6 +55003,7 @@ async function readComments(store, branch) {
  * kept apart because a wrong input is a mistake somebody can fix and a missing
  * environment variable means the action is not running in Actions at all.
  */
+
 
 /** Raised when the environment is not one this action can run in. */
 class MissingContextError extends Error {
@@ -54932,12 +55031,45 @@ function readContext(env, read = (path) => (0,external_node_fs_.readFileSync)(pa
 /** What the payload says about the surface: its commit, its number, whose it is. */
 function surfaceOf(payload, repository) {
     const sha = payload?.pull_request?.head?.sha ?? payload?.merge_group?.head_sha;
-    const pull = payload?.pull_request?.number;
+    const pull = payload?.pull_request?.number ?? commentedPull(payload);
     const head = payload?.pull_request?.head?.repo?.full_name;
     return {
         fork: head !== undefined && head !== repository,
         ...(sha === undefined ? {} : { sha }),
         ...(pull === undefined ? {} : { pull }),
+    };
+}
+/**
+ * The number of the pull request a comment is on. A comment on a plain issue
+ * carries no `pull_request` marker and is not a pull request.
+ */
+function commentedPull(payload) {
+    return payload?.issue?.pull_request === undefined ? undefined : payload.issue.number;
+}
+/**
+ * Fills in the head of a pull request an `issue_comment` run is about.
+ *
+ * That payload names the pull request and nothing of its head, so the head is
+ * asked of the API. Only the API: nothing is checked out and no code from the
+ * pull request runs, which is what keeps a comment on a fork's pull request from
+ * being a way to run it with this token. Every other event returns unchanged.
+ *
+ * @throws {Error} when the pull request cannot be read, because a verdict with
+ * no commit to attach to has nowhere to go.
+ */
+async function resolveHead(context, token) {
+    if (context.eventName !== "issue_comment" || context.pull === undefined)
+        return context;
+    const { head } = await request(context, token, `/pulls/${String(context.pull)}`);
+    if (head?.sha === undefined || head.ref === undefined) {
+        throw new Error(`GitHub returned no head for pull request ${String(context.pull)}.`);
+    }
+    const repository = `${context.owner}/${context.repo}`;
+    return {
+        ...context,
+        sha: head.sha,
+        headRef: head.ref,
+        fork: head.repo?.full_name !== undefined && head.repo.full_name !== repository,
     };
 }
 /**
@@ -55164,11 +55296,12 @@ function readInput(env, name) {
     return (env[`INPUT_${name.toUpperCase().replace(/ /g, "_")}`] ?? "").trim();
 }
 /**
- * Validates every input at once.
+ * Validates every input at once. `headRef` is the branch to fall back to when
+ * neither the input nor `GITHUB_HEAD_REF` names one.
  *
  * @throws {InvalidInputError} on the first input that is missing or invalid.
  */
-function readInputs(env) {
+function readInputs(env, headRef = "") {
     const mode = readInput(env, "mode");
     if (mode !== "sync" && mode !== "gate" && mode !== "lint") {
         throw new InvalidInputError("mode", `must be "sync", "gate" or "lint", received "${mode}"`);
@@ -55176,7 +55309,7 @@ function readInputs(env) {
     const token = readInput(env, "token");
     if (token === "")
         throw new InvalidInputError("token", "is required");
-    const branch = readInput(env, "branch") || (env["GITHUB_HEAD_REF"] ?? "");
+    const branch = readInput(env, "branch") || (env["GITHUB_HEAD_REF"] ?? "") || headRef;
     const appId = readInput(env, "app-id");
     return {
         mode,
@@ -55310,104 +55443,6 @@ async function runLint(env, context, inputs, runCiLint) {
     return result;
 }
 
-// EXTERNAL MODULE: ./node_modules/.pnpm/@maple-kit+core@0.18.0_vitest@5.0.1_@types+node@26.6.1_msw@2.15.0_@types+node@26.6.1_ty_522a68d27dcbeeacdf0a432c924b93dc/node_modules/@maple-kit/core/dist/export/markdown.js
-var markdown = __nccwpck_require__(6138);
-;// CONCATENATED MODULE: ./src/sync.ts
-/**
- * The sticky comment `sync` keeps on the pull request.
- *
- * One comment, rewritten in place, so a reviewer who hits a blocked merge can
- * read on the pull request which comments are holding it. It is found again by
- * a marker rather than by remembering an id anywhere.
- */
-
-/**
- * How the comment finds itself again. Hidden, because it is for this action and
- * not for a reader — unlike the fences, which are visible on purpose.
- */
-const MARKER = "<!-- maple:visual-review -->";
-/** What the sticky comment says: the verdict's own title and table. */
-function stickyBody(verdict, comments, branch) {
-    const detail = comments === undefined || comments.length === 0
-        ? verdict.summary
-        : (0,markdown/* exportMarkdown */.k4)(comments, { branch, fence: false }).markdown;
-    return [MARKER, `### ${verdict.title}`, "", detail, "", FOOTER].join("\n");
-}
-/**
- * Why this comment carries no ```maple fence, where a reader will look for one.
- * `docs/connectors.md` in maple has what a second fence would cost.
- */
-const FOOTER = "_Each comment above is a comment of its own on this pull request, carrying " +
-    "the `maple` JSON fence an agent reads; this summary carries none, because a " +
-    "second copy reads back as a comment nobody can resolve. Resolve a comment in " +
-    "the overlay and `maple/visual-review` clears with no new push._";
-/**
- * Writes the sticky comment, or says why it could not.
- *
- * A fork's token is read-only whatever the workflow asked for, so there the
- * body goes to the step summary instead: degrading is right where failing
- * would block a contributor who did nothing wrong.
- */
-async function syncSticky(context, token, body) {
-    if (context.pull === undefined || context.fork)
-        return "skipped";
-    const existing = await findSticky(context, token);
-    if (existing === undefined) {
-        await request(context, token, `/issues/${String(context.pull)}/comments`, post("POST", body));
-        return "created";
-    }
-    await request(context, token, `/issues/comments/${String(existing.id)}`, post("PATCH", body));
-    return "updated";
-}
-/** The pages GitHub will be asked for before this gives up looking. */
-const sync_MAX_PAGES = 20;
-const PAGE_SIZE = 100;
-/** The comment this action last wrote, or undefined when it never has. */
-async function findSticky(context, token) {
-    for (let page = 1; page <= sync_MAX_PAGES; page += 1) {
-        const path = `/issues/${String(context.pull ?? 0)}/comments` +
-            `?per_page=${String(PAGE_SIZE)}&page=${String(page)}`;
-        const listed = await request(context, token, path);
-        const found = listed.find((comment) => comment.body.includes(MARKER));
-        if (found)
-            return found;
-        if (listed.length < PAGE_SIZE)
-            return undefined;
-    }
-    return undefined;
-}
-/** A write of one comment body, as fetch takes it. */
-function post(method, body) {
-    return { method, body: JSON.stringify({ body }) };
-}
-/** The three calls this file makes, with GitHub's own message on a failure. */
-async function request(context, token, path, init = {}) {
-    const url = `${context.apiUrl}/repos/${context.owner}/${context.repo}${path}`;
-    const response = await fetch(url, {
-        ...init,
-        headers: {
-            accept: "application/vnd.github+json",
-            authorization: `Bearer ${token}`,
-            "x-github-api-version": "2022-11-28",
-            ...(init.body === undefined ? {} : { "content-type": "application/json" }),
-        },
-    });
-    if (!response.ok) {
-        throw new Error(`GitHub ${String(response.status)} on ${path}: ${await detail(response)}`);
-    }
-    return (await response.json());
-}
-async function detail(response) {
-    const text = await response.text().catch(() => "");
-    try {
-        const { message } = JSON.parse(text);
-        return typeof message === "string" ? message : text;
-    }
-    catch {
-        return text || response.statusText;
-    }
-}
-
 ;// CONCATENATED MODULE: ./src/run.ts
 /**
  * One run of the action, from the environment to the check run.
@@ -55519,8 +55554,9 @@ function appendSummary(env, body) {
  * fails is not one of those; a publish that fails is.
  */
 async function run(env) {
-    const context = readContext(env);
-    const inputs = readInputs(env);
+    const token = readInputs(env).token;
+    const context = await resolveHead(readContext(env), token);
+    const inputs = readInputs(env, context.headRef);
     // A merge-queue entry has nobody to comment on it and a run off a pull
     // request has nothing to read. Both pass: neither has a head ref to read from.
     const reviewed = !isMergeGroup(context.eventName) && context.sha !== undefined;

@@ -10,7 +10,7 @@ import { appendFileSync } from "node:fs";
 import { decideGate } from "@maple-kit/core/gate";
 
 import { readComments, storeFor } from "./comments.js";
-import { readContext } from "./context.js";
+import { readContext, resolveHead } from "./context.js";
 import { gateFor, isMergeGroup, outputsFor } from "./gate.js";
 import { InvalidInputError, readInputs } from "./inputs.js";
 import { loadRunCiLint, runLint } from "./lint.js";
@@ -138,8 +138,9 @@ function appendSummary(env: NodeJS.ProcessEnv, body: string): void {
  * fails is not one of those; a publish that fails is.
  */
 export async function run(env: NodeJS.ProcessEnv): Promise<GateVerdict> {
-  const context = readContext(env);
-  const inputs = readInputs(env);
+  const token = readInputs(env).token;
+  const context = await resolveHead(readContext(env), token);
+  const inputs = readInputs(env, context.headRef);
 
   // A merge-queue entry has nobody to comment on it and a run off a pull
   // request has nothing to read. Both pass: neither has a head ref to read from.
